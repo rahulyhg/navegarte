@@ -1,0 +1,39 @@
+{% extends 'layout/app.twig' %}
+{% block style %}
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-size: 1em;
+      
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+    
+    h1 {
+      color: #555;
+      font-size: 2em;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      text-shadow: 0 2px 10px #fff;
+    }
+    
+    .container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      background: #eee;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="content">
+      <h1>Olá{{ ' ' ~ name }}!</h1>
+    </div>
+  </div>
+{% endblock %}
