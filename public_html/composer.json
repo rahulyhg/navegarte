@@ -1,28 +1,13 @@
 {
-  <
-  <
-  <
-  <
-  <
-  <
-  < HEAD
-  "name": "navegarte/frontend",
-  "description": "Estrutura inicial para projetos frontend!",
-=======
-"name": "navegarte/framework",
-"description": "Projeto para desenvolvimento do front end da navegarte!",
->>>>>>> 4fb1885671cc7441700f79b3bcbe1cfd32ffebb7
+  "name": "navegarte/framework",
+  "description": "Projeto para desenvolvimento do front end da navegarte!",
   "type": "project",
   "license": "MIT",
   "authors": [
     {
       "name": "Vagner Cardoso",
       "email": "vagnercardosoweb@gmail.com",
-    <<<<<<< HEAD
-      "homepage": "https://www.vagnercardosoweb.com.br/",
-=======
-"homepage": "https://www.navegarte.com.br/",
->>>>>>> 4fb1885671cc7441700f79b3bcbe1cfd32ffebb7
+      "homepage": "https://www.navegarte.com.br/",
       "role": "Developer"
     }
   ],
