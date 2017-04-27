@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 simples/
+=======
+.env
+>>>>>>> 4fb1885671cc7441700f79b3bcbe1cfd32ffebb7
 vendor/
 node_modules/
 composer.lock
