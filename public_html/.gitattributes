@@ -1,0 +1,7 @@
+# Enforce Unix newlines
+* text=lf
+
+# Exclude unused files
+/.editorconfig      export-ignore
+/.gitattributes     export-ignore
+/.gitignore         export-ignore
