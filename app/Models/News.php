@@ -12,7 +12,7 @@
 
 namespace App\Models;
 
-use App\Core\Contracts\BaseModel;
+use Navegarte\Contracts\BaseModel;
 
 /**
  * Class News

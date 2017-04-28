@@ -12,7 +12,7 @@
 
 namespace App\Controllers;
 
-use App\Core\Contracts\BaseController;
+use Navegarte\Contracts\BaseController;
 
 /**
  * Class HomeController
