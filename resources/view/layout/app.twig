@@ -4,11 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    
-    <title>{{ config('client.name', 'Title') }} - Estrutura FrontEnd!</title>
+  
+    <title>{{ titlePage is defined ? titlePage ~ ' - ' ~ config('client.name') : config('client.name') ~ ' - ' ~ config('client.subname') }}</title>
     
     {# stylesheets #}
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     {% block style %}{% endblock %}
+  
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script><![endif]-->
   </head>
   <body>
     
@@ -16,6 +21,7 @@
     {% block content %}{% endblock %}
     
     {# scripts #}
+    <script src="{{ asset('js/app.js') }}"></script>
     {% block script %}{% endblock %}
   </body>
 </html>

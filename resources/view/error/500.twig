@@ -1,0 +1,78 @@
+{% extends 'layout/app.twig' %}
+{% set titlePage = "Error 500 (Internal Server Error)" %}
+{% block style %}
+  <style>
+    .system_error {
+      position: relative;
+      width: 500px;
+      max-width: 90%;
+      margin: 50px auto auto;
+      
+      word-break: break-all;
+      
+      border: 1px solid #eee;
+      box-shadow: 0 0 5px #eee;
+    }
+    
+    .system_error_title {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .system_error_title p {
+      font-size: 22px;
+      font-weight: bolder;
+    }
+    
+    .system_error_content {
+      padding: 10px;
+    }
+    
+    .system_error_content > p {
+      font-size: 16px;
+      text-align: center;
+      display: block;
+      font-weight: 400;
+    }
+    
+    .system_error_content .debug {
+      display: block;
+      margin-top: 10px;
+    }
+    
+    .system_error_content .debug > small {
+      color: red;
+    }
+    
+    .system_error_footer {
+      padding: 5px;
+      border-top: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class='system_error'>
+    <div class='system_error_title'>
+      <p>{{ config('client.name', 'System') }} Application Error</p>
+    </div><!-- /.system_error_title -->
+    <div class='system_error_content'>
+      <p>Opss ocorreu um erro no sistema, por favor tente recarregar a página ou entre em contato com os administradores!</p>
+      {% if debug %}
+        <div class="debug">
+          <p>Erro na linha: <b>#{{ error.line }}</b> {{ error.message }}</p>
+          <small>{{ error.file }}</small>
+        </div><!-- /.debug -->
+      {% endif %}
+    </div><!-- /.system_error_content -->
+    <div class='system_error_footer'>
+      <p>Version core: <b>{{ config('app.version') }}</b></p>
+      <p>Version skeleton: <b>{{ config('app.skeleton') }}</b></p>
+    </div><!-- /.system_error_footer -->
+  </div><!-- /.system_error -->
+{% endblock %}
+
+{% block script %}{% endblock %}

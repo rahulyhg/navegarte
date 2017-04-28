@@ -6,7 +6,7 @@ return [
    * Configuração do site
    */
   'name' => 'Navegarte', /* Nome do site do cliente */
-  'subname' => 'Desenvolvimento de websites, softwares para seu negócio!', /* Slogan do site do cliente */
+  'subname' => 'Desenvolvimento de software!', /* Slogan do site do cliente */
   'description' => 'Descrição com máximo de 160 caracteres', /* Descrição do site do cliente */
   
   /**

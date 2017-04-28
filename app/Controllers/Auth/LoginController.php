@@ -10,18 +10,25 @@
  * @copyright 2017-2017 Vagner Cardoso - NAVEGARTE
  */
 
-namespace App\Controllers;
+namespace App\Controllers\Auth;
+
+use App\Controllers\Controller;
 
 /**
- * Class HomeController
+ * Class LoginController
  *
- * @package App\Controllers
+ * @package App\Controllers\Auth
  * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
-final class HomeController extends Controller
+class LoginController extends Controller
 {
   public function get()
   {
-    return view('home');
+    return view('auth/login');
+  }
+  
+  public function post()
+  {
+    return '';
   }
 }

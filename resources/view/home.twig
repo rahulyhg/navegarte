@@ -1,16 +1,6 @@
 {% extends 'layout/app.twig' %}
 {% block style %}
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      font-size: 1em;
-      
-      -webkit-box-sizing: border-box;
-      -moz-box-sizing: border-box;
-      box-sizing: border-box;
-    }
-    
     h1 {
       color: #555;
       font-size: 2em;
@@ -33,7 +23,7 @@
 {% block content %}
   <div class="container">
     <div class="content">
-      <h1>Olá{{ ' ' ~ name }}!</h1>
+      <h1>{{ config('client.name') }}!!!</h1>
     </div>
   </div>
 {% endblock %}
