@@ -10,14 +10,15 @@
  * @copyright 2017-2017 Vagner Cardoso - NAVEGARTE
  */
 
-namespace App\Core\Helpers;
+namespace App\Core\Providers\View;
 
 use Slim\Container;
 
 /**
- * Class ViewHelper
+ * Class TwigExtension
  *
- * @package App\Core\Helpers
+ * @package App\Core\Providers\View
+ * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
 final class TwigExtension extends \Twig_Extension
 {
@@ -54,10 +55,7 @@ final class TwigExtension extends \Twig_Extension
   public function getFunctions()
   {
     return [
-      new \Twig_SimpleFunction('config', [
-        $this,
-        'getConfig',
-      ]),
+      new \Twig_SimpleFunction('config', [$this, 'getConfig',]),
     ];
   }
   

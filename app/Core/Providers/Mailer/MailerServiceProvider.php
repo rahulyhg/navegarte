@@ -1,5 +1,4 @@
 <?php
-
 /**
  * NAVEGARTE Networks
  *
@@ -10,18 +9,18 @@
  * @copyright 2017-2017 Vagner Cardoso - NAVEGARTE
  */
 
-namespace App\Core\Providers;
+namespace App\Core\Providers\Mailer;
 
 use App\Core\Contracts\BaseServiceProvider;
 use Slim\Container;
 
 /**
- * Class ErrorServiceProvider
+ * Class MailerServiceProvider
  *
- * @package App\Core\Providers
+ * @package App\Core\Providers\Mailer
  * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
-final class ErrorServiceProvider extends BaseServiceProvider
+class MailerServiceProvider extends BaseServiceProvider
 {
   /**
    * Registers services on the given container.
@@ -32,8 +31,9 @@ final class ErrorServiceProvider extends BaseServiceProvider
    */
   public function register(Container $container)
   {
-    /*$container['phpErrorHandler'] = $container['errorHandler'] = function () use ($container) {
-      return new ErrorHandler($container->get('settings')['displayErrorDetails']);
-    };*/
+    $container['mailer'] = function () use ($container) {
+      
+      return 'mailer';
+    };
   }
 }

@@ -18,6 +18,7 @@ use App\Core\Contracts\BaseModel;
  * Class News
  *
  * @package App\Models
+ * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
 final class News extends BaseModel
 {

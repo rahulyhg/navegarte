@@ -12,7 +12,7 @@
 
 namespace App\Core\Middleware;
 
-use App\Core\Contracts\BaseMiddleware;
+use App\Core\Middleware\Contracts\BaseMiddleware;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -20,6 +20,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  * Class ConfigurationMiddleware
  *
  * @package App\Core\Middleware
+ * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
 final class ConfigurationMiddleware extends BaseMiddleware
 {
@@ -90,11 +91,13 @@ final class ConfigurationMiddleware extends BaseMiddleware
       case 'development';
         ini_set('error_reporting', -1);
         ini_set('display_errors', 1);
+        /*error_reporting(E_ALL);*/
         break;
       
       case 'production':
         ini_set('error_reporting', 0);
         ini_set('display_errors', 0);
+        /*error_reporting(E_ERROR);*/
         break;
       
       default:

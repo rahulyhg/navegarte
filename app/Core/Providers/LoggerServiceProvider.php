@@ -22,6 +22,7 @@ use Slim\Container;
  * Class LoggerServiceProvider
  *
  * @package App\Core\Providers
+ * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
 final class LoggerServiceProvider extends BaseServiceProvider
 {
@@ -47,7 +48,7 @@ final class LoggerServiceProvider extends BaseServiceProvider
         /**
          * Instance logger
          */
-        $logger = new Logger(config('app.name', 'log'));
+        $logger = new Logger('log');
         
         /**
          * Verify name/dir

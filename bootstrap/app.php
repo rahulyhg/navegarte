@@ -10,15 +10,7 @@ ob_start(function ($buffer) {
   
   if (!empty(OPTIMIZE) && OPTIMIZE === true) {
     $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
-    $buffer = str_replace([
-      "\r\n",
-      "\r",
-      "\n",
-      "\t",
-      '  ',
-      '   ',
-      '    ',
-    ], '', $buffer);
+    $buffer = str_replace(["\r\n", "\r", "\n", "\t", '  ', '   ', '    ',], '', $buffer);
   }
   
   return $buffer;
@@ -48,7 +40,7 @@ if (file_exists(ROOT . '/.env')) {
   try {
     (new Dotenv\Dotenv(ROOT))->load();
   } catch (Dotenv\Exception\InvalidPathException $e) {
-    die($e->getMessage());
+    // Mostrar erro caso não der load no DotEnv.
   }
 }
 

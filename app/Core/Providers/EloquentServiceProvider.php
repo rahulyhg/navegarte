@@ -21,6 +21,7 @@ use Slim\Container;
  * Class EloquentServiceProvider
  *
  * @package App\Core\Providers
+ * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
 final class EloquentServiceProvider extends BaseServiceProvider
 {

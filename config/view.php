@@ -7,19 +7,9 @@ return [
    *
    * Define qual engine de template será utilizada.
    *
-   * twig | blade
+   * php | twig | blade
    */
-  'template' => 'twig',
-  
-  /**
-   * View paths
-   *
-   * Directories that will pull the views and save the cache
-   */
-  'path' => [
-    'folder' => ROOT . '/resources/view',
-    'compiled' => ROOT . '/storage/view',
-  ],
+  'engine' => 'twig',
   
   /**
    * View debug
@@ -34,6 +24,16 @@ return [
    * When enabled, it will be saved as configured by configuring [path.compiled]
    */
   'cache' => false,
+  
+  /**
+   * View paths
+   *
+   * Directories that will pull the views and save the cache
+   */
+  'path' => [
+    'folder' => ROOT . '/resources/view',
+    'compiled' => ROOT . '/storage/view',
+  ],
 
 ];
 

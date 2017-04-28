@@ -16,7 +16,10 @@
     "vlucas/phpdotenv": "^2.4",
     "slim/twig-view": "2.1.1",
     "symfony/var-dumper": "^3.2",
-    "monolog/monolog": "^1.22"
+    "monolog/monolog": "^1.22",
+    "phpmailer/phpmailer": "^5.2",
+    "illuminate/support": "^5.4",
+    "philo/laravel-blade": "^3.1"
   },
   "autoload": {
     "psr-4": {

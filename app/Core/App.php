@@ -19,6 +19,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  * Class App
  *
  * @package App\Core
+ * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
 final class App extends \Slim\App
 {
@@ -33,19 +34,19 @@ final class App extends \Slim\App
   public function __construct()
   {
     // Slim setup
-    $container = [
+    $settings = [
       'settings' => [
         'determineRouteBeforeAppMiddleware' => true,
-        'displayErrorDetails' => (env('APP_ENV') === 'production' ? false : true),
+        'displayErrorDetails' => (config('app.environment') === 'production' ? false : true),
         'addContentLengthHeader' => false,
       ],
     ];
     
     // Merge all settings
-    $container = array_merge($container, config());
+    $settings = array_merge($settings, config());
     
     // Slim parent construct
-    parent::__construct($container);
+    parent::__construct($settings);
   }
   
   /**
@@ -149,6 +150,8 @@ final class App extends \Slim\App
     $providers = [];
     foreach ($registers['providers'] as $class) {
       if (class_exists($class)) {
+  
+        /** @var \App\Core\Contracts\BaseServiceProvider $provider */
         $provider = new $class;
         $provider->register($this->getContainer());
         

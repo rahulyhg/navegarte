@@ -10,7 +10,7 @@
  * @copyright 2017-2017 Vagner Cardoso - NAVEGARTE
  */
 
-namespace App\Core\Contracts;
+namespace App\Core\Middleware\Contracts;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -19,7 +19,8 @@ use Slim\Container;
 /**
  * Class BaseMiddleware
  *
- * @package App\Core\Contracts
+ * @package App\Core\Middleware
+ * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
 abstract class BaseMiddleware
 {

@@ -18,6 +18,7 @@ use App\Core\Contracts\BaseController;
  * Class HomeController
  *
  * @package App\Controllers
+ * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
 final class HomeController extends BaseController
 {

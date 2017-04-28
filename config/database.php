@@ -5,7 +5,7 @@ return [
   /**
    * Conexão padrão
    */
-  'default' => 'mysql',
+  'default' => env('DB_CONNECTION', 'mysql'),
   
   /**
    * Tipos de conexões
@@ -17,11 +17,11 @@ return [
      */
     'mysql' => [
       'driver' => 'mysql',
-      'host' => 'db',
-      'port' => '3306',
-      'database' => 'framework',
-      'username' => 'root',
-      'password' => 'root',
+      'host' => env('DB_HOST', 'localhost'),
+      'port' => env('DB_PORT', 3306),
+      'database' => env('DB_DATABASE', 'framework'),
+      'username' => env('DB_USER', 'root'),
+      'password' => env('DB_PASS', 'root'),
       'charset' => 'utf8',
       'collation' => 'utf8_general_ci',
     ],

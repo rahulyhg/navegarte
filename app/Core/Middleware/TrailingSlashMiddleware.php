@@ -12,7 +12,7 @@
 
 namespace App\Core\Middleware;
 
-use App\Core\Contracts\BaseMiddleware;
+use App\Core\Middleware\Contracts\BaseMiddleware;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -20,6 +20,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  * Class TrailingSlashMiddleware
  *
  * @package App\Core\Middleware
+ * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
 final class TrailingSlashMiddleware extends BaseMiddleware
 {

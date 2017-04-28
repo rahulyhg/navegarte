@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NAVEGARTE Networks
  *
@@ -9,18 +10,18 @@
  * @copyright 2017-2017 Vagner Cardoso - NAVEGARTE
  */
 
-namespace App\Core\Providers;
+namespace App\Core\Providers\View;
 
 use App\Core\Contracts\BaseServiceProvider;
 use Slim\Container;
 
 /**
- * Class BladeServiceProvider
+ * Class ViewServiceProvider
  *
- * @package App\Core\Providers
+ * @package App\Core\Providers\View
  * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
-class BladeServiceProvider extends BaseServiceProvider
+final class ViewServiceProvider extends BaseServiceProvider
 {
   /**
    * Registers services on the given container.
@@ -33,7 +34,19 @@ class BladeServiceProvider extends BaseServiceProvider
   {
     $container['view'] = function () use ($container) {
       
-      return $this;
+      if (config('view.engine') === 'php') {
+        return 'PHP';
+      }
+      
+      if (config('view.engine') === 'blade') {
+        return new Blade($container);
+      }
+      
+      if (config('view.engine') === 'twig') {
+        return new Twig($container);
+      }
+      
+      throw new \Exception('A Camada [view] está configurada incorretamente. Favor verificar suas configurações!', E_USER_NOTICE);
     };
   }
 }

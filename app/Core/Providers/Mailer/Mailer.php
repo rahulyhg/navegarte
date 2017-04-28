@@ -9,14 +9,14 @@
  * @copyright 2017-2017 Vagner Cardoso - NAVEGARTE
  */
 
-namespace App\Core\Mailer;
+namespace App\Core\Providers\Mailer;
 
 /**
- * Class Message
+ * Class Mailer
  *
- * @package App\Core\Mailer
+ * @package App\Core\Providers\Mailer
  * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
-class Message
+class Mailer
 {
 }

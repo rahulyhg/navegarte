@@ -87,8 +87,8 @@ abstract class Connect
         }
       }
     } catch (\PDOException $e) {
-      PHPError($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
-      die(1);
+      trigger_error("Problema ao connectar: <b>[{$e->getMessage()}]</b>", E_USER_ERROR);
+      die;
     }
     
     return static::$conn;

@@ -20,6 +20,7 @@ use Slim\Handlers\AbstractHandler;
  * Class ErrorHandler
  *
  * @package App\Core\Handlers
+ * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
  */
 final class ErrorHandler extends AbstractHandler
 {
@@ -31,7 +32,7 @@ final class ErrorHandler extends AbstractHandler
    *
    * @param bool $displayErrorDetails
    */
-  public function __construct(bool $displayErrorDetails)
+  public function __construct($displayErrorDetails)
   {
     $this->displayErrorDetails = $displayErrorDetails;
   }
@@ -88,7 +89,7 @@ final class ErrorHandler extends AbstractHandler
    */
   private function renderJson(\Throwable $error)
   {
-    $json = ['message' => config('app.name', 'Web') . ' Application Error'];
+    $json = ['message' => config('client.name', 'Web') . ' Application Error'];
     
     if ($this->displayErrorDetails) {
       $json['error'] = [];
@@ -117,7 +118,7 @@ final class ErrorHandler extends AbstractHandler
    */
   private function renderXML(\Throwable $error)
   {
-    $xml = "<error>\n <message>" . config('app.name', 'Web') . " Application Error</message>\n";
+    $xml = "<error>\n <message>" . config('client.name', 'Web') . " Application Error</message>\n";
     
     if ($this->displayErrorDetails) {
       do {
@@ -147,8 +148,8 @@ final class ErrorHandler extends AbstractHandler
   private function renderHtml(\Throwable $error)
   {
     $output = [];
-    
-    $output['title'] = config('app.name', 'Web') . ' Application Error';
+  
+    $output['title'] = config('client.name', 'Web') . ' Application Error';
     
     return view('error/handler', $output, 500);
   }

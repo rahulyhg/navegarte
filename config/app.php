@@ -14,20 +14,20 @@ return [
    *
    * Define se o site vai estar em manutenção
    */
-  'maintenance' => true,
+  'maintenance' => false,
   
   /**
    * App Environment
    *
    * Define se o site está em produção ou em desenvolvimento
    */
-  'environment' => 'development',
+  'environment' => env('APP_ENV', 'production'),
   
   /**
    * App Timezone
    *
    * Define o fuso horário do site
    */
-  'timezone' => 'America/Sao_Paulo',
+  'timezone' => env('APP_TIMEZONE', 'America/Sao_Paulo'),
 
 ];

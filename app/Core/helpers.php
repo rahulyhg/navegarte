@@ -100,14 +100,15 @@ if (!function_exists('logger')) {
    * @param string|null $file
    *
    * @return bool|\Monolog\Logger
+   * @throws \Exception
    */
   function logger($file = null)
   {
-    if (app()->resolve('logger')) {
+    if (is_object(app()->resolve('logger'))) {
       return app()->resolve('logger', [$file]);
     }
-    
-    return false;
+  
+    throw new Exception('Logger configurado incorretamente!');
   }
 }
 
@@ -120,16 +121,26 @@ if (!function_exists('view')) {
    * @param int|null $code
    *
    * @return mixed
+   * @throws \Exception
    */
   function view($view, $data = [], $code = null)
   {
-    $response = response();
+    if (is_object(app()->resolve('view'))) {
+      $response = response();
     
-    if (!is_null($code)) {
-      $response = $response->withStatus($code);
+      if (!is_null($code)) {
+        $response = $response->withStatus($code);
+      }
+    
+      $extension = '';
+      if (config('view.engine') === 'twig') {
+        $extension = '.twig';
+      }
+    
+      return app()->resolve('view')->render($response, $view . $extension, $data);
     }
   
-    return app()->resolve('view')->render($response, $view . '.twig', $data);
+    throw new Exception('View configurado incorretamente!');
   }
 }
 
