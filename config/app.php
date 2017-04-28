@@ -7,7 +7,14 @@ return [
    *
    * Define a versão do framework
    */
-  'version' => 'v1.0.0',
+  'version' => 'v0.0.1',
+  
+  /**
+   * App Version
+   *
+   * Define a versão do skeleton
+   */
+  'skeleton' => 'v0.0.1',
   
   /**
    * App Maintenance
