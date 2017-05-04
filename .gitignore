@@ -1,7 +1,7 @@
-.idea/
-.env
-vendor/
-node_modules/
-composer.lock
-EGP/
-resources/assets/js/lib
+/.idea/
+/.env
+/vendor/
+/node_modules/
+/composer.lock
+/EGP/
+/resources/assets/js/lib
