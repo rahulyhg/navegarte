@@ -21,6 +21,7 @@ return [
   'middleware' => [
     \Navegarte\Middleware\ConfigurationMiddleware::class,
     \Navegarte\Middleware\TrailingSlashMiddleware::class,
+    \Navegarte\Middleware\OldInputMiddleware::class,
   ],
 
 ];
