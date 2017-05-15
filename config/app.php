@@ -7,7 +7,7 @@ return [
    *
    * Define a versão do framework
    */
-  'version' => 'v0.0.8',
+  'version' => 'v0.0.11',
   
   /**
    * App Version
@@ -21,7 +21,7 @@ return [
    *
    * Url do sistema
    */
-  'url' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . str_replace('/index.php', '', $_SERVER['PHP_SELF']) . '/',
+  'url' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . str_replace('/index.php', '', $_SERVER['PHP_SELF']),
   
   /**
    * App Maintenance
