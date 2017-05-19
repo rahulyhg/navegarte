@@ -13,6 +13,7 @@ return [
     \Navegarte\Providers\View\ViewServiceProvider::class,
     /*Navegarte\Providers\EloquentServiceProvider::class,*/
     \Navegarte\Providers\Mailer\MailerServiceProvider::class,
+    \Navegarte\Providers\InterventionImageServiceProvider::class
   ],
   
   /**
