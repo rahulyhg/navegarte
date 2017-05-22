@@ -24,6 +24,7 @@ use Slim\Exception\NotFoundException;
  * @property \Navegarte\Providers\Hash\BcryptHasher hash
  * @property \Navegarte\Providers\Session\Session   session
  * @property \Navegarte\Providers\Mailer\Mailer     mailer
+ * @property \Intervention\Image\ImageManager       image
  */
 abstract class Controller extends BaseController
 {
