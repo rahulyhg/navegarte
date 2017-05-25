@@ -17,6 +17,11 @@ return [
   'skeleton' => 'v0.0.1',
   
   /**
+   *
+   */
+  'key' => env('APP_KEY'),
+  
+  /**
    * App Url
    *
    * Url do sistema
