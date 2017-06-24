@@ -1,10 +1,7 @@
 {% extends 'layout/app.twig' %}
-{% set titlePage = "Error 405 (Method not Allowed)" %}
-{% block style %}{% endblock %}
+{% set title = "Error 405 (Method not Allowed)" %}
 
 {% block content %}
   <h1>Página não encontrada!!</h1>
   <p>({{ method }}) {{ methods }} {{ url }}</p>
 {% endblock %}
-
-{% block script %}{% endblock %}

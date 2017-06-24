@@ -3,6 +3,9 @@
 /**
  * Router for api
  */
-$app->get('/user', function () {
-  return 'Hello World :: API!';
-});
+$app->get(
+    '/user',
+    function () {
+        return 'Hello World :: API!';
+    }
+);

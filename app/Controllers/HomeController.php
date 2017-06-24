@@ -20,8 +20,8 @@ namespace App\Controllers;
  */
 final class HomeController extends Controller
 {
-  public function get()
-  {
-    return view('home');
-  }
+    public function get()
+    {
+        return view('home');
+    }
 }

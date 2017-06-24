@@ -5,6 +5,6 @@ return [
   /**
    * Agency
    *
-   * Define os dados da sua agência web
+   * Sets the data for your web agency
    */
 ];

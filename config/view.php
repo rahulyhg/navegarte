@@ -5,9 +5,11 @@ return [
   /**
    * Template engine
    *
-   * Define qual engine de template será utilizada.
+   * Defines which template engine will be used.
    *
    * php | twig | blade
+   *
+   * blade required : "composer require philo/laravel-blade"
    */
   'engine' => 'twig',
   

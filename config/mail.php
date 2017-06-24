@@ -3,9 +3,9 @@
 return [
   
   /**
-   * Configuração de e-Mail
+   * Configuration of e-mail
    *
-   * Consulte esses dados com o serviço de hospedagem
+   * Check this data with the hosting service
    */
   
   /**

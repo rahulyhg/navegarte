@@ -5,9 +5,9 @@ return [
   /**
    * Configuração do site
    */
-  'name' => 'Navegarte', /* Nome do site do cliente */
-  'subname' => 'Desenvolvimento de software!', /* Slogan do site do cliente */
-  'description' => 'Descrição com máximo de 160 caracteres', /* Descrição do site do cliente */
+    'name' => 'VCWeb', /* Nome do site do cliente */
+    'subname' => 'Mvc!', /* Slogan do site do cliente */
+    'description' => 'Estrutura de MVC para começar qualquer projeto com uma base de estrutura, rotas, database, views etc prontas.', /* Descrição do site do cliente */
   
   /**
    * Dados da empresa do cliente
@@ -41,7 +41,7 @@ return [
    * Redes sociais
    */
   'social' => [
-    'name' => 'Navegarte networks!',
+      'name' => 'VCWeb Dev!',
     
     /**
      * Google Plus

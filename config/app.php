@@ -7,19 +7,25 @@ return [
    *
    * Define a versão do framework
    */
-  'version' => 'v0.0.11',
+    'version' => 'v0.0.0',
   
   /**
    * App Version
    *
    * Define a versão do skeleton
    */
-  'skeleton' => 'v0.0.1',
+    'skeleton' => 'v0.0.0',
   
   /**
+   * Encryption app
    *
+   * Gera a chave do sistema e define se precisa gerar em determinados dias.
    */
-  'key' => env('APP_KEY'),
+    'encryption' => [
+        'key' => env('APP_KEY'),
+        'cipher' => 'AES-256-CBC',
+        'regenerate.days' => false
+    ],
   
   /**
    * App Url

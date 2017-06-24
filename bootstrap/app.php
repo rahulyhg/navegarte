@@ -6,15 +6,17 @@ use Navegarte\App;
  * Initializes the buffer and blocks any output to the browser
  * Compress HTML,JS,CSS etc
  */
-ob_start(function ($buffer) {
-  
-  if (!empty(OPTIMIZE) && OPTIMIZE === true) {
-    $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
-    $buffer = str_replace(["\r\n", "\r", "\n", "\t", '  ', '   ', '    ',], '', $buffer);
-  }
-  
-  return $buffer;
-});
+ob_start(
+    function ($buffer) {
+        
+        if (!empty(OPTIMIZE) && OPTIMIZE === true) {
+            $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+            $buffer = str_replace(["\r\n", "\r", "\n", "\t", '  ', '   ', '    ',], '', $buffer);
+        }
+        
+        return $buffer;
+    }
+);
 
 /**
  * It is used when running the php embedded server
@@ -40,7 +42,7 @@ if (file_exists(ROOT . '/.env')) {
   try {
     (new Dotenv\Dotenv(ROOT))->load();
   } catch (Dotenv\Exception\InvalidPathException $e) {
-    // Mostrar erro caso não der load no DotEnv.
+      //
   }
 }
 
