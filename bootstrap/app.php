@@ -22,12 +22,12 @@ ob_start(
  * It is used when running the php embedded server
  */
 if (PHP_SAPI == 'cli-server') {
-  $url = parse_url($_SERVER['REQUEST_URI']);
-  $file = ROOT . $url['path'];
-  
-  if (is_file($file)) {
-    return false;
-  }
+    $url = parse_url($_SERVER['REQUEST_URI']);
+    $file = ROOT . $url['path'];
+    
+    if (is_file($file)) {
+        return false;
+    }
 }
 
 /**
@@ -39,11 +39,11 @@ include ROOT . '/vendor/autoload.php';
  * Starting dotenv configuration
  */
 if (file_exists(ROOT . '/.env')) {
-  try {
-    (new Dotenv\Dotenv(ROOT))->load();
-  } catch (Dotenv\Exception\InvalidPathException $e) {
-      //
-  }
+    try {
+        (new Dotenv\Dotenv(ROOT))->load();
+    } catch (Dotenv\Exception\InvalidPathException $e) {
+        //
+    }
 }
 
 /**
