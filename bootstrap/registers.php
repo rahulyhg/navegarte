@@ -16,6 +16,7 @@ return [
         /*Navegarte\Providers\EloquentServiceProvider::class,*/
         \Navegarte\Providers\Mailer\MailerServiceProvider::class,
         /*\Navegarte\Providers\InterventionImageServiceProvider::class,*/
+        /*\Navegarte\Providers\WideImageServiceProvider::class,*/
     ],
     
     /**
