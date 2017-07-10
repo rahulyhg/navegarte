@@ -5,7 +5,7 @@ return [
     /**
      * Configuração do site
      */
-    'name' => 'VCWeb', /* Nome do site do cliente */
+    'name' => 'Core', /* Nome do site do cliente */
     'subname' => 'Mvc!', /* Slogan do site do cliente */
     'description' => 'Estrutura de MVC para começar qualquer projeto com uma base de estrutura, rotas, database, views etc prontas.', /* Descrição do site do cliente */
     
@@ -41,7 +41,7 @@ return [
      * Redes sociais
      */
     'social' => [
-        'name' => 'VCWeb Dev!',
+        'name' => 'Core Dev!',
         
         /**
          * Google Plus

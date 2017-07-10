@@ -1,6 +1,6 @@
 <?php
 
-use Navegarte\App;
+use Core\App;
 
 /**
  * Initializes the buffer and blocks any output to the browser

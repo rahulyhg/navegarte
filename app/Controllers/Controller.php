@@ -1,18 +1,18 @@
 <?php
 
 /**
- * NAVEGARTE Networks
+ * Core Networks
  *
  * @package   framework
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-${YEAH} Vagner Cardoso - NAVEGARTE
+ * @copyright 2017-${YEAH} Vagner Cardoso - Core
  */
 
 namespace App\Controllers;
 
-use Navegarte\Contracts\ControllerAbstract;
+use Core\Contracts\ControllerAbstract;
 
 /**
  * Class Controller

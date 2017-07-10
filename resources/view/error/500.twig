@@ -138,10 +138,15 @@
     <div class="system_error_ab">
       
       <div class='system_error'>
-        <div class='system_error_title'><p>{{ config('client.name', 'System') }} - Erro no sistema! <a href="{{ base_url() }}">Voltar!</a></p></div><!-- /.system_error_title -->
+        <div class='system_error_title'>
+          <p>
+            {{ config('client.name', 'System') }} - Erro no sistema!
+            <a href="{{ base_url() }}">Voltar!</a>
+          </p>
+        </div><!-- /.system_error_title -->
         
         <div class='system_error_content'>
-          <p>Olá, acabamos de verificar que foi ocorrido um erro no sistema e já estamos sendo avisados do ocorrido e em alguns minutos o erro será resolvido.<br/> Obrigado e desculpe o contrangimento.</p>
+          <p>Olá, acabamos de verificar que foi ocorrido um erro no sistema e já estamos sendo avisados do ocorrido e em alguns minutos o erro será resolvido. <br/> Obrigado e desculpe o contrangimento.</p>
           {% if debug %}
             <div class="debug">
               <p><b>ERRO NA LINHA: #{{ error.line }}</b> <br/>{{ error.message }}</p>

@@ -6,26 +6,27 @@ return [
      * Register for all containers
      */
     'providers' => [
-        \Navegarte\Providers\ErrorServiceProvider::class,
-        \Navegarte\Providers\DatabaseServiceProvider::class,
-        \Navegarte\Providers\Session\SessionServiceProvider::class,
-        \Navegarte\Providers\Hash\BcryptServiceProvider::class,
-        \Navegarte\Providers\Encryption\EncryptionServiceProvider::class,
-        \Navegarte\Providers\LoggerServiceProvider::class,
-        \Navegarte\Providers\View\ViewServiceProvider::class,
-        /*Navegarte\Providers\EloquentServiceProvider::class,*/
-        \Navegarte\Providers\Mailer\MailerServiceProvider::class,
-        /*\Navegarte\Providers\InterventionImageServiceProvider::class,*/
-        /*\Navegarte\Providers\WideImageServiceProvider::class,*/
+        \Core\Providers\ErrorServiceProvider::class,
+        \Core\Providers\DatabaseServiceProvider::class,
+        \Core\Providers\Session\SessionServiceProvider::class,
+        \Core\Providers\Hash\BcryptServiceProvider::class,
+        \Core\Providers\Encryption\EncryptionServiceProvider::class,
+        \Core\Providers\LoggerServiceProvider::class,
+        \Core\Providers\View\ViewServiceProvider::class,
+        /*Core\Providers\EloquentServiceProvider::class,*/
+        \Core\Providers\Mailer\MailerServiceProvider::class,
+        /*\Core\Providers\InterventionImageServiceProvider::class,*/
+        /*\Core\Providers\WideImageServiceProvider::class,*/
+        \Core\Providers\ConfigServiceProvider::class,
     ],
     
     /**
      * Register for all middleware
      */
     'middleware' => [
-        \Navegarte\Middleware\ConfigurationMiddleware::class,
-        \Navegarte\Middleware\TrailingSlashMiddleware::class,
-        \Navegarte\Middleware\OldInputMiddleware::class,
+        \Core\Middleware\ConfigurationMiddleware::class,
+        \Core\Middleware\TrailingSlashMiddleware::class,
+        \Core\Middleware\OldInputMiddleware::class,
     ],
 
 ];
