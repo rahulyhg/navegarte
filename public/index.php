@@ -5,7 +5,7 @@
  *
  * When activating, the source code is (HTML, JS, CSS, etc..)
  */
-define('OPTIMIZE', false);
+define('OPTIMIZE', true);
 
 /**
  * Project root
