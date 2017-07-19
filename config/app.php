@@ -17,13 +17,6 @@ return [
     'skeleton' => 'v0.0.6',
     
     /**
-     * Public Folder
-     *
-     * Define a pasta publica da aplicação
-     */
-    'root.folder' => 'public',
-    
-    /**
      * Encryption app
      *
      * Gera a chave do sistema e define se precisa gerar em determinados dias.

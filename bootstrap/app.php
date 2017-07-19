@@ -23,7 +23,7 @@ ob_start(
  */
 if (PHP_SAPI == 'cli-server') {
     $url = parse_url($_SERVER['REQUEST_URI']);
-    $file = ROOT . $url['path'];
+    $file = APP_FOLDER . $url['path'];
     
     if (is_file($file)) {
         return false;
@@ -33,14 +33,14 @@ if (PHP_SAPI == 'cli-server') {
 /**
  * Composer autoload dependencies
  */
-include ROOT . '/vendor/autoload.php';
+include APP_FOLDER . '/vendor/autoload.php';
 
 /**
  * Starting dotenv configuration
  */
-if (file_exists(ROOT . '/.env')) {
+if (file_exists(APP_FOLDER . '/.env')) {
     try {
-        (new Dotenv\Dotenv(ROOT))->load();
+        (new Dotenv\Dotenv(APP_FOLDER))->load();
     } catch (Dotenv\Exception\InvalidPathException $e) {
         //
     }
