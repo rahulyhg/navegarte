@@ -7,14 +7,21 @@ return [
      *
      * Define a versão do framework
      */
-    'version' => 'v0.0.0',
+    'version' => 'v0.0.27',
     
     /**
      * App Version
      *
      * Define a versão do skeleton
      */
-    'skeleton' => 'v0.0.0',
+    'skeleton' => 'v0.0.6',
+    
+    /**
+     * Public Folder
+     *
+     * Define a pasta publica da aplicação
+     */
+    'root.folder' => 'public',
     
     /**
      * Encryption app
