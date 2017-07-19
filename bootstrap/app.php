@@ -44,6 +44,8 @@ if (file_exists(APP_FOLDER . '/.env')) {
     } catch (Dotenv\Exception\InvalidPathException $e) {
         //
     }
+} else {
+    dd('Copie o arquivo `.env-example` para `.env` na sua aplicação.');
 }
 
 /**

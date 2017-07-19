@@ -14,7 +14,7 @@ return [
      *
      * Define a versão do skeleton
      */
-    'skeleton' => 'v0.0.7',
+    'skeleton' => 'v0.0.9',
     
     /**
      * Encryption app
