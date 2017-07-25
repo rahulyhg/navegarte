@@ -33,7 +33,13 @@ if (PHP_SAPI == 'cli-server') {
 /**
  * Composer autoload dependencies
  */
-include APP_FOLDER . '/vendor/autoload.php';
+$composerAutoload = APP_FOLDER . '/vendor/autoload.php';
+
+if (!file_exists($composerAutoload)) {
+    die('run composer install');
+}
+
+include "{$composerAutoload}";
 
 /**
  * Starting dotenv configuration
