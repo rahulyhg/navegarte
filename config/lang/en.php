@@ -11,10 +11,5 @@
  */
 
 return [
-    
-    /**
-     * Agency
-     *
-     * Sets the data for your web agency
-     */
+    'name' => 'English'
 ];

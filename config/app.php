@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * VCWeb <https://www.vagnercardosoweb.com.br/>
+ *
+ * @package   VCWeb
+ * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
+ * @license   MIT
+ *
+ * @copyright 2017-2017 Vagner Cardoso
+ */
+
 return [
     
     /**
@@ -7,14 +17,14 @@ return [
      *
      * Define a versão do framework
      */
-    'version' => 'v0.0.28',
+    'version' => 'v0.1.0',
     
     /**
      * App Version
      *
      * Define a versão do skeleton
      */
-    'skeleton' => 'v0.0.9',
+    'skeleton' => 'v0.0.11',
     
     /**
      * Encryption app
@@ -26,6 +36,11 @@ return [
         'cipher' => 'AES-256-CBC',
         'regenerate.days' => false
     ],
+    
+    /**
+     * Application locale configuration
+     */
+    'locale' => 'pt_BR',
     
     /**
      * App Url

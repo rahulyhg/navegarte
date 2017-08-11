@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * VCWeb <https://www.vagnercardosoweb.com.br/>
+ *
+ * @package   VCWeb
+ * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
+ * @license   MIT
+ *
+ * @copyright 2017-2017 Vagner Cardoso
+ */
+
 use Core\App;
 
 /**
@@ -51,7 +61,8 @@ if (file_exists(APP_FOLDER . '/.env')) {
         //
     }
 } else {
-    dd('Copie o arquivo `.env-example` para `.env` na sua aplicação.');
+    $envContent = file_get_contents(APP_FOLDER . '/.env-example');
+    file_put_contents(APP_FOLDER . '/.env', $envContent, FILE_APPEND);
 }
 
 /**

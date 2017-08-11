@@ -1,11 +1,14 @@
 <?php
 
 /**
- * Router for api
+ * VCWeb <https://www.vagnercardosoweb.com.br/>
+ *
+ * @package   VCWeb
+ * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
+ * @license   MIT
+ *
+ * @copyright 2017-2017 Vagner Cardoso
  */
-$app->get(
-    '/user',
-    function () {
-        return 'Hello World :: API!';
-    }
-);
+
+// $app->route('post', '/user', 'UserController', 'api.user', 'middleware');
+// domain.com.br/api/user

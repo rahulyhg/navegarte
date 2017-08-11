@@ -1,6 +1,16 @@
 <?php
 
 /**
+ * VCWeb <https://www.vagnercardosoweb.com.br/>
+ *
+ * @package   VCWeb
+ * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
+ * @license   MIT
+ *
+ * @copyright 2017-2017 Vagner Cardoso
+ */
+
+/**
  * Optimize the application
  *
  * When activating, the source code is (HTML, JS, CSS, etc..)
@@ -27,6 +37,11 @@ define('PUBLIC_FOLDER', ROOT . '/public');
  * Defines where protected application files will be kept
  */
 define('APP_FOLDER', ROOT . '');
+
+/**
+ * Resource folder
+ */
+define('RESOURCE_FOLTER', APP_FOLDER . '/resources');
 
 /**
  * Starting application

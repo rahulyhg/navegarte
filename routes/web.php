@@ -1,6 +1,13 @@
 <?php
 
 /**
- * Router for web
+ * VCWeb <https://www.vagnercardosoweb.com.br/>
+ *
+ * @package   VCWeb
+ * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
+ * @license   MIT
+ *
+ * @copyright 2017-2017 Vagner Cardoso
  */
-$app->route('get', '/', 'HomeController')->setName('home');
+
+$app->route('get', '/', 'HomeController', 'home');

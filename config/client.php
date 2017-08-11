@@ -1,13 +1,23 @@
 <?php
 
+/**
+ * VCWeb <https://www.vagnercardosoweb.com.br/>
+ *
+ * @package   VCWeb
+ * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
+ * @license   MIT
+ *
+ * @copyright 2017-2017 Vagner Cardoso
+ */
+
 return [
     
     /**
      * Configuração do site
      */
-    'name' => 'Core', /* Nome do site do cliente */
-    'subname' => 'Mvc!', /* Slogan do site do cliente */
-    'description' => 'Estrutura de MVC para começar qualquer projeto com uma base de estrutura, rotas, database, views etc prontas.', /* Descrição do site do cliente */
+    'name' => 'VCWeb', /* Nome do site do cliente */
+    'subname' => 'APP', /* Slogan do site do cliente */
+    'description' => '', /* Descrição do site do cliente */
     
     /**
      * Dados da empresa do cliente
@@ -47,19 +57,19 @@ return [
          * Google Plus
          */
         'google' => [
-            'active' => 1, /* Ativa | Desativa */
-            'author' => '114194145304748321596', /* ID do Usuário */
-            'page' => '114194145304748321596', /* ID da Página */
+            'active' => 0, /* Ativa | Desativa */
+            'author' => '', /* ID do Usuário */
+            'page' => '', /* ID da Página */
         ],
         
         /**
          * Facebook
          */
         'facebook' => [
-            'active' => 1, /* Ativa | Desativa */
+            'active' => 0, /* Ativa | Desativa */
             'app' => 0, /* Opcional APP do facebook */
-            'author' => 'vagnercardosoweb', /* https://www.facebook.com/????? */
-            'page' => 'facebook', /* https://www.facebook.com/????? */
+            'author' => '', /* https://www.facebook.com/????? */
+            'page' => '', /* https://www.facebook.com/????? */
             'pageId' => 0, /* ID do Facebook Pages */
         ],
         

@@ -20,8 +20,15 @@ namespace App\Controllers;
  */
 final class HomeController extends Controller
 {
+    /**
+     * Template home
+     *
+     * @return mixed
+     */
     public function get()
     {
-        return view('home');
+        $array = [];
+    
+        return $this->view('home', $array, 200);
     }
 }
