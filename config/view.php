@@ -43,7 +43,7 @@ return [
      * Directories that will pull the views and save the cache
      */
     'path' => [
-        'folder' => APP_FOLDER . '/resources/view',
+        'folder' => RESOURCE_FOLTER . '/view',
         'compiled' => APP_FOLDER . '/storage/view',
     ],
 
