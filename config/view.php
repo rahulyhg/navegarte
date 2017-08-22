@@ -17,9 +17,7 @@ return [
      *
      * Defines which template engine will be used.
      *
-     * php | twig | blade
-     *
-     * blade required : "composer require philo/laravel-blade"
+     * php | twig
      */
     'engine' => 'twig',
     
@@ -44,7 +42,7 @@ return [
      */
     'path' => [
         'folder' => RESOURCE_FOLTER . '/view',
-        'compiled' => APP_FOLDER . '/storage/view',
+        'compiled' => APP_FOLDER . '/storage/cache',
     ],
 
 ];
