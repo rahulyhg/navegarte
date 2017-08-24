@@ -1,6 +1,7 @@
-_framework
-.idea/
-.env
-vendor/
-node_modules/
-composer.lock
+/**/.idea/
+/**/.env
+/**/vendor/
+/**/node_modules/
+/**/composer.lock
+/**/package-lock.json
+/**/bower_components/

@@ -1,0 +1,16 @@
+{
+  "name": "vcweb/resources",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "**/node_modules/**",
+    "**/vendor/**",
+    "**/bower_components/**/"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.1",
+    "bootstrap": "*",
+    "fontawesome": "4.7.0",
+    "animate.css": "^3.5.2"
+  }
+}
