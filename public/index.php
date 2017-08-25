@@ -29,14 +29,14 @@ define('ROOT', str_ireplace('\\', '/', realpath(dirname(__DIR__))));
  *
  * Defines where the public application files will be kept
  */
-define('PUBLIC_FOLDER', ROOT . '/public_html');
+define('PUBLIC_FOLDER', ROOT . '');
 
 /**
  * Application folder
  *
  * Defines where protected application files will be kept
  */
-define('APP_FOLDER', ROOT . '/application');
+define('APP_FOLDER', ROOT . '');
 
 /**
  * Resource folder

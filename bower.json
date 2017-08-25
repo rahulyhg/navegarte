@@ -9,8 +9,8 @@
   ],
   "dependencies": {
     "jquery": "^2.2.1",
-    "bootstrap": "*",
+    "bootstrap": "4.0.0-beta",
     "fontawesome": "4.7.0",
-    "animate.css": "^3.5.2"
+    "animate.css": "3.5.2"
   }
 }

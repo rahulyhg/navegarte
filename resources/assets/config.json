@@ -1,0 +1,17 @@
+{
+  "path": {
+    "public": "./public",
+    "css": "./public/css/",
+    "js": "./public/js/"
+  },
+  "css": [
+    "./resources/assets/sass/*.scss",
+    "./resources/assets/libraries/*.{scss,css}"
+  ],
+  "js": [
+    "./public/bower_components/jquery/dist/jquery.js",
+    "./public/bower_components/bootstrap/dist/js/bootstrap.js",
+    "./resources/assets/libraries/*.js",
+    "./resources/assets/js/*.js"
+  ]
+}
