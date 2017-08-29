@@ -28,7 +28,7 @@ final class HomeController extends Controller
     public function get()
     {
         $array = [];
-    
+
         return $this->view('home', $array, 200);
     }
 }
