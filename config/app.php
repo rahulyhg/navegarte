@@ -17,14 +17,14 @@ return [
      *
      * Define a versão do framework
      */
-    'version' => 'v0.1.2',
+    'version' => 'v0.1.3',
     
     /**
      * App Version
      *
      * Define a versão do skeleton
      */
-    'skeleton' => 'v0.1.2',
+    'skeleton' => 'v0.1.3',
     
     /**
      * Encryption app
