@@ -18,7 +18,6 @@ use Core\App;
  */
 ob_start(
     function ($buffer) {
-    
         if ((!empty(OPTIMIZE) && OPTIMIZE === true) && (!mb_strpos($_SERVER['HTTP_HOST'], '.dev') && !mb_strpos($_SERVER['HTTP_HOST'], '.local'))) {
             $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
             $buffer = str_replace(["\r\n", "\r", "\n", "\t", '  ', '   ', '    ',], '', $buffer);
@@ -50,6 +49,13 @@ if (!file_exists($composerAutoload)) {
 }
 
 include "{$composerAutoload}";
+
+/**
+ * Load functions custom
+ */
+if (file_exists(APP_FOLDER . '/app/functions.php')) {
+    include APP_FOLDER . '/app/functions.php';
+}
 
 /**
  * Starting dotenv configuration

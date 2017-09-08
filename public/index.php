@@ -44,6 +44,11 @@ define('APP_FOLDER', ROOT . '');
 define('RESOURCE_FOLDER', APP_FOLDER . '/resources');
 
 /**
+ * Request URI
+ */
+define('REQUEST_URI', $_SERVER['REQUEST_URI']);
+
+/**
  * Starting application
  *
  * Do NOT TOUCH

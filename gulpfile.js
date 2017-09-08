@@ -1,27 +1,27 @@
 'use strict';
 
-let file = require('fs');
+let file   = require('fs');
 let config = JSON.parse(file.readFileSync('./resources/assets/config.json', 'UTF8')) || {};
 
-const gulp = require('gulp');
-const concat = require('gulp-concat-util');
+const gulp     = require('gulp');
+const concat   = require('gulp-concat-util');
 const sequence = require('run-sequence');
-const notify = require('gulp-notify');
+const notify   = require('gulp-notify');
 
 /**
  * Gulps STYLES
  */
-const cssComb = require('gulp-csscomb');
-const sass = require('gulp-sass');
-const postCss = require('gulp-postcss');
+const cssComb      = require('gulp-csscomb');
+const sass         = require('gulp-sass');
+const postCss      = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
-const minifyCss = require('gulp-minify-css');
+const minifyCss    = require('gulp-minify-css');
 
 /**
  * Gulp JS
  */
 const uglify = require('gulp-uglify');
-const babel = require('gulp-babel');
+const babel  = require('gulp-babel');
 const es2015 = require('babel-preset-es2015');
 
 /**
@@ -41,7 +41,7 @@ gulp.task('styles', () => {
     ]))
     .pipe(cssComb('./resources/assets/.csscomb.json'))
     .pipe(minifyCss({
-      keepBreaks: true,
+      keepBreaks: false,
       target: config.path.public,
       root: config.path.public,
       processImport: true,
@@ -86,7 +86,7 @@ gulp.task('watch', () => {
   const onChange = (event) => {
     console.log(`File ${event.path} was ${event.type}, running tasks...`);
   };
-
+  
   return [
     gulp.watch('./resources/assets/sass/**/**/*.{scss,css}', ['styles']).on('change', onChange),
     gulp.watch('./resources/assets/libraries/**/**/*.{scss,css}', ['styles']).on('change', onChange),
