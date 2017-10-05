@@ -17,7 +17,7 @@ return [
      *
      * Define a versão do framework
      */
-    'version' => 'v0.1.3',
+    'version' => 'v0.1.7',
     
     /**
      * App Version
