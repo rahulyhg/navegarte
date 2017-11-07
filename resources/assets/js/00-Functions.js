@@ -46,6 +46,19 @@ function isNumeric (evt) {
   return !(charCode > 31 && (charCode < 48 || charCode > 57));
 }
 
+/**
+ * Verifica o máximo de caracteres
+ *
+ * @param element
+ * @param length
+ * @returns {string|jQuery}
+ */
+function isLength (element, length) {
+  if ($(element).val().length >= length) {
+    return $(element).val($(element).val().substr(0, length - 1));
+  }
+}
+
 (function (window) {
   /**
    * Passado pro escopo global do `window` para poder usar
