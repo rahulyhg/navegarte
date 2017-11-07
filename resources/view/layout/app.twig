@@ -1,20 +1,91 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" itemscope itemtype="https://schema.org/WebSite">
   <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  
-    <title>{{ title is defined ? title ~ ' - ' ~ config('client.name') : config('client.name') ~ ' - ' ~ config('client.subname') }}</title>
-    
+
+    {# Metas tags #}
+    {% set titulo_seo = (title ?  title ~ ' - ' ~ config('client.name') ~ '!'  : config('client.name') ~ ' - ' ~ config('client.subname')) %}
+    {% set base_url = config('app.url') %}
+    {% set social = config('client.social') %}
+
+    <title>{{ titulo_seo }}</title>
+
+    <meta name="description" content="{{ description ? description : config('client.description') }}"/>
+    <meta name="abstract" content="{{ abstract ? abstract : config('client.abstract') }}"/>
+    <meta name="keywords" content="{{ keywords ? keywords : config('client.keywords') }}"/>
+    <meta name="robots" content="index, follow"/>
+
+    <link rel="base" href="{{ base_url }}"/>
+    <link rel="canonical" href="{{ base_url ~ constant('REQUEST_URI') }}"/>
+
+    {# Fazer RSS e SiteMAP #}
+    {#<link rel="alternate" type="application/rss+xml" href="{{ base_url }}/rss"/>
+    <link rel="sitemap" type="application/xml" href="{{ base_url }}/sitemap.xml" />#}
+
+    {% if social['google']['active'] %}
+      <link rel="author" href="https://plus.google.com/{{ social['google']['author'] }}/posts"/>
+
+      {% if social['google']['page'] %}
+        <link rel="publisher" href="https://plus.google.com/{{ social['google']['page'] }}"/>
+      {% endif %}
+    {% endif %}
+
+    <meta itemprop="name" content="{{ titulo_seo }}"/>
+    <meta itemprop="description" content="{{ description ? description : config('client.description') }}"/>
+    <meta itemprop="image" content="{{ base_url ~ asset('/images/default.jpg') }}"/>
+    <meta itemprop="url" content="{{ base_url ~ constant('REQUEST_URI') }}"/>
+
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="{{ titulo_seo }}"/>
+    <meta property="og:description" content="{{ description ? description : config('client.description') }}"/>
+    <meta property="og:image" content="{{ base_url ~ asset('images/default.jpg') }}"/>
+    <meta property="og:url" content="{{ base_url ~ constant('REQUEST_URI') }}"/>
+    <meta property="og:site_name" content="{{ config('client.name') }}"/>
+    <meta property="og:locale" content="pt_BR"/>
+    {% if social['facebook']['active'] %}
+      <meta property="article:author" content="https://www.facebook.com/{{ social['facebook']['author'] }}"/>
+      <meta property="article:publisher" content="https://www.facebook.com/{{ social['facebook']['page'] }}"/>
+
+      {% if social['facebook']['app'] %}
+        <meta property="fb:app_id" content="{{ social['facebook']['app'] }}"/>
+      {% endif %}
+
+      {% if social['facebook']['pageId'] %}
+        <meta property="fb:pages" content="{{ social['facebook']['pageId'] }}"/>
+      {% endif %}
+    {% endif %}
+
+    <meta property="twitter:card" content="summary_large_image"/>
+    {% if social['twitter'] %}
+      <meta property="twitter:site" content="@{{ social['twitter'] }}"/>
+    {% endif %}
+    <meta property="twitter:domain" content="{{ base_url }}"/>
+    <meta property="twitter:title" content="{{ titulo_seo }}"/>
+    <meta property="twitter:description" content="{{ description ? description : config('client.description') }}"/>
+    <meta property="twitter:image" content="{{ base_url ~ asset('/images/default.jpg') }}"/>
+    <meta property="twitter:url" content="{{ base_url ~ constant('REQUEST_URI') }}"/>
+
+    {# FavIcon #}
+    <link rel="shortcut icon" type="image/png" href="{{ asset('/images/favicon.png') }}">
+
     {# stylesheets #}
+    <style>{{ asset_source('/css/app.css') }}</style>
     {% block style %}{% endblock %}
+
+    <!--[if lt IE 9]
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
   </head>
   <body>
-    {# content #}
+    {# Content #}
     {% block content %}{% endblock %}
-    
+
     {# scripts #}
+    <script>{{ asset_source('/js/app.js') }}</script>
     {% block script %}{% endblock %}
   </body>
 </html>
