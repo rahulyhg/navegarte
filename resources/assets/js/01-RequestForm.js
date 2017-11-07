@@ -73,7 +73,7 @@ jQuery(function ($) {
         /* Mensagem de retorno */
         if (data.trigger) {
           if (message.length > 0) {
-            message.html('<div class="alert alert-' + data.trigger[0] + '" style="margin:10px 0!important;">' + data.trigger[1] + '</div>').fadeIn(0);
+            message.html('<div class="alert alert-' + data.trigger[0] + ' margin-bottom-0 margin-top-10">' + data.trigger[1] + '</div>').fadeIn(0);
             
             window.setTimeout(function () {
               message.fadeOut(0).html('');
@@ -95,9 +95,7 @@ jQuery(function ($) {
         
         /* Redirect */
         if (data.location) {
-          window.setTimeout(function () {
-            window.location.href = data.location;
-          }, 2000);
+          window.location.href = data.location;
         }
         /**/
         
