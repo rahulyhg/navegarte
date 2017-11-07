@@ -75,32 +75,6 @@ a {
   font-weight: 500;
 }
 
-/* Text align */
-$text: (left, right, center, justify, justify-all, start, end, match-parent);
-@each $align in $text {
-  .text-#{$align} {
-    text-align: #{$align} !important;
-  }
-}
-
-/* Margins & Paddings */
-$names: ('top', 'right', 'left', 'bottom');
-@each $name in $names {
-  @for $i from 0 through 4 {
-    $calc: $i * 5;
-    
-    // Margins
-    .margin-#{$name}-#{$calc} {
-      margin-#{$name}: #{$calc + 'px'} !important;
-    }
-    
-    // Paddings
-    .padding-#{$name}-#{$calc} {
-      padding-#{$name}: #{$calc + 'px'} !important;
-    }
-  }
-}
-
 /* Conteudo */
 @mixin clearfix() {
   &::after {
@@ -123,7 +97,7 @@ $names: ('top', 'right', 'left', 'bottom');
 }
 
 .content {
-  max-width: 600px;
+  max-width: 500px;
   margin: 0 auto;
   display: block;
   padding: 10px 0;
@@ -155,3 +129,53 @@ $names: ('top', 'right', 'left', 'bottom');
     margin-bottom: 0;
   }
 }
+
+/* Table */
+.table {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+  border-collapse: collapse;
+  text-align: center;
+  
+  thead tr {
+    background: #f7f7f7;
+    font-weight: 700;
+    
+    th {
+      padding: 5px;
+    }
+  }
+  
+  tbody tr td,
+  tfoot tr td {
+    padding: 3px;
+  }
+}
+
+/* Text align */
+$text: (left, right, center, justify, justify-all, start, end, match-parent);
+@each $align in $text {
+  .text-#{$align} {
+    text-align: #{$align} !important;
+  }
+}
+
+/* Margins & Paddings */
+$names: ('top', 'right', 'left', 'bottom');
+@each $name in $names {
+  @for $i from 0 through 4 {
+    $calc: $i * 5;
+    
+    // Margins
+    .margin-#{$name}-#{$calc} {
+      margin-#{$name}: #{$calc + 'px'} !important;
+    }
+    
+    // Paddings
+    .padding-#{$name}-#{$calc} {
+      padding-#{$name}: #{$calc + 'px'} !important;
+    }
+  }
+}
+
