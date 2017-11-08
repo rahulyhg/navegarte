@@ -1,17 +1,21 @@
 {
   "path": {
     "public": "./public",
-    "css": "./public/css/",
-    "js": "./public/js/"
+    "css": "./public/assets/",
+    "js": "./public/assets/"
   },
-  "css": [
-    "./resources/assets/sass/*.scss",
-    "./resources/assets/libraries/*.{scss,css}"
-  ],
-  "js": [
-    "./public/bower_components/jquery/dist/jquery.js",
-    "./public/bower_components/bootstrap/dist/js/bootstrap.js",
-    "./resources/assets/libraries/*.js",
-    "./resources/assets/js/*.js"
-  ]
+  "web": {
+    "css": [
+      "./resources/assets/sass/web/*.scss"
+    ],
+    "js": [
+      "./public/bower_components/jquery/dist/jquery.js",
+      "./public/bower_components/bootstrap/dist/js/bootstrap.js",
+      "./resources/assets/js/web/*.js"
+    ]
+  },
+  "adm": {
+    "css": [],
+    "js": []
+  }
 }

@@ -11,43 +11,49 @@
  */
 
 return [
-    
-    /**
-     * Register for all containers
-     */
-    'providers' => [
-        'app' => [
-            \Core\Providers\ErrorServiceProvider::class,
-            \Core\Providers\DatabaseServiceProvider::class,
-            \Core\Providers\Session\SessionServiceProvider::class,
-            \Core\Providers\Hash\BcryptServiceProvider::class,
-            \Core\Providers\Encryption\EncryptionServiceProvider::class,
-            \Core\Providers\LoggerServiceProvider::class,
-            \Core\Providers\View\ViewServiceProvider::class,
-            /*Core\Providers\EloquentServiceProvider::class,*/
-            \Core\Providers\Mailer\MailerServiceProvider::class,
-            /*\Core\Providers\InterventionImageServiceProvider::class,*/
-            /*\Core\Providers\WideImageServiceProvider::class,*/
-        ],
-    
-        'web' => [
-    
-        ]
-    ],
-    
     /**
      * Register for all middleware
      */
     'middleware' => [
         'app' => [
-            'config' => \Core\Middleware\ConfigurationMiddleware::class,
-            'slash' => \Core\Middleware\TrailingSlashMiddleware::class,
-            'old' => \Core\Middleware\OldInputMiddleware::class,
+            \Core\Middlewares\ConfigurationMiddleware::class,
+            \Core\Middlewares\TrailingSlashMiddleware::class,
+            \Core\Middlewares\OldInputMiddleware::class,
         ],
-    
+
         'web' => [
-    
+
         ],
+    ],
+
+    /**
+     * Register for all functions and helpers
+     */
+    'functions' => [
+        APP_FOLDER . '/app/functions.php',
+    ],
+
+    /**
+     * Register for all containers
+     */
+    'providers' => [
+        'app' => [
+            \Core\Providers\ErrorProvider::class,
+            \Core\Providers\DatabaseProvider::class,
+            \Core\Providers\Session\SessionProvider::class,
+            \Core\Providers\Hash\BcryptProvider::class,
+            \Core\Providers\Encryption\EncryptionProvider::class,
+            \Core\Providers\LoggerProvider::class,
+            \Core\Providers\View\ViewProvider::class,
+            /*Core\Providers\EloquentProvider::class,*/
+            \Core\Providers\Mailer\MailerProvider::class,
+            /*\Core\Providers\InterventionImageProvider::class,*/
+            /*\Core\Providers\WideImageProvider::class,*/
+        ],
+
+        'web' => [
+
+        ]
     ],
 
 ];

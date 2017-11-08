@@ -11,21 +11,21 @@
  */
 
 return [
-    
+
     /**
      * App Version
      *
      * Define a versão do framework
      */
-    'version' => 'v0.1.7',
-    
+    'version' => 'v1.0.0',
+
     /**
      * App Version
      *
      * Define a versão do skeleton
      */
-    'skeleton' => 'v0.1.4',
-    
+    'skeleton' => 'v1.0.0',
+
     /**
      * Encryption app
      *
@@ -34,35 +34,34 @@ return [
     'encryption' => [
         'key' => env('APP_KEY'),
         'cipher' => 'AES-256-CBC',
-        'regenerate.days' => false
     ],
-    
+
     /**
      * Application locale configuration
      */
     'locale' => 'pt_BR',
-    
+
     /**
      * App Url
      *
      * Url do sistema
      */
-    'url' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']),
-    
+    'url' => BASE_URL,
+
     /**
      * App Maintenance
      *
      * Define se o site vai estar em manutenção
      */
     'maintenance' => false,
-    
+
     /**
      * App Environment
      *
      * Define se o site está em produção ou em desenvolvimento
      */
     'environment' => env('APP_ENV', 'production'),
-    
+
     /**
      * App Timezone
      *

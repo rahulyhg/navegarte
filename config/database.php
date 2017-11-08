@@ -12,22 +12,22 @@
 
 return [
     /**
-     * To use Laravel Database you must:
+     * Para usar Laravel Database
      *
      * composer require illuminate/database
-     * And uncomment in bootstrap/registers.php the eloquent provider
+     * e descomente o EloquentServiceProvider em bootstrap/registers.php
      */
-    
+
     /**
      * Conexão padrão
      */
-    'default' => env('DB_CONNECTION', 'mysql'),
-    
+    'default' => env('DB_DRIVER', 'mysql'),
+
     /**
      * Tipos de conexões
      */
-    'connect' => [
-        
+    'connections' => [
+
         /**
          * MySQL
          */
@@ -39,29 +39,35 @@ return [
             'username' => env('DB_USER', 'username'),
             'password' => env('DB_PASS', 'password'),
             'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
+            'collation' => 'utf8mb4_general_ci',
         ],
-        
-        'pgsql' => [
-            'driver' => env('DB_DRIVER', 'pgsql'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', 5432),
-            'database' => env('DB_DATABASE', 'database'),
-            'username' => env('DB_USERNAME', 'username'),
-            'password' => env('DB_PASSWORD', 'password'),
-            'charset' => 'utf8',
-        ],
-        
+
+        /**
+         * MSSQL Windows
+         */
         'sqlsrv' => [
             'driver' => env('DB_DRIVER', 'sqlsrv'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', 1433),
             'database' => env('DB_DATABASE', 'database'),
-            'username' => env('DB_USERNAME', 'username'),
-            'password' => env('DB_PASSWORD', 'password'),
+            'username' => env('DB_USER', 'username'),
+            'password' => env('DB_PASS', 'password'),
             'charset' => false,
         ],
-    
+
+        /**
+         * MSSQL Linux
+         */
+        'dblib' => [
+            'driver' => env('DB_DRIVER', 'dblib'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', 1433),
+            'database' => env('DB_DATABASE', 'database'),
+            'username' => env('DB_USER', 'username'),
+            'password' => env('DB_PASS', 'password'),
+            'charset' => false,
+        ],
+
     ],
 
 ];

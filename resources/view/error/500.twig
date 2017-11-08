@@ -5,26 +5,26 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Error 500 (Internal Server Error)</title>
-    
+
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <style>
       *, *:before, *:after {
         margin: 0;
         padding: 0;
-        
+
         font-size: 1rem;
         font-weight: normal;
         font-family: 'Open Sans', sans-serif;
-        
+
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
       }
-      
+
       body {
         background: #f5f5f5;
       }
-      
+
       .system_error_ab {
         position: absolute;
         width: 100%;
@@ -33,35 +33,35 @@
         align-content: center;
         justify-content: center;
       }
-      
+
       .system_error {
         position: relative;
         width: 600px;
         max-width: 95%;
         margin: auto;
-        
+
         word-break: break-all;
-        
+
         background: #fff;
         border-radius: 4px;
         /*border: 1px solid #d6d6d6;*/
         box-shadow: 0 0 15px #d6d6d6, 0 10px 20px #d6d6d6;
       }
-      
+
       .system_error_title p {
         position: relative;
-        
+
         display: flex;
         align-items: center;
         justify-content: space-between;
-        
+
         padding: 20px;
         font-size: 1.75rem;
         font-weight: 400;
         color: #555;
         border-bottom: 1px solid #d6d6d6;
       }
-      
+
       .system_error_title p > a {
         display: block;
         padding: 5px 8px;
@@ -74,22 +74,22 @@
         text-decoration: none;
         text-transform: uppercase;
       }
-      
+
       .system_error_title p > a:hover {
         box-shadow: 0 1px 12px #d6d6d6;
       }
-      
+
       .system_error_content {
         padding: 15px;
       }
-      
+
       .system_error_content > p {
         font-size: 16px;
         text-align: center;
         display: block;
         font-weight: 300;
       }
-      
+
       .system_error_content > p:after {
         content: '';
         display: block;
@@ -97,22 +97,22 @@
         margin: 10px auto;
         border-bottom: 1px solid #f5f5f5;
       }
-      
+
       .system_error_content .debug {
         display: block;
         margin-top: 10px;
       }
-      
+
       .system_error_content .debug p {
         text-align: left;
         font-size: 0.75rem;
       }
-      
+
       .system_error_content .debug > small {
         color: red;
         font-size: 0.70rem;
       }
-      
+
       .system_error_footer {
         padding: 8px;
         border-top: 1px solid #d6d6d6;
@@ -120,13 +120,13 @@
         align-items: center;
         justify-content: space-between;
       }
-      
+
       .system_error_footer p {
         font-size: .875rem;
         color: #333;
         font-weight: 300;
       }
-      
+
       .system_error_footer p > b {
         text-decoration: underline;
         font-weight: 400;
@@ -134,33 +134,28 @@
     </style>
   </head>
   <body>
-    
     <div class="system_error_ab">
-      
       <div class='system_error'>
         <div class='system_error_title'>
           <p>
             {{ config('client.name', 'System') }} - Erro no sistema!
-            <a href="{{ base_url() }}">Voltar!</a>
+            <a href="{{ constant('BASE_URL') }}">Voltar!</a>
           </p>
         </div><!-- /.system_error_title -->
-        
         <div class='system_error_content'>
           <p>Olá, acabamos de verificar que foi ocorrido um erro no sistema e já estamos sendo avisados do ocorrido e em alguns minutos o erro será resolvido. <br/> Obrigado e desculpe o contrangimento.</p>
           {% if debug %}
             <div class="debug">
-              <p><b>ERRO NA LINHA: #{{ error.line }}</b> <br/>{{ error.message }}</p>
+              <p><b>ERRO NA LINHA: #{{ error.line }}</b> <br/>{{ error.message|raw }}</p>
               <small>{{ error.file }}</small>
             </div><!-- /.debug -->
           {% endif %}
         </div><!-- /.system_error_content -->
-        
         <div class='system_error_footer'>
           <p>Version core: <b>{{ config('app.version') }}</b></p>
           <p>Version skeleton: <b>{{ config('app.skeleton') }}</b></p>
         </div><!-- /.system_error_footer -->
       </div><!-- /.system_error -->
-    
     </div>
     <!-- /.system_error_ab -->
   </body>

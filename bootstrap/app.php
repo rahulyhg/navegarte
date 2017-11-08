@@ -22,7 +22,7 @@ ob_start(
             $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
             $buffer = str_replace(["\r\n", "\r", "\n", "\t", '  ', '   ', '    ',], '', $buffer);
         }
-        
+
         return $buffer;
     }
 );
@@ -33,7 +33,7 @@ ob_start(
 if (PHP_SAPI == 'cli-server') {
     $url = parse_url($_SERVER['REQUEST_URI']);
     $file = APP_FOLDER . $url['path'];
-    
+
     if (is_file($file)) {
         return false;
     }
@@ -51,13 +51,6 @@ if (!file_exists($composerAutoload)) {
 include "{$composerAutoload}";
 
 /**
- * Load functions custom
- */
-if (file_exists(APP_FOLDER . '/app/functions.php')) {
-    include APP_FOLDER . '/app/functions.php';
-}
-
-/**
  * Starting dotenv configuration
  */
 if (file_exists(APP_FOLDER . '/.env')) {
@@ -69,7 +62,7 @@ if (file_exists(APP_FOLDER . '/.env')) {
 } else {
     $envContent = file_get_contents(APP_FOLDER . '/.env-example');
     file_put_contents(APP_FOLDER . '/.env', $envContent, FILE_APPEND);
-}
+};
 
 /**
  * Instance class app
@@ -77,14 +70,19 @@ if (file_exists(APP_FOLDER . '/.env')) {
 $app = App::getInstance();
 
 /**
+ * Register providers
+ */
+$app->registerProviders();
+
+/**
+ * Register functions
+ */
+$app->registerFunctions();
+
+/**
  * Register middleware
  */
 $app->registerMiddleware();
-
-/**
- * Register container
- */
-$app->registerContainer();
 
 /**
  * Register routers

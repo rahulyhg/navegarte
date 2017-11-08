@@ -10,25 +10,35 @@
  * @copyright 2017-2017 Vagner Cardoso
  */
 
-namespace App\Controllers;
+namespace App\Controllers {
 
-/**
- * Class HomeController
- *
- * @package App\Controllers
- * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
- */
-final class HomeController extends Controller
-{
+    use Core\Contracts\Controller;
+
     /**
-     * Template home
+     * Class HomeController
      *
-     * @return mixed
+     * @package App\Controllers
+     * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
      */
-    public function get()
+    final class HomeController extends Controller
     {
-        $array = [];
+        /**
+         * Inicializa junto com o Controller
+         */
+        public function boot()
+        {
+        }
 
-        return $this->view('home', $array, 200);
+        /**
+         * Template home
+         *
+         * @return mixed
+         */
+        public function get()
+        {
+            $array = [];
+
+            return $this->view('home', $array, 200);
+        }
     }
 }

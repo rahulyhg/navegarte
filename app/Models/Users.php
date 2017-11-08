@@ -10,16 +10,17 @@
  * @copyright 2017-2017 Vagner Cardoso
  */
 
-return [
-    
-    /**
-     * Brazil
-     */
-    'pt_BR' => include __DIR__ . '/lang/pt_BR.php',
-    
-    /**
-     * English
-     */
-    'en' => include __DIR__ . '/lang/en.php'
+namespace App\Models {
 
-];
+    use Core\Contracts\Model;
+
+    /**
+     * Class Users
+     *
+     * @package App\Models
+     * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
+     */
+    class Users extends Model
+    {
+    }
+}
