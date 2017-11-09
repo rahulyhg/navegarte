@@ -3,12 +3,11 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     {# Metas tags #}
     {% set title_seo = (title ?  title ~ ' - ' ~ config('client.name') ~ '!'  : config('client.name') ~ ' - ' ~ config('client.subname')) %}
-    {% set base_url = constant('BASE_URL') %}
     {% set social = config('client.social') %}
 
     <title>{{ title_seo }}</title>
@@ -18,12 +17,12 @@
     <meta name="keywords" content="{{ keywords ? keywords : config('client.keywords') }}"/>
     <meta name="robots" content="index, follow"/>
 
-    <link rel="base" href="{{ base_url }}"/>
-    <link rel="canonical" href="{{ base_url ~ constant('REQUEST_URI') }}"/>
+    <link rel="base" href="{{ constant('BASE_URL') }}"/>
+    <link rel="canonical" href="{{ constant('FULL_URL') }}"/>
 
     {# Fazer RSS e SiteMAP #}
-    {#<link rel="alternate" type="application/rss+xml" href="{{ base_url }}/rss"/>
-    <link rel="sitemap" type="application/xml" href="{{ base_url }}/sitemap.xml" />#}
+    {#<link rel="alternate" type="application/rss+xml" href="{{ constant('BASE_URL') }}/rss"/>
+    <link rel="sitemap" type="application/xml" href="{{ constant('BASE_URL') }}/sitemap.xml" />#}
 
     {% if social['google']['active'] %}
       <link rel="author" href="https://plus.google.com/{{ social['google']['author'] }}/posts"/>
@@ -35,14 +34,14 @@
 
     <meta itemprop="name" content="{{ title_seo }}"/>
     <meta itemprop="description" content="{{ description ? description : config('client.description') }}"/>
-    <meta itemprop="image" content="{{ base_url ~ asset('/assets/web/images/1200x630.png') }}"/>
-    <meta itemprop="url" content="{{ base_url ~ constant('REQUEST_URI') }}"/>
+    <meta itemprop="image" content="{{ asset('/assets/web/images/1200x630.png', true) }}"/>
+    <meta itemprop="url" content="{{ constant('FULL_URL') }}"/>
 
     <meta property="og:type" content="website"/>
     <meta property="og:title" content="{{ title_seo }}"/>
     <meta property="og:description" content="{{ description ? description : config('client.description') }}"/>
-    <meta property="og:image" content="{{ base_url ~ asset('images/default.jpg') }}"/>
-    <meta property="og:url" content="{{ base_url ~ constant('REQUEST_URI') }}"/>
+    <meta property="og:image" content="{{ asset('/assets/web/images/1200x630.png', true) }}"/>
+    <meta property="og:url" content="{{ constant('FULL_URL') }}"/>
     <meta property="og:site_name" content="{{ config('client.name') }}"/>
     <meta property="og:locale" content="pt_BR"/>
     {% if social['facebook']['active'] %}
@@ -62,14 +61,14 @@
     {% if social['twitter'] %}
       <meta property="twitter:site" content="@{{ social['twitter'] }}"/>
     {% endif %}
-    <meta property="twitter:domain" content="{{ base_url }}"/>
+    <meta property="twitter:domain" content="{{ constant('BASE_URL') }}"/>
     <meta property="twitter:title" content="{{ title_seo }}"/>
     <meta property="twitter:description" content="{{ description ? description : config('client.description') }}"/>
-    <meta property="twitter:image" content="{{ base_url ~ asset('/assets/web/images/1200x630.png') }}"/>
-    <meta property="twitter:url" content="{{ base_url ~ constant('REQUEST_URI') }}"/>
+    <meta property="twitter:image" content="{{ asset('/assets/web/images/1200x630.png', true) }}"/>
+    <meta property="twitter:url" content="{{ constant('FULL_URL') }}"/>
 
     {# FavIcon #}
-    <link rel="shortcut icon" type="image/png" href="{{ asset('/images/favicon.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('/assets/web/images/favicon.png') }}">
 
     {# stylesheets #}
     <style>{{ asset_source('/assets/web/app.css') }}</style>

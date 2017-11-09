@@ -12,28 +12,6 @@
 
 return [
     /**
-     * Register for all middleware
-     */
-    'middleware' => [
-        'app' => [
-            \Core\Middlewares\ConfigurationMiddleware::class,
-            \Core\Middlewares\TrailingSlashMiddleware::class,
-            \Core\Middlewares\OldInputMiddleware::class,
-        ],
-
-        'web' => [
-
-        ],
-    ],
-
-    /**
-     * Register for all functions and helpers
-     */
-    'functions' => [
-        APP_FOLDER . '/app/functions.php',
-    ],
-
-    /**
      * Register for all containers
      */
     'providers' => [
@@ -52,8 +30,28 @@ return [
         ],
 
         'web' => [
-
         ]
+    ],
+
+    /**
+     * Register for all functions and helpers
+     */
+    'functions' => [
+        APP_FOLDER . '/app/functions.php',
+    ],
+
+    /**
+     * Register for all middleware
+     */
+    'middleware' => [
+        'app' => [
+            \Core\Middlewares\ConfigurationMiddleware::class,
+            \Core\Middlewares\TrailingSlashMiddleware::class,
+            \Core\Middlewares\OldInputMiddleware::class,
+        ],
+
+        'web' => [
+        ],
     ],
 
 ];

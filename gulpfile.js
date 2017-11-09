@@ -116,5 +116,6 @@ gulp.task('watch', () => {
  * Task DEFAULT
  */
 gulp.task('default', (callback) => {
+  //return sequence('styles', 'stylesAdm', 'stylesMail', 'scripts', 'scriptsAdm', ['watch'], callback);
   return sequence('styles', 'stylesMail', 'scripts', ['watch'], callback);
 });

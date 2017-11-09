@@ -70,14 +70,14 @@ if (file_exists(APP_FOLDER . '/.env')) {
 $app = App::getInstance();
 
 /**
- * Register providers
- */
-$app->registerProviders();
-
-/**
  * Register functions
  */
 $app->registerFunctions();
+
+/**
+ * Register providers
+ */
+$app->registerProviders();
 
 /**
  * Register middleware
