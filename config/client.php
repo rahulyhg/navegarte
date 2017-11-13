@@ -53,7 +53,7 @@ return [
      * Redes sociais
      */
     'social' => [
-        'name' => 'MuBrGames!',
+        'name' => 'VCWeb!',
 
         /**
          * Google Plus
