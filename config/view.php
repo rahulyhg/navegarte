@@ -11,7 +11,7 @@
  */
 
 return [
-    
+
     /**
      * Template engine
      *
@@ -20,21 +20,21 @@ return [
      * php | twig
      */
     'engine' => 'twig',
-    
+
     /**
      * View debug
      *
      * When enabled, any type of error will be
      */
     'debug' => true,
-    
+
     /**
      * View cache
      *
      * When enabled, it will be saved as configured by configuring [path.compiled]
      */
     'cache' => false,
-    
+
     /**
      * View paths
      *

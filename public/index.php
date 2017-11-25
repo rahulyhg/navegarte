@@ -29,14 +29,14 @@ define('ROOT', str_ireplace('\\', '/', realpath(dirname(__DIR__))));
  *
  * Defines where the public application files will be kept
  */
-define('PUBLIC_FOLDER', ROOT . '');
+define('PUBLIC_FOLDER', ROOT . '/public');
 
 /**
  * Application folder
  *
  * Defines where protected application files will be kept
  */
-define('APP_FOLDER', ROOT . '');
+define('APP_FOLDER', ROOT);
 
 /**
  * Resource folder
@@ -44,9 +44,19 @@ define('APP_FOLDER', ROOT . '');
 define('RESOURCE_FOLDER', APP_FOLDER . '/resources');
 
 /**
+ * Base URL
+ */
+define('BASE_URL', (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']));
+
+/**
  * Request URI
  */
 define('REQUEST_URI', $_SERVER['REQUEST_URI']);
+
+/**
+ * Full URL
+ */
+define('FULL_URL', BASE_URL . REQUEST_URI);
 
 /**
  * Starting application

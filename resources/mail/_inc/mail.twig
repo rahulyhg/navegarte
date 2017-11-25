@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
       <title></title>
-      <style>{{ asset_source('css/mail.css') }}</style>
+      <style>{{ asset_source('/assets/mail.css') }}</style>
       {% block style %}{% endblock %}
     </head>
     <body>
@@ -22,7 +22,8 @@
                       {% block content %}{% endblock %}
                       <tr>
                         <td class="footer">
-                          <img src="{{ config('app.url') ~ asset('img/mail.jpg') }}"/>
+                          <img src="{{ config('app.url') ~ asset('/assets/mail.jpg') }}"/>
+                          <p class="margin-top-5 margin-bottom-5" style="font-size: 10px !important; font-weight: bold;">Enviado em {{ date('d/m/Y H:i:s') }}!</p>
 
                           <p>{{ config('client.company.name') }}</p>
                           <p>Telefone: {{ config('client.company.phoneA') }}</p>

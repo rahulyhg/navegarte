@@ -17,14 +17,19 @@ return [
      *
      * Define a versão do framework
      */
-    'version' => 'v0.1.8',
+    'version' => 'v1.0.0',
 
     /**
      * App Version
      *
      * Define a versão do skeleton
      */
-    'skeleton' => 'v0.1.5',
+    'skeleton' => 'v1.0.0',
+
+    /**
+     * Configuração para habilitar ou desabilitar as sessões
+     */
+    'session' => env('APP_SESSION', true),
 
     /**
      * Encryption app
@@ -34,13 +39,7 @@ return [
     'encryption' => [
         'key' => env('APP_KEY'),
         'cipher' => 'AES-256-CBC',
-        'regenerate.days' => false
     ],
-
-    /**
-     * Enable and disabled sessions
-     */
-    'session' => false,
 
     /**
      * Application locale configuration
@@ -52,7 +51,7 @@ return [
      *
      * Url do sistema
      */
-    'url' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']),
+    'url' => BASE_URL,
 
     /**
      * App Maintenance
