@@ -22,5 +22,11 @@ namespace App\Models {
      */
     class Users extends Model
     {
+        /**
+         * Inicializa junto com o model
+         */
+        protected function boot()
+        {
+        }
     }
 }

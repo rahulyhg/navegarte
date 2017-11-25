@@ -9,8 +9,7 @@
       "./resources/assets/sass/web/*.scss"
     ],
     "js": [
-      "./public/bower_components/jquery/dist/jquery.js",
-      "./public/bower_components/bootstrap/dist/js/bootstrap.js",
+      "./public/assets/bower_components/jquery/dist/jquery.min.js",
       "./resources/assets/js/web/*.js"
     ]
   },

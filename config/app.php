@@ -27,6 +27,11 @@ return [
     'skeleton' => 'v1.0.0',
 
     /**
+     * Configuração para habilitar ou desabilitar as sessões
+     */
+    'session' => env('APP_SESSION', true),
+
+    /**
      * Encryption app
      *
      * Gera a chave do sistema e define se precisa gerar em determinados dias.

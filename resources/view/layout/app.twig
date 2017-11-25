@@ -12,9 +12,9 @@
 
     <title>{{ title_seo }}</title>
 
-    <meta name="description" content="{{ description ? description : config('client.description') }}"/>
-    <meta name="abstract" content="{{ abstract ? abstract : config('client.abstract') }}"/>
-    <meta name="keywords" content="{{ keywords ? keywords : config('client.keywords') }}"/>
+    <meta name="description" content="{{ description ?: config('client.description') }}"/>
+    <meta name="abstract" content="{{ abstract ?: config('client.abstract') }}"/>
+    <meta name="keywords" content="{{ keywords ?: config('client.keywords') }}"/>
     <meta name="robots" content="index, follow"/>
 
     <link rel="base" href="{{ constant('BASE_URL') }}"/>
@@ -33,14 +33,14 @@
     {% endif %}
 
     <meta itemprop="name" content="{{ title_seo }}"/>
-    <meta itemprop="description" content="{{ description ? description : config('client.description') }}"/>
-    <meta itemprop="image" content="{{ asset('/assets/web/images/1200x630.png', true) }}"/>
+    <meta itemprop="description" content="{{ description ?: config('client.description') }}"/>
+    <meta itemprop="image" content="{{ asset(image ?: '/assets/web/images/1200x630.png', true) }}"/>
     <meta itemprop="url" content="{{ constant('FULL_URL') }}"/>
 
-    <meta property="og:type" content="website"/>
+    <meta property="og:type" content="{{ type ?: 'article' }}"/>
     <meta property="og:title" content="{{ title_seo }}"/>
-    <meta property="og:description" content="{{ description ? description : config('client.description') }}"/>
-    <meta property="og:image" content="{{ asset('/assets/web/images/1200x630.png', true) }}"/>
+    <meta property="og:description" content="{{ description ?: config('client.description') }}"/>
+    <meta property="og:image" content="{{ asset(image ?: '/assets/web/images/1200x630.png', true) }}"/>
     <meta property="og:url" content="{{ constant('FULL_URL') }}"/>
     <meta property="og:site_name" content="{{ config('client.name') }}"/>
     <meta property="og:locale" content="pt_BR"/>
@@ -63,12 +63,12 @@
     {% endif %}
     <meta property="twitter:domain" content="{{ constant('BASE_URL') }}"/>
     <meta property="twitter:title" content="{{ title_seo }}"/>
-    <meta property="twitter:description" content="{{ description ? description : config('client.description') }}"/>
-    <meta property="twitter:image" content="{{ asset('/assets/web/images/1200x630.png', true) }}"/>
+    <meta property="twitter:description" content="{{ description ?: config('client.description') }}"/>
+    <meta property="twitter:image" content="{{ asset(image ?: '/assets/web/images/1200x630.png', true) }}"/>
     <meta property="twitter:url" content="{{ constant('FULL_URL') }}"/>
 
     {# FavIcon #}
-    <link rel="shortcut icon" type="image/png" href="{{ asset('/assets/web/images/favicon.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('/assets/web/images/24x24.png', true) }}">
 
     {# stylesheets #}
     <style>{{ asset_source('/assets/web/app.css') }}</style>

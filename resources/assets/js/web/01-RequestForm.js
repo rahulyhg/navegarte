@@ -77,7 +77,7 @@ jQuery(function ($) {
             
             window.setTimeout(function () {
               message.fadeOut(0).html('');
-            }, 10000);
+            }, 60000);
           } else {
             alert(data.trigger[1]);
           }

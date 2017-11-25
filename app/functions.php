@@ -26,6 +26,27 @@ if (!function_exists('onlyNumber')) {
     }
 }
 
+
+if (!function_exists('json_trigger')) {
+    /**
+     * @param string $type
+     * @param string $message
+     * @param int    $status
+     *
+     * @return mixed
+     */
+    function json_trigger($type, $message = '', $status = 200)
+    {
+        if ($type == 'error' && empty($message)) {
+            $type = 'danger';
+            $message = 'Erro, atualize a página e tente novamente.';
+            $status = 500;
+        }
+
+        return json(['trigger' => [$type, $message]], $status);
+    }
+}
+
 if (!function_exists('convert_minutes')) {
     /**
      * Converte os minutos
@@ -117,20 +138,15 @@ if (!function_exists('get_image')) {
      */
     function get_image($table, $id, $name, $ext = 'jpg')
     {
-        /*if (strpos($table, 'pm_') === false) {
-            $table = "pm_{$table}";
-        }*/
-
         $folder = "fotos/{$table}/{$id}";
-
         $name = mb_strtoupper($name, 'UTF-8');
 
         /**
          * Pega as imagem
          */
         if (file_exists(PUBLIC_FOLDER . "/{$folder}") && is_dir(PUBLIC_FOLDER . "/{$folder}")) {
-            if (file_exists(PUBLIC_FOLDER . "/{$folder}/{$name}_0.{$ext}")) {
-                return asset("/{$folder}/{$name}_0.{$ext}");
+            if (file_exists(PUBLIC_FOLDER . "/{$folder}/{$name}.{$ext}")) {
+                return "/{$folder}/{$name}.{$ext}";
             }
         }
 
@@ -150,44 +166,22 @@ if (!function_exists('get_galeria')) {
      */
     function get_galeria($table, $id, $name)
     {
-        $imagemGaleria = [];
-
-        if (!is_array($name)) {
-            $name = (array) $name;
-        }
-
-        /*if (strpos($table, 'pm_') === false) {
-            $table = "pm_{$table}";
-        }*/
-
-        $folder = "fotos/{$table}/{$id}";
-
-        $name = array_map(
-            function ($name) {
-                return mb_strtoupper($name, 'UTF-8');
-            }, $name
-        );
+        $path = "fotos/{$table}/{$id}";
+        $name = mb_strtoupper($name, 'UTF-8');
+        $array = [];
 
         /**
          * Pega as imagem
          */
-        if (file_exists(PUBLIC_FOLDER . "/{$folder}") && is_dir(PUBLIC_FOLDER . "/{$folder}")) {
-            foreach ($name as $n) {
-                if (file_exists(PUBLIC_FOLDER . "/{$folder}/galeria_{$n}/0")) {
-                    $imagemGaleria[$n] = array_diff(scandir(PUBLIC_FOLDER . "/{$folder}/galeria_{$n}/0"), ['.', '..']);
-                }
-            }
+        if (file_exists(PUBLIC_FOLDER . "/{$path}/galeria_{$name}")) {
+            $images = array_values(array_diff(scandir(PUBLIC_FOLDER . "/{$path}/galeria_{$name}/0"), ['.', '..']));
 
-            foreach ($imagemGaleria as $id => $images) {
-                foreach ($images as $k => $image) {
-                    $imagemGaleria[$id][$k] = asset("{$folder}/galeria_{$id}/0/{$image}");
-                }
+            foreach ($images as $key => $image) {
+                $array[] = "/{$path}/galeria_{$name}/%s/{$image}";
             }
-
-            return $imagemGaleria;
         }
 
-        return false;
+        return $array;
     }
 }
 
@@ -195,53 +189,59 @@ if (!function_exists('get_month')) {
     /**
      * Get name month
      *
-     * @param $month
+     * @param string $month
      *
-     * @return string
+     * @return string|bool
      */
     function get_month($month)
     {
-        $return = '---';
+        $months = [
+            '01' => 'Janeiro',
+            '02' => 'Fevereiro',
+            '03' => 'Março',
+            '04' => 'Abril',
+            '05' => 'Maio',
+            '06' => 'Junho',
+            '07' => 'Julho',
+            '08' => 'Agosto',
+            '09' => 'Setembro',
+            '10' => 'Outubro',
+            '11' => 'Novembro',
+            '12' => 'Dezembro',
+        ];
 
-        switch ($month) {
-            case '01':
-                $return = 'Janeiro';
-                break;
-            case '02':
-                $return = 'Fevereiro';
-                break;
-            case '03':
-                $return = 'Março';
-                break;
-            case '04':
-                $return = 'Abril';
-                break;
-            case '05':
-                $return = 'Maio';
-                break;
-            case '06':
-                $return = 'Junho';
-                break;
-            case '07':
-                $return = 'Julho';
-                break;
-            case '08':
-                $return = 'Agosto';
-                break;
-            case '09':
-                $return = 'Setembro';
-                break;
-            case '10':
-                $return = 'Outubro';
-                break;
-            case '11':
-                $return = 'Novembro';
-                break;
-            case '12':
-                $return = 'Dezembro';
-                break;
+        if (array_key_exists($month, $months)) {
+            return $months[$month];
         }
 
-        return $return;
+        return false;
+    }
+}
+
+if (!function_exists('get_day')) {
+    /**
+     * Get name day
+     *
+     * @param string $day
+     *
+     * @return string|bool
+     */
+    function get_day($day)
+    {
+        $days = [
+            '0' => 'Domingo',
+            '1' => 'Segunda Feira',
+            '2' => 'Terça Feira',
+            '3' => 'Quarta Feira',
+            '' => 'Quinta Feira',
+            '6' => 'Sexta Feira',
+            '7' => 'Sábado'
+        ];
+
+        if (array_key_exists($day, $days)) {
+            return $days[$day];
+        }
+
+        return false;
     }
 }

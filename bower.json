@@ -8,8 +8,6 @@
     "**/bower_components/**/"
   ],
   "dependencies": {
-    "jquery": "^*",
-    "bootstrap": "*",
-    "fontawesome": "*"
+    "jquery": "^2.2.1"
   }
 }
