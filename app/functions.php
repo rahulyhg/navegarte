@@ -233,9 +233,9 @@ if (!function_exists('get_day')) {
             '1' => 'Segunda Feira',
             '2' => 'Terça Feira',
             '3' => 'Quarta Feira',
-            '' => 'Quinta Feira',
-            '6' => 'Sexta Feira',
-            '7' => 'Sábado'
+            '4' => 'Quinta Feira',
+            '5' => 'Sexta Feira',
+            '6' => 'Sábado'
         ];
 
         if (array_key_exists($day, $days)) {
