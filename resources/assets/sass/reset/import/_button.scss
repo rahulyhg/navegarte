@@ -1,0 +1,91 @@
+// Controla as formatação dos input[type=submit,button,reset],button,btns
+// ==========================================================================
+
+%btn {
+  display: inline-flex;
+  padding: 8px 14px;
+  background-color: $siteColor;
+  font-size: unquote((15 / 16) + 'rem');
+  font-family: 'Open Sans', sans-serif;
+  color: #ffffff;
+  text-decoration: none;
+  text-align: center;
+  border: none;
+  //text-shadow: 1px 1px #555555;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background-color .25s, color .25s;
+  
+  &:hover {
+    background-color: darken($siteColor, 10);
+    text-decoration: none;
+  }
+}
+
+input[type=submit],
+input[type=button],
+button {
+  @extend %btn;
+}
+
+//
+
+.btn {
+  @extend %btn;
+  
+  &-outline {
+    @include outline($siteColor);
+  }
+  
+  &-gradient {
+    @include gradient($siteColor);
+  }
+  
+  &-info {
+    @include default($infoColor, 10, true);
+    
+    &-outline {
+      @include outline($infoColor);
+    }
+    
+    &-gradient {
+      @include gradient($infoColor);
+    }
+  }
+  
+  &-warning {
+    @include default($warningColor, 10, true);
+    
+    &-outline {
+      @include outline($warningColor);
+    }
+    
+    &-gradient {
+      @include gradient($warningColor);
+    }
+  }
+  
+  &-success {
+    @include default($successColor, 10, true);
+    
+    &-outline {
+      @include outline($successColor);
+    }
+    
+    &-gradient {
+      @include gradient($successColor);
+    }
+  }
+  
+  &-danger {
+    @include default($dangerColor, 10, true);
+    
+    &-outline {
+      @include outline($dangerColor);
+    }
+    
+    &-gradient {
+      @include gradient($dangerColor);
+    }
+  }
+}

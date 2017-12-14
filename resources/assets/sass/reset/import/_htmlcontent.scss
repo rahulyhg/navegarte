@@ -1,0 +1,153 @@
+// HTML Content
+.htmlcontent {
+  font-size: 1.1em;
+  color: #444444;
+}
+
+.htmlcontent h3,
+.htmlcontent h4,
+.htmlcontent h5 {
+  padding: 20px 30px
+}
+
+.htmlcontent h3 {
+  font-size: 1.6em;
+  font-weight: bold;
+}
+
+.htmlcontent h4 {
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+.htmlcontent h5 {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.htmlcontent p {
+  padding: 15px 30px;
+}
+
+.htmlcontent ul {
+  padding: 15px 60px;
+  list-style: disc;
+}
+
+.htmlcontent ol {
+  padding: 15px 60px;
+}
+
+.htmlcontent pre {
+  font-family: "Source Code Pro", serif;
+  font-size: 1rem;
+  padding: 30px;
+  margin: 30px 0;
+}
+
+.htmlcontent img {
+  width: 100%;
+  height: auto;
+}
+
+.htmlcontent a {
+  font-weight: bold;
+  color: #4a88da
+}
+
+.htmlcontent a:hover {
+  text-decoration: none;
+}
+
+.htmlcontent .btn {
+  display: block;
+  width: 100%;
+}
+
+.htmlcontent iframe {
+  width: 100%;
+  border: none;
+}
+
+//
+
+// HTML chars
+.htmlchars {
+  display: block;
+  width: 100%;
+  /*padding: 30px;*/
+  
+  h3 {
+    display: block;
+    font-size: 2em;
+    font-weight: 300;
+    margin-bottom: 20px
+  }
+  
+  h4 {
+    display: block;
+    font-size: 1.8em;
+    font-weight: 300;
+    margin-bottom: 20px
+  }
+  
+  h5 {
+    display: block;
+    font-size: 1.6em;
+    font-weight: 300;
+    margin-bottom: 20px
+  }
+  
+  p {
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    font-weight: 400;
+    
+    &:last-of-type {
+      margin: 0;
+    }
+  }
+  
+  iframe {
+    width: 100%;
+    border: none;
+  }
+  
+  ul {
+    list-style: circle;
+    margin: 10px 30px;
+  }
+  
+  ol {
+    margin: 10px 30px;
+  }
+  
+  form {
+    padding: 20px;
+    background: #fbfbfb;
+    margin: 10px 0;
+    
+    label {
+      display: block;
+      margin-bottom: 15px;
+      font-size: convert_px(14, true);
+      text-transform: uppercase;
+    }
+    
+    input, textarea {
+      display: block;
+      margin-top: 10px;
+    }
+  }
+  
+  a {
+    color: $siteColor;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+//

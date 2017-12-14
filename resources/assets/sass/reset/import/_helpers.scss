@@ -1,0 +1,92 @@
+// Helpers
+// ==========================================================================
+
+// Display
+$names: ('none', 'inline', 'block', 'flex', 'inline-block', 'inline-flex', 'inline-table');
+@each $name in $names {
+  .ds-#{$name} {
+    display: unquote($name) !important;
+  }
+}
+
+//
+
+// Margins e paddings
+$names: ('top', 'right', 'left', 'bottom');
+@each $name in $names {
+  @for $i from 0 through 10 {
+    $calc: $i * 5;
+    
+    // Margins
+    .m-#{$name}-#{$calc} {
+      margin-#{$name}: unquote($calc + 'px') !important;
+    }
+    
+    // Paddings
+    .p-#{$name}-#{$calc} {
+      padding-#{$name}: unquote($calc + 'px') !important;
+    }
+  }
+}
+
+//
+
+// Floats
+$names: ('left', 'right', 'none');
+@each $name in $names {
+  .fl-#{$name} {
+    float: unquote($name) !important;
+  }
+}
+
+//
+
+// Text align
+$names: ('left', 'right', 'center', 'justify');
+@each $name in $names {
+  .text-#{$name} {
+    text-align: unquote($name) !important;
+  }
+}
+
+//
+
+// Outros
+.clear-fix {
+  @include clearfix;
+}
+
+.text-hidden {
+  position: absolute;
+  font-size: .1px;
+  left: -999999px;
+}
+
+//
+
+// Embeds
+object, embed, video, iframe, iframe[style] {
+  max-width: 100%;
+  height: auto;
+}
+
+.embed-container {
+  position: relative;
+  padding-bottom: percentage(9 / 16);
+  height: 0;
+  max-width: 100%;
+  overflow: hidden;
+  
+  object, embed, video, iframe {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+//

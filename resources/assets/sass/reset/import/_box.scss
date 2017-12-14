@@ -1,0 +1,86 @@
+// Box Model
+// ==========================================================================
+.container {
+  display: block;
+  width: 100%;
+  
+  @if not $enable_flex {
+    @include clearfix;
+  }
+}
+
+.content {
+  display: block;
+  width: 90%;
+  max-width: 1366px;
+  margin: 0 auto;
+  
+  @if not $enable_flex {
+    @include clearfix;
+  }
+}
+
+@if ($enable_flex) {
+  .flex {
+    display: flex !important;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    
+    flex: 1 1 100%;
+    //max-width: 100%;
+    
+    &-center {
+      align-items: center;
+      align-content: center;
+    }
+    
+    &-end {
+      align-items: flex-end;
+      align-content: flex-end;
+    }
+    
+    &-stretch {
+      align-items: stretch;
+      align-content: stretch;
+    }
+  }
+  
+  [class*="col"] {
+    margin-bottom: ($gutter-width / 2);
+    padding-right: ($gutter-width / 2);
+    padding-left: ($gutter-width / 2);
+  }
+} @else if ($enable_display) {
+  .box {
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
+    
+    @include clearfix;
+  }
+} @else if ($enable_float) {
+  .box {
+    float: left;
+    width: 100%;
+    
+    @include clearfix;
+  }
+}
+
+@for $i from 1 through $grid_columns {
+  $calc: (100 - (($i * 2) - 2));
+  //$width: #{($calc / $grid_columns * $i) + '%'};
+  $width: 100% / $grid_columns * $i;
+  
+  .col#{$i} {
+    @if ($enable_flex) {
+      flex: 1 1 $width;
+    } @else {
+      width: $width;
+    }
+    
+    max-width: 100%;
+  }
+}
+
+//

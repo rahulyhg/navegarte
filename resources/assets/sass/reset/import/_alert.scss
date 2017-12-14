@@ -1,0 +1,42 @@
+// Alert
+.alert {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  background: $siteColor;
+  font-size: unquote((15 / 16) + 'rem');
+  color: #ffffff;
+  margin-bottom: 10px;
+  border-radius: 2px;
+  /*text-shadow: 1px 1px #555555;*/
+  
+  p {
+    margin-bottom: 5px;
+    
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+  
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+  
+  &-info {
+    @include default($infoColor);
+  }
+  
+  &-warning {
+    @include default($warningColor);
+  }
+  
+  &-success {
+    @include default($successColor);
+  }
+  
+  &-danger {
+    @include default($dangerColor);
+  }
+}
+
+//
