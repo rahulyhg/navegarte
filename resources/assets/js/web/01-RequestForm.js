@@ -73,7 +73,7 @@ jQuery(function ($) {
         /* Mensagem de retorno */
         if (data.trigger) {
           if (message.length > 0) {
-            message.html('<div class="alert alert-' + data.trigger[0] + ' margin-bottom-0 margin-top-10">' + data.trigger[1] + '</div>').fadeIn(0);
+            message.html('<div class="alert alert-' + data.trigger[0] + '">' + data.trigger[1] + '</div>').fadeIn(0);
             
             window.setTimeout(function () {
               message.fadeOut(0).html('');
@@ -127,7 +127,14 @@ jQuery(function ($) {
         }
       },
       error: function (xhr) {
-        alert('Erro ao realizar a requisição para a URL: ' + url);
+        var msg = 'Erro no sistemas, favor atualize a página e tente novamente. (500)';
+        
+        if (message.length > 0) {
+          message.html('<div class="alert alert-danger m-bottom-0 m-top-10">' + msg + '</div>').fadeIn(0);
+        } else {
+          alert(msg);
+        }
+        
         console.log(JSON.parse(JSON.stringify(xhr.responseText)));
       }
     });
