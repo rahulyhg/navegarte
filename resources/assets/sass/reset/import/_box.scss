@@ -21,7 +21,7 @@
 }
 
 @if ($enable_flex) {
-  .flex {
+  .grid {
     display: flex !important;
     align-items: flex-start;
     flex-wrap: wrap;
@@ -31,27 +31,27 @@
     
     &-center {
       align-items: center;
-      align-content: center;
+      justify-content: center;
     }
     
     &-end {
       align-items: flex-end;
-      align-content: flex-end;
+      justify-content: flex-end;
     }
     
     &-stretch {
       align-items: stretch;
-      align-content: stretch;
+      justify-content: stretch;
     }
   }
   
-  [class*="col"] {
+  [class*="grid-"] {
     margin-bottom: ($gutter-width / 2);
     padding-right: ($gutter-width / 2);
     padding-left: ($gutter-width / 2);
   }
 } @else if ($enable_display) {
-  .box {
+  .grid {
     display: inline-block;
     width: 100%;
     vertical-align: top;
@@ -59,7 +59,7 @@
     @include clearfix;
   }
 } @else if ($enable_float) {
-  .box {
+  .grid {
     float: left;
     width: 100%;
     
@@ -72,7 +72,7 @@
   //$width: #{($calc / $grid_columns * $i) + '%'};
   $width: 100% / $grid_columns * $i;
   
-  .col#{$i} {
+  .grid-#{$i} {
     @if ($enable_flex) {
       flex: 1 1 $width;
     } @else {
