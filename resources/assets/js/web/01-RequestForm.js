@@ -16,6 +16,7 @@ jQuery(function ($) {
     
     var disabled = $('#request-disabled');
     var message  = form.find('#request-message');
+    
     if (message.length <= 0) {
       message = form.parent().find('#request-message');
     }
@@ -93,9 +94,15 @@ jQuery(function ($) {
           }
         }
         
-        /* Redirect */
+        /* Location */
         if (data.location) {
           window.location.href = data.location;
+        }
+        /**/
+        
+        /* Reload */
+        if (data.reload) {
+          window.location.reload();
         }
         /**/
         
@@ -127,15 +134,14 @@ jQuery(function ($) {
         }
       },
       error: function (xhr) {
-        var msg = 'Erro no sistemas, favor atualize a página e tente novamente. (500)';
+        var text  = 'Erro no sistemas, favor atualize a página e tente novamente. (500)',
+            error = JSON.parse(JSON.stringify(xhr.responseText));
         
         if (message.length > 0) {
-          message.html('<div class="alert alert-danger m-bottom-0 m-top-10">' + msg + '</div>').fadeIn(0);
+          message.html('<div class="alert alert-danger">' + error + '</div>').fadeIn(0);
         } else {
-          alert(msg);
+          alert(text);
         }
-        
-        console.log(JSON.parse(JSON.stringify(xhr.responseText)));
       }
     });
   });
