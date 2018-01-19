@@ -11,26 +11,26 @@
  */
 
 return [
-
+    
     /**
      * App Version
      *
      * Define a versão do framework
      */
     'version' => 'v1.0.4',
-
+    
     /**
      * Skeleton Version
      *
      * Define a versão do skeleton
      */
     'skeleton' => 'v1.0.1',
-
+    
     /**
      * Configuração para habilitar ou desabilitar as sessões
      */
     'session' => env('APP_SESSION', true),
-
+    
     /**
      * Encryption app
      *
@@ -40,33 +40,33 @@ return [
         'key' => env('APP_KEY'),
         'cipher' => 'AES-256-CBC',
     ],
-
+    
     /**
      * Application locale configuration
      */
     'locale' => 'pt_BR',
-
+    
     /**
      * App Url
      *
      * Url do sistema
      */
     'url' => BASE_URL,
-
+    
     /**
      * App Maintenance
      *
      * Define se o site vai estar em manutenção
      */
     'maintenance' => false,
-
+    
     /**
      * App Environment
      *
      * Define se o site está em produção ou em desenvolvimento
      */
     'environment' => env('APP_ENV', 'production'),
-
+    
     /**
      * App Timezone
      *

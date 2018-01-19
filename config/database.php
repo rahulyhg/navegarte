@@ -17,17 +17,17 @@ return [
      * composer require illuminate/database
      * e descomente o EloquentServiceProvider em bootstrap/registers.php
      */
-
+    
     /**
      * Conexão padrão
      */
     'default' => env('DB_DRIVER', 'mysql'),
-
+    
     /**
      * Tipos de conexões
      */
     'connections' => [
-
+        
         /**
          * MySQL
          */
@@ -41,7 +41,7 @@ return [
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_general_ci',
         ],
-
+        
         /**
          * MSSQL Windows
          */
@@ -54,7 +54,7 @@ return [
             'password' => env('DB_PASS', 'password'),
             'charset' => false,
         ],
-
+        
         /**
          * MSSQL Linux
          */
@@ -67,7 +67,7 @@ return [
             'password' => env('DB_PASS', 'password'),
             'charset' => false,
         ],
-
+    
     ],
 
 ];

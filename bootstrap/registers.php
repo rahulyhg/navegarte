@@ -28,18 +28,17 @@ return [
             /*\Core\Providers\InterventionImageProvider::class,*/
             /*\Core\Providers\WideImageProvider::class,*/
         ],
-
-        'web' => [
-        ]
+        
+        'web' => [],
     ],
-
+    
     /**
      * Register for all functions and helpers
      */
     'functions' => [
-        APP_FOLDER . '/app/functions.php',
+        APP_FOLDER.'/app/functions.php',
     ],
-
+    
     /**
      * Register for all middleware
      */
@@ -49,9 +48,8 @@ return [
             \Core\Middlewares\TrailingSlashMiddleware::class,
             \Core\Middlewares\OldInputMiddleware::class,
         ],
-
-        'web' => [
-        ],
+        
+        'web' => [],
     ],
 
 ];

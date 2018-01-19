@@ -11,7 +11,7 @@
  */
 
 return [
-
+    
     /**
      * Configuração do site
      */
@@ -20,7 +20,7 @@ return [
     'description' => '', /* Descrição do site do cliente */
     'abstract' => '',
     'keywords' => '',
-
+    
     /**
      * Dados da empresa do cliente
      */
@@ -33,7 +33,7 @@ return [
         'ie' => '', /* Inscrição estadual da empresa */
         'phoneA' => '', /* Telefone 1 */
         'phoneB' => '', /* Telefone 2 */
-
+        
         /**
          * Endereço
          */
@@ -48,13 +48,13 @@ return [
             'country' => '', /* País */
         ],
     ],
-
+    
     /**
      * Redes sociais
      */
     'social' => [
         'name' => 'VCWeb!',
-
+        
         /**
          * Google Plus
          */
@@ -63,7 +63,7 @@ return [
             'author' => '', /* ID do Usuário */
             'page' => '', /* ID da Página */
         ],
-
+        
         /**
          * Facebook
          */
@@ -74,17 +74,17 @@ return [
             'page' => '', /* https://www.facebook.com/????? */
             'pageId' => 0, /* ID do Facebook Pages */
         ],
-
+        
         /**
          * Twitter
          */
         'twitter' => 0, /* https://www.twitter.com/????? */
-
+        
         /**
          * Youtube
          */
         'youtube' => 0, /* https://www.youtube.com/user/????? */
-
+        
         /**
          * Instagram
          */

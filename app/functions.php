@@ -26,7 +26,6 @@ if (!function_exists('onlyNumber')) {
     }
 }
 
-
 if (!function_exists('json_trigger')) {
     /**
      * @param string $type
@@ -34,6 +33,8 @@ if (!function_exists('json_trigger')) {
      * @param int    $status
      *
      * @return mixed
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     function json_trigger($type, $message = '', $status = 200)
     {
@@ -42,7 +43,7 @@ if (!function_exists('json_trigger')) {
             $message = 'Erro, atualize a página e tente novamente.';
             $status = 500;
         }
-
+        
         return json(['trigger' => [$type, $message]], $status);
     }
 }
@@ -59,7 +60,7 @@ if (!function_exists('convert_minutes')) {
     function convert_minutes($time, $full = null)
     {
         $string = '';
-
+        
         if ($time > 0) {
             // Transforma em segundos
             $seconds = $time * 60;
@@ -69,22 +70,22 @@ if (!function_exists('convert_minutes')) {
             $seconds -= $hours * 3600;
             $minutes = floor($seconds / 60);
             $seconds -= $minutes * 60;
-
+            
             if ($days > 0 && $full) {
                 $string .= "{$days}d ";
             }
-
+            
             if ($hours > 0) {
                 $string .= "{$hours}h ";
             }
-
+            
             $string .= "{$minutes}m ";
-
+            
             if ($full) {
                 $string .= "{$seconds}s";
             }
         }
-
+        
         return $string;
     }
 }
@@ -99,27 +100,31 @@ if (!function_exists('link_youtube')) {
      */
     function link_youtube($url)
     {
-        if (strstr($url, "/v/")) {
+        if (strpos($url, 'youtu.be/')) {
+            preg_match('/(https:|http:|)(\/\/www\.|\/\/|)(.*?)\/(.{11})/i', $url, $matches);
+            
+            return $matches[4];
+        } else if (strstr($url, "/v/")) {
             $aux = explode("v/", $url);
             $aux2 = explode("?", $aux[1]);
             $cod_youtube = $aux2[0];
-
+            
             return $cod_youtube;
-        } elseif (strstr($url, "v=")) {
+        } else if (strstr($url, "v=")) {
             $aux = explode("v=", $url);
             $aux2 = explode("&", $aux[1]);
             $cod_youtube = $aux2[0];
-
+            
             return $cod_youtube;
-        } elseif (strstr($url, "/embed/")) {
+        } else if (strstr($url, "/embed/")) {
             $aux = explode("/embed/", $url);
             $cod_youtube = $aux[1];
-
+            
             return $cod_youtube;
-        } elseif (strstr($url, "be/")) {
+        } else if (strstr($url, "be/")) {
             $aux = explode("be/", $url);
             $cod_youtube = $aux[1];
-
+            
             return $cod_youtube;
         }
     }
@@ -140,16 +145,16 @@ if (!function_exists('get_image')) {
     {
         $folder = "fotos/{$table}/{$id}";
         $name = mb_strtoupper($name, 'UTF-8');
-
+        
         /**
          * Pega as imagem
          */
-        if (file_exists(PUBLIC_FOLDER . "/{$folder}") && is_dir(PUBLIC_FOLDER . "/{$folder}")) {
-            if (file_exists(PUBLIC_FOLDER . "/{$folder}/{$name}.{$ext}")) {
+        if (file_exists(PUBLIC_FOLDER."/{$folder}") && is_dir(PUBLIC_FOLDER."/{$folder}")) {
+            if (file_exists(PUBLIC_FOLDER."/{$folder}/{$name}.{$ext}")) {
                 return "/{$folder}/{$name}.{$ext}";
             }
         }
-
+        
         return false;
     }
 }
@@ -169,18 +174,18 @@ if (!function_exists('get_galeria')) {
         $path = "fotos/{$table}/{$id}";
         $name = mb_strtoupper($name, 'UTF-8');
         $array = [];
-
+        
         /**
          * Pega as imagem
          */
-        if (file_exists(PUBLIC_FOLDER . "/{$path}/galeria_{$name}")) {
-            $images = array_values(array_diff(scandir(PUBLIC_FOLDER . "/{$path}/galeria_{$name}/0"), ['.', '..']));
-
+        if (file_exists(PUBLIC_FOLDER."/{$path}/galeria_{$name}")) {
+            $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path}/galeria_{$name}/0"), ['.', '..']));
+            
             foreach ($images as $key => $image) {
                 $array[] = "/{$path}/galeria_{$name}/%s/{$image}";
             }
         }
-
+        
         return $array;
     }
 }
@@ -209,11 +214,11 @@ if (!function_exists('get_month')) {
             '11' => 'Novembro',
             '12' => 'Dezembro',
         ];
-
+        
         if (array_key_exists($month, $months)) {
             return $months[$month];
         }
-
+        
         return false;
     }
 }
@@ -235,13 +240,13 @@ if (!function_exists('get_day')) {
             '3' => 'Quarta Feira',
             '4' => 'Quinta Feira',
             '5' => 'Sexta Feira',
-            '6' => 'Sábado'
+            '6' => 'Sábado',
         ];
-
+        
         if (array_key_exists($day, $days)) {
             return $days[$day];
         }
-
+        
         return false;
     }
 }
