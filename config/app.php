@@ -58,7 +58,7 @@ return [
      *
      * Define se o site vai estar em manutenção
      */
-    'maintenance' => false,
+    'maintenance' => env('APP_MAINTENANCE', false),
     
     /**
      * App Environment
