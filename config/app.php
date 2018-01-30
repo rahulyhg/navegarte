@@ -44,7 +44,7 @@ return [
     /**
      * Application locale configuration
      */
-    'locale' => 'pt_BR',
+    'locale' => env('APP_LOCALE', 'pt_BR'),
     
     /**
      * App Url
