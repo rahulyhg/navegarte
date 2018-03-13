@@ -16,14 +16,16 @@ use Core\App;
  * Initializes the buffer and blocks any output to the browser
  * Compress HTML,JS,CSS etc
  */
-ob_start(function ($buffer) {
-    if ((!empty(OPTIMIZE) && OPTIMIZE === true) && (!mb_strpos($_SERVER['HTTP_HOST'], '.dev') && !mb_strpos($_SERVER['HTTP_HOST'], '.local'))) {
-        $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
-        $buffer = str_replace(["\r\n", "\r", "\n", "\t", '  ', '   ', '    ',], '', $buffer);
+ob_start(
+    function ($buffer) {
+        if ((!empty(OPTIMIZE) && OPTIMIZE === true) && (!mb_strpos($_SERVER['HTTP_HOST'], '.dev') && !mb_strpos($_SERVER['HTTP_HOST'], '.local'))) {
+            $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+            $buffer = str_replace(["\r\n", "\r", "\n", "\t", '  ', '   ', '    ',], '', $buffer);
+        }
+        
+        return $buffer;
     }
-    
-    return $buffer;
-});
+);
 
 /**
  * It is used when running the php embedded server

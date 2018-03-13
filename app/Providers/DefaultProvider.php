@@ -11,9 +11,9 @@
  */
 
 namespace App\Providers {
-
+    
     use Core\Contracts\Provider;
-
+    
     /**
      * Class DefaultProvider
      *
@@ -33,7 +33,7 @@ namespace App\Providers {
                 return 'name';
             };
         }
-
+        
         /**
          * Inicializa junto com o service
          */

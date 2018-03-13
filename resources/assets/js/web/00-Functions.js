@@ -7,8 +7,8 @@
  * @param milhar_separador
  * @returns {string|*}
  */
-function number_format (numero, decimal, decimal_separador, milhar_separador) {
-  numero         = (numero + '').replace(/[^0-9+\-Ee.]/g, '');
+function number_format(numero, decimal, decimal_separador, milhar_separador) {
+  numero = (numero + '').replace(/[^0-9+\-Ee.]/g, '');
   var n          = !isFinite(+numero) ? 0 : +numero,
       prec       = !isFinite(+decimal) ? 0 : Math.abs(decimal),
       sep        = (typeof milhar_separador === 'undefined') ? ',' : milhar_separador,
@@ -40,7 +40,7 @@ function number_format (numero, decimal, decimal_separador, milhar_separador) {
  * @param evt
  * @returns {boolean}
  */
-function isNumeric (evt) {
+function isNumeric(evt) {
   var charCode = (evt.which) ? evt.which : event.keyCode;
   
   return !(charCode > 31 && (charCode < 48 || charCode > 57));
@@ -53,7 +53,7 @@ function isNumeric (evt) {
  * @param length
  * @returns {string|jQuery}
  */
-function isLength (element, length) {
+function isLength(element, length) {
   if ($(element).val().length >= length) {
     return $(element).val($(element).val().substr(0, length - 1));
   }

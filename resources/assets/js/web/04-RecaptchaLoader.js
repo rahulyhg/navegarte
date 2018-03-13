@@ -1,4 +1,4 @@
-function recaptchaLoader () {
+function recaptchaLoader() {
   window.top.recaptchaKey = $('meta[name="recaptchaKey"]').attr('content');
   
   $('div').find('[data-recaptcha="true"]').each(function (index, element) {

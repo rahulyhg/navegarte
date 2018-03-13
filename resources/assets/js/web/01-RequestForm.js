@@ -6,16 +6,16 @@ jQuery(function ($) {
   $('html').on('submit', '.request-form', function (event) {
     event.preventDefault();
     
-    var form   = $(this);
+    var form = $(this);
     var method = form.attr('method') ? form.attr('method').toUpperCase() : 'POST';
-    var url    = form.attr('action');
+    var url = form.attr('action');
     
-    var btn         = form.find('button, .request-btn');
-    var btnLoadding = btn.attr('data-loadding') !== undefined ? btn.attr('data-loadding') : 'Aguarde...';
-    var btnHTML     = btn.html();
+    var btn = form.find('button, .request-btn');
+    var btnHTML = btn.html();
+    var btnLoadding = btn.attr('data-loadding') !== undefined ? btn.attr('data-loadding') : btnHTML;
     
     var disabled = $('#request-disabled');
-    var message  = form.find('#request-message');
+    var message = form.find('#request-message');
     
     if (message.length <= 0) {
       message = form.parent().find('#request-message');
@@ -75,10 +75,6 @@ jQuery(function ($) {
         if (data.trigger) {
           if (message.length > 0) {
             message.html('<div class="alert alert-' + data.trigger[0] + '">' + data.trigger[1] + '</div>').fadeIn(0);
-            
-            window.setTimeout(function () {
-              message.fadeOut(0).html('');
-            }, 60000);
           } else {
             alert(data.trigger[1]);
           }

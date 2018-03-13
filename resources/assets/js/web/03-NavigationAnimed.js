@@ -27,7 +27,7 @@ jQuery(function () {
    *
    * @param id
    */
-  function scrollMenu (id) {
+  function scrollMenu(id) {
     var sroll = $('[data-goto-id="' + id + '"]');
     
     $('html,body').animate({

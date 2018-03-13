@@ -1,6 +1,6 @@
 jQuery(function ($) {
   
-  function cleanEnd () {
+  function cleanEnd() {
     $('#ENDERECO_BAIRRO_ALUNO').val('');
     $('#ENDERECO_COMPLEMENTO_ALUNO').val('');
     $('#ENDERECO_CIDADE_ALUNO').val('');
@@ -14,7 +14,7 @@ jQuery(function ($) {
    */
   $('.jq_getCep').on('change', function (event) {
     
-    var cep         = $(event.currentTarget).val().replace(/\D/g, '');
+    var cep = $(event.currentTarget).val().replace(/\D/g, '');
     var validadeCep = /^[0-9]{8}$/;
     
     if (cep.length === 8) {

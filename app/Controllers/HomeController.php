@@ -11,9 +11,9 @@
  */
 
 namespace App\Controllers {
-
+    
     use Core\Contracts\Controller;
-
+    
     /**
      * Class HomeController
      *
@@ -28,7 +28,7 @@ namespace App\Controllers {
         public function boot()
         {
         }
-
+        
         /**
          * Template home
          *
@@ -37,7 +37,7 @@ namespace App\Controllers {
         public function get()
         {
             $array = [];
-
+            
             return $this->view('home', $array, 200);
         }
     }

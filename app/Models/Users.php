@@ -11,9 +11,9 @@
  */
 
 namespace App\Models {
-
+    
     use Core\Contracts\Model;
-
+    
     /**
      * Class Users
      *
