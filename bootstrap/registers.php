@@ -16,15 +16,15 @@ return [
      */
     'providers' => [
         'app' => [
-            \Core\Providers\ErrorProvider::class,
-            \Core\Providers\DatabaseProvider::class,
+            \Core\Providers\View\ViewProvider::class,
             \Core\Providers\Session\SessionProvider::class,
+            \Core\Providers\DatabaseProvider::class,
+            \Core\Providers\LoggerProvider::class,
+            \Core\Providers\Mailer\MailerProvider::class,
             \Core\Providers\Hash\BcryptProvider::class,
             \Core\Providers\Encryption\EncryptionProvider::class,
-            \Core\Providers\LoggerProvider::class,
-            \Core\Providers\View\ViewProvider::class,
+            \Core\Providers\ErrorProvider::class,
             /*Core\Providers\EloquentProvider::class,*/
-            \Core\Providers\Mailer\MailerProvider::class,
             /*\Core\Providers\InterventionImageProvider::class,*/
             /*\Core\Providers\WideImageProvider::class,*/
         ],
@@ -44,7 +44,7 @@ return [
      */
     'middleware' => [
         'app' => [
-            \Core\Middlewares\ConfigurationMiddleware::class,
+            \App\Middlewares\MaintenanceMiddleware::class,
             \Core\Middlewares\TrailingSlashMiddleware::class,
             \Core\Middlewares\OldInputMiddleware::class,
         ],

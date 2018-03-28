@@ -7,7 +7,7 @@
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-2017 Vagner Cardoso
+ * @copyright 2017-2018 Vagner Cardoso
  */
 
 // Adicionar as funcoes custum
@@ -16,7 +16,7 @@ if (!function_exists('onlyNumber')) {
     /**
      * Retorna apenas os números de uma string passada
      *
-     * @param $value
+     * @param string $value
      *
      * @return mixed
      */
@@ -28,69 +28,41 @@ if (!function_exists('onlyNumber')) {
 
 if (!function_exists('json_trigger')) {
     /**
+     * Gera a trigger no padrão das requisições ajax
+     *
      * @param string $type
      * @param string $message
      * @param int    $status
      *
      * @return mixed
      */
-    function json_trigger($type, $message = '', $status = 200)
+    function json_trigger($message, $type = null, $status = 200)
     {
-        if ($type == 'error' && empty($message)) {
-            $type = 'danger';
-            $message = 'Erro, atualize a página e tente novamente.';
-            $status = 500;
+        switch ($type) {
+            case E_USER_NOTICE:
+                $type = 'info';
+                break;
+            case E_USER_WARNING:
+                $type = 'warning';
+                break;
+            case E_USER_ERROR:
+                $type = 'danger';
+                break;
+            case 0:
+                $type = 'success';
+                break;
+            
+            default:
+                $type = 'success';
         }
         
         return json(['trigger' => [$type, $message]], $status);
     }
 }
 
-if (!function_exists('convert_minutes')) {
-    /**
-     * Converte os minutos
-     *
-     * @param      $time
-     * @param null $full
-     *
-     * @return string
-     */
-    function convert_minutes($time, $full = null)
-    {
-        $string = '';
-        
-        if ($time > 0) {
-            // Transforma em segundos
-            $seconds = $time * 60;
-            $days = floor($seconds / 86400);
-            $seconds -= $days * 86400;
-            $hours = floor($seconds / 3600);
-            $seconds -= $hours * 3600;
-            $minutes = floor($seconds / 60);
-            $seconds -= $minutes * 60;
-            
-            if ($days > 0 && $full) {
-                $string .= "{$days}d ";
-            }
-            
-            if ($hours > 0) {
-                $string .= "{$hours}h ";
-            }
-            
-            $string .= "{$minutes}m ";
-            
-            if ($full) {
-                $string .= "{$seconds}s";
-            }
-        }
-        
-        return $string;
-    }
-}
-
 if (!function_exists('link_youtube')) {
     /**
-     * Transforma a url passada pegando o seu hash
+     * Recupera o código do vídeo do Youtube
      *
      * @param string $url
      *
@@ -190,11 +162,11 @@ if (!function_exists('get_galeria')) {
 
 if (!function_exists('get_month')) {
     /**
-     * Get name month
+     * Retorna o mes do ano em pt-BR
      *
      * @param string $month
      *
-     * @return string|bool
+     * @return string
      */
     function get_month($month)
     {
@@ -217,17 +189,17 @@ if (!function_exists('get_month')) {
             return $months[$month];
         }
         
-        return false;
+        return '';
     }
 }
 
 if (!function_exists('get_day')) {
     /**
-     * Get name day
+     * Retorna o dia da semana pt-BR
      *
      * @param string $day
      *
-     * @return string|bool
+     * @return string
      */
     function get_day($day)
     {
@@ -245,28 +217,6 @@ if (!function_exists('get_day')) {
             return $days[$day];
         }
         
-        return false;
-    }
-}
-
-if (!function_exists('uuid')) {
-    /**
-     * Generate
-     *
-     * @return string
-     */
-    function uuid()
-    {
-        return sprintf(
-            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0x0C2f) | 0x4000,
-            mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0x2Aff),
-            mt_rand(0, 0xffD3),
-            mt_rand(0, 0xff4B)
-        );
+        return '';
     }
 }

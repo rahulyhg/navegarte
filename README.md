@@ -1,4 +1,4 @@
-# Desenvolvimento com o framework.
+# VCWeb Networks | Skeleton
 
 ## Instalação
 
@@ -13,7 +13,6 @@ composer create-project --prefer-dist navegarte/framework NOME_DA_PASTA
 
 As configurações ficam em `config/*.php` e `.env` para dados sensíveis.
 
-- `agency.php` Serve para caso queira adicionar os dados da agencia que está desenvolvendo o site.
 - `app.php` Configuração do sistema interno difícilmente irá mexer.
 - `client.php` Configuração do cliente **importante configurar com os dados correto dele.**
 - `database.php` Dados de conexão com o banco de dados que você irá configurar no arquivo `.env`.
@@ -203,7 +202,7 @@ Caso o `$method` seja `get,post`
   }
 ````
 
-#### Views
+##### Views
 
 Repare no Controller que criação lá acima que o `public function get()` retorna um `$this->view($archive, $array, $status);` que por sua vez
 irá retornar o HTML desenvolvido na view para o browser
@@ -223,7 +222,7 @@ irá retornar o HTML desenvolvido na view para o browser
 E dentro das views é **HTML** normal, porém utilizamos um sistema de template chamado [Twig](https://twig.symfony.com/) para não misturarmos php
 com html, pois as boas pratica de desenvolvimento não utilizamos para não injeçar nosso código fonte e ficar mais bonito.
 
-Para você dar seus `foreach, ifs, etc` no twig é muito simples é só olhar na [Documentação](https://twig.symfony.com/doc/2.x/) pois existe diversos
+Para você dar seus `foreach, if, etc` no twig é muito simples é só olhar na [Documentação](https://twig.symfony.com/doc/2.x/) pois existe diversos
 filtros, funções e possibilidades para usarmos na view.
 
 > Restante da documentação está sendo criada, aguarde...

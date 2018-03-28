@@ -15,8 +15,8 @@ return [
     /**
      * Configuração do site
      */
-    'name' => 'VCWeb', /* Nome do site do cliente */
-    'subname' => 'Desenvolvedor de sistemas web!', /* Slogan do site do cliente */
+    'name' => 'VCWeb Networks', /* Nome do site do cliente */
+    'subname' => 'Desenvolvendo soluções digitais!', /* Slogan do site do cliente */
     'description' => '', /* Descrição do site do cliente */
     'abstract' => '',
     'keywords' => '',
@@ -53,32 +53,32 @@ return [
      * Redes sociais
      */
     'social' => [
-        'name' => 'VCWeb!',
+        'name' => 'VCWeb Networks!',
         
         /**
          * Google Plus
          */
         'google' => [
-            'active' => 0, /* Ativa | Desativa */
-            'author' => '', /* ID do Usuário */
-            'page' => '', /* ID da Página */
+            'active' => 1, /* Ativa | Desativa */
+            'author' => '114194145304748321596', /* ID do Usuário */
+            'page' => '114194145304748321596', /* ID da Página */
         ],
         
         /**
          * Facebook
          */
         'facebook' => [
-            'active' => 0, /* Ativa | Desativa */
-            'app' => 0, /* Opcional APP do facebook */
-            'author' => '', /* https://www.facebook.com/????? */
-            'page' => '', /* https://www.facebook.com/????? */
-            'pageId' => 0, /* ID do Facebook Pages */
+            'active' => 1, /* Ativa | Desativa */
+            'app' => '342941756145265', /* Opcional APP do facebook */
+            'author' => 'vagnercardosoweb', /* https://www.facebook.com/????? */
+            'page' => 'vcwebnetworks', /* https://www.facebook.com/????? */
+            'pageId' => '555309298001978', /* ID do Facebook Pages */
         ],
         
         /**
          * Twitter
          */
-        'twitter' => 0, /* https://www.twitter.com/????? */
+        'twitter' => 'vcwebnetworks', /* https://www.twitter.com/????? */
         
         /**
          * Youtube
@@ -88,7 +88,7 @@ return [
         /**
          * Instagram
          */
-        'instagram' => 0, /* https://www.instagram.com/????? */
+        'instagram' => 'vcwebnetworks', /* https://www.instagram.com/????? */
     ],
 
 ];

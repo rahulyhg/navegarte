@@ -1,5 +1,4 @@
-jQuery(function ($) {
-  
+/*$(document).ready(function () {
   function cleanEnd() {
     $('#ENDERECO_BAIRRO_ALUNO').val('');
     $('#ENDERECO_COMPLEMENTO_ALUNO').val('');
@@ -9,9 +8,9 @@ jQuery(function ($) {
     $('#ENDERECO_NUMERO_ALUNO').val('');
   }
   
-  /**
-   * Get Cep
-   */
+  /!**
+   * Busca CEP
+   *!/
   $('.jq_getCep').on('change', function (event) {
     
     var cep = $(event.currentTarget).val().replace(/\D/g, '');
@@ -49,4 +48,4 @@ jQuery(function ($) {
       alert('Cep digitado é inválido');
     }
   });
-});
+});*/

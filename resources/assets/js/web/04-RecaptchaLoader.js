@@ -1,4 +1,4 @@
-function recaptchaLoader() {
+/*function recaptchaLoader() {
   window.top.recaptchaKey = $('meta[name="recaptchaKey"]').attr('content');
   
   $('div').find('[data-recaptcha="true"]').each(function (index, element) {
@@ -14,4 +14,4 @@ function recaptchaLoader() {
 
 jQuery(function ($) {
   $.getScript('https://www.google.com/recaptcha/api.js?onload=recaptchaLoader&render=explicit');
-});
+});*/

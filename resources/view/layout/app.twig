@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
     {# Metas tags #}
@@ -34,13 +34,13 @@
     
     <meta itemprop="name" content="{{ title_seo }}"/>
     <meta itemprop="description" content="{{ description ?: config('client.description') }}"/>
-    <meta itemprop="image" content="{{ asset(image ?: '/assets/web/images/1200x630.png', true) }}"/>
+    <meta itemprop="image" content="{{ imageUrl ?: asset(image ?: '/assets/web/images/1200x630.png', true) }}"/>
     <meta itemprop="url" content="{{ constant('FULL_URL') }}"/>
     
     <meta property="og:type" content="{{ type ?: 'article' }}"/>
     <meta property="og:title" content="{{ title_seo }}"/>
     <meta property="og:description" content="{{ description ?: config('client.description') }}"/>
-    <meta property="og:image" content="{{ asset(image ?: '/assets/web/images/1200x630.png', true) }}"/>
+    <meta property="og:image" content="{{ imageUrl ?: asset(image ?: '/assets/web/images/1200x630.png', true) }}"/>
     <meta property="og:url" content="{{ constant('FULL_URL') }}"/>
     <meta property="og:site_name" content="{{ config('client.name') }}"/>
     <meta property="og:locale" content="pt_BR"/>
@@ -64,7 +64,7 @@
     <meta property="twitter:domain" content="{{ constant('BASE_URL') }}"/>
     <meta property="twitter:title" content="{{ title_seo }}"/>
     <meta property="twitter:description" content="{{ description ?: config('client.description') }}"/>
-    <meta property="twitter:image" content="{{ asset(image ?: '/assets/web/images/1200x630.png', true) }}"/>
+    <meta property="twitter:image" content="{{ imageUrl ?: asset(image ?: '/assets/web/images/1200x630.png', true) }}"/>
     <meta property="twitter:url" content="{{ constant('FULL_URL') }}"/>
     
     {# FavIcon #}

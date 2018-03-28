@@ -1,13 +1,17 @@
 {
   "name": "navegarte/framework",
-  "description": "Projeto para desenvolvimento do front end da navegarte!",
+  "description": "Framework para criação de novos projetos.",
   "type": "project",
   "license": "MIT",
+  "support": {
+    "issues": "https://github.com/vagnercardosoweb/navegarte/issues",
+    "source": "https://github.com/vagnercardosoweb/navegarte"
+  },
   "authors": [
     {
-      "name": "Vagner Cardoso",
+      "name": "VCWeb Networks",
       "email": "vagnercardosoweb@gmail.com",
-      "homepage": "https://www.navegarte.com.br/",
+      "homepage": "https://www.vagnercardosoweb.com.br/",
       "role": "Developer"
     }
   ],

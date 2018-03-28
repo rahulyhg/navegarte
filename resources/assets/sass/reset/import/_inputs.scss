@@ -207,7 +207,20 @@ input[type="month"] {
   }
 }
 
-#request-message {
+#request-message,
+#vc-request {
   margin-top: 10px;
   display: none;
+  
+  .alert {
+    margin-bottom: 0;
+    
+    p {
+      margin-bottom: 3px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
 }

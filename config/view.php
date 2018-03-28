@@ -33,7 +33,7 @@ return [
      *
      * When enabled, it will be saved as configured by configuring [path.compiled]
      */
-    'cache' => false,
+    'cache' => true,
     
     /**
      * View paths
