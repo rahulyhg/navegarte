@@ -204,7 +204,7 @@ function ajaxForm(click, url, data, method, form) {
       
       // Reload datatable
       if (data.datatable) {
-        $('#startDatatable').DataTable().ajax.reload();
+        $(data.datatable).DataTable().ajax.reload();
       }
       
       // Reset recaptch
@@ -217,10 +217,10 @@ function ajaxForm(click, url, data, method, form) {
       click.html(html).attr('disabled', false);
     },
     error: function (xhr) {
-      var error = JSON.parse(JSON.stringify(xhr.responseText));
+      var error = JSON.parse(xhr.responseText);
       
       if (message !== undefined && message.length > 0) {
-        message.html('<div class="alert alert-danger">' + error + '</div>').fadeIn(0);
+        message.html('<div class="alert alert-danger"><p style="margin-bottom: 0;">' + error.error.message + '</p><small>#' + error.error.line + ' ' + error.error.file + '</small></div>').fadeIn(0);
       } else {
         alert(error.message);
       }

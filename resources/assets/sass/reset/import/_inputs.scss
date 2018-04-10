@@ -152,7 +152,7 @@ input[type="month"] {
   justify-content: space-between;
   
   > .label {
-    width: calc((100% / 2) - ($gutter-width / 2));
+    width: calc((100% / 2) - 5px);
   }
 }
 
@@ -160,7 +160,7 @@ input[type="month"] {
   @extend .label-50;
   
   > .label {
-    width: calc((100% / 3) - ($gutter-width / 2));
+    width: calc((100% / 3) - 5px);
   }
 }
 

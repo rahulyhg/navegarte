@@ -61,6 +61,7 @@ const taskCss = (taskName, array, name, path) => {
   });
 };
 
+//taskCss('styles', './resources/assets/sass/reset/reset.scss', 'reset', config.path.css + '/web');
 taskCss('styles', config.web.css, 'app', config.path.css + '/web');
 taskCss('stylesMail', './resources/assets/sass/mail.scss', 'mail', config.path.css);
 //taskCss('stylesAdm', config.adm.css, 'app', config.path.css + '/adm');
@@ -107,8 +108,10 @@ gulp.task('watch', () => {
     gulp.watch('./resources/assets/js/web/**/**/**/*.js', ['scripts']).on('change', onChange),
     //gulp.watch('./resources/assets/js/adm/**/**/**/*.js', ['scriptsAdm']).on('change', onChange),
     
-    gulp.watch('./resources/assets/libraries/web/**/**/**/*.{scss,css,js}', ['styles', 'scripts']).on('change', onChange)
+    //gulp.watch('./resources/assets/libraries/web/**/**/**/*.{scss,css,js}', ['styles', 'scripts']).on('change', onChange)
     //gulp.watch('./resources/assets/libraries/adm/**/**/**/*.{scss,css,js}', ['stylesAdm', 'scriptsAdm']).on('change', onChange)
+  
+    //gulp.watch('./resources/assets/sass/reset/**/**/**/*.{scss,css}', ['styles']).on('change', onChange)
   ];
 });
 

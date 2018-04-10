@@ -24,7 +24,7 @@ return [
             \Core\Providers\Hash\BcryptProvider::class,
             \Core\Providers\Encryption\EncryptionProvider::class,
             \Core\Providers\ErrorProvider::class,
-            /*Core\Providers\EloquentProvider::class,*/
+            /*\Core\Providers\EloquentProvider::class,*/
             /*\Core\Providers\InterventionImageProvider::class,*/
             /*\Core\Providers\WideImageProvider::class,*/
         ],

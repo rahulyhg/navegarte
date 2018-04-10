@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
     {# Metas tags #}
-    {% set title_seo = (title ?  title ~ ' - ' ~ config('client.name') ~ '!'  : config('client.name') ~ ' - ' ~ config('client.subname')) %}
+    {% set title_seo = (title ? title ~ ' - ' ~ config('client.name') ~ '!'  : config('client.name') ~ (config('client.subname') ? ' - ' ~ config('client.subname') : '!')) %}
     {% set social = config('client.social') %}
     
     <title>{{ title_seo }}</title>
@@ -22,7 +22,7 @@
     
     {# Fazer RSS e SiteMAP #}
     {#<link rel="alternate" type="application/rss+xml" href="{{ constant('BASE_URL') }}/rss"/>
-    <link rel="sitemap" type="application/xml" href="{{ constant('BASE_URL') }}/sitemap.xml" />#}
+    <link rel="sitemap" type="application/xml" href="{{ constant('BASE_URL') }}/sitemap.xml"/>#}
     
     {% if social['google']['active'] %}
       <link rel="author" href="https://plus.google.com/{{ social['google']['author'] }}/posts"/>

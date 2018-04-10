@@ -34,7 +34,7 @@ if (!function_exists('json_trigger')) {
      * @param string $message
      * @param int    $status
      *
-     * @return mixed
+     * @return \Slim\Http\Response
      */
     function json_trigger($message, $type = null, $status = 200)
     {
@@ -152,7 +152,9 @@ if (!function_exists('get_galeria')) {
             $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path}/galeria_{$name}/0"), ['.', '..']));
             
             foreach ($images as $key => $image) {
-                $array[] = "/{$path}/galeria_{$name}/%s/{$image}";
+                if (strpos($image, '.jpg') !== false || strpos($image, '.png') !== false) {
+                    $array[] = "/{$path}/galeria_{$name}/%s/{$image}";
+                }
             }
         }
         
