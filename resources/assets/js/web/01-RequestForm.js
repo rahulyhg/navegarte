@@ -217,12 +217,24 @@ function ajaxForm(click, url, data, method, form) {
       click.html(html).attr('disabled', false);
     },
     error: function (xhr) {
-      var error = JSON.parse(xhr.responseText);
+      var parse;
       
-      if (message !== undefined && message.length > 0) {
-        message.html('<div class="alert alert-danger"><p style="margin-bottom: 0;">' + error.error.message + '</p><small>#' + error.error.line + ' ' + error.error.file + '</small></div>').fadeIn(0);
-      } else {
-        alert(error.message);
+      try {
+        parse = JSON.parse(xhr.responseText);
+        
+        if (message !== undefined && message.length > 0) {
+          message.html('<div class="alert alert-danger">' + parse.error.message + '</div>').fadeIn(0);
+        } else {
+          alert(parse.error.message);
+        }
+      } catch (e) {
+        parse = JSON.parse(JSON.stringify(xhr.responseText));
+        
+        if (message !== undefined && message.length > 0) {
+          message.html('<div class="alert alert-danger">' + parse + '</div>').fadeIn(0);
+        } else {
+          alert('Não foi possível completar a requisição, tente novamente em alguns minutos.');
+        }
       }
     }
   });
