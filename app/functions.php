@@ -30,8 +30,8 @@ if (!function_exists('json_trigger')) {
     /**
      * Gera a trigger no padrão das requisições ajax
      *
-     * @param string $type
      * @param string $message
+     * @param int    $type
      * @param int    $status
      *
      * @return \Slim\Http\Response
@@ -40,20 +40,23 @@ if (!function_exists('json_trigger')) {
     {
         switch ($type) {
             case E_USER_NOTICE:
+            case E_NOTICE;
                 $type = 'info';
                 break;
             case E_USER_WARNING:
+            case E_WARNING;
                 $type = 'warning';
                 break;
             case E_USER_ERROR:
+            case E_ERROR;
                 $type = 'danger';
                 break;
-            case 0:
+            case 'success':
                 $type = 'success';
                 break;
             
             default:
-                $type = 'success';
+                $type = 'danger';
         }
         
         return json(['trigger' => [$type, $message]], $status);
