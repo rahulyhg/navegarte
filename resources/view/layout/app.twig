@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
     {# Metas tags #}
@@ -19,6 +19,9 @@
     
     <link rel="base" href="{{ constant('BASE_URL') }}"/>
     <link rel="canonical" href="{{ constant('FULL_URL') }}"/>
+    
+    {# Manifest #}
+    {#<link rel="manifest" href="{{ asset('/manifest.json') }}"/>#}
     
     {# Fazer RSS e SiteMAP #}
     {#<link rel="alternate" type="application/rss+xml" href="{{ constant('BASE_URL') }}/rss"/>
