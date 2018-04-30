@@ -234,6 +234,8 @@ function ajaxForm(click, url, data, method, form) {
           message.html('<div class="alert alert-danger">' + parse + '</div>').fadeIn(0);
         } else {
           alert('Não foi possível completar a requisição, tente novamente em alguns minutos.');
+
+          console.log(parse);
         }
       }
     }
