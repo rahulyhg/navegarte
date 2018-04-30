@@ -25,27 +25,27 @@ return [
      * Dados da empresa do cliente
      */
     'company' => [
-        'name' => '', /* Nome de remetente */
-        'rs' => '', /* Razão Social */
-        'email' => '', /* E-mail de contato */
-        'site' => '', /* URL descrita */
-        'cnpj' => '', /* CNPJ da empresa */
+        'name' => ' Vagner Dos Santos Cardoso', /* Nome de remetente */
+        'rs' => 'VCWeb Networks', /* Razão Social */
+        'email' => 'contato@vcwebnetworks.com.br', /* E-mail de contato */
+        'site' => 'www.vcwebnetworks.com.br', /* URL descrita */
+        'cnpj' => '29.334.153/0001-57', /* CNPJ da empresa */
         'ie' => '', /* Inscrição estadual da empresa */
-        'phoneA' => '', /* Telefone 1 */
-        'phoneB' => '', /* Telefone 2 */
+        'phoneA' => '(44) 99736-2151', /* Telefone 1 */
+        'phoneB' => '(44) 99736-2151', /* Telefone 2 */
         
         /**
          * Endereço
          */
         'address' => [
-            'street' => '', /* Nome da rua */
-            'number' => '', /* Número da casa */
-            'complement' => '', /* Complemento (casa,ap,etc...) */
-            'city' => '', /* Nome Cidade */
-            'district' => '', /* Nome do bairro */
-            'state' => '', /* UF do estado */
-            'zipCode' => '', /* CEP da sua rua */
-            'country' => '', /* País */
+            'street' => 'Rua Larazo Bom', /* Nome da rua */
+            'number' => '2294', /* Número da casa */
+            'complement' => 'Casa', /* Complemento (casa,ap,etc...) */
+            'city' => 'Umuarama', /* Nome Cidade */
+            'district' => 'Jardim Petrópolis', /* Nome do bairro */
+            'state' => 'PR', /* UF do estado */
+            'zipCode' => '87506-200', /* CEP da sua rua */
+            'country' => 'Brasil', /* País */
         ],
     ],
     
