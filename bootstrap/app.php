@@ -18,7 +18,7 @@ use Core\App;
  */
 ob_start(
     function ($buffer) {
-        if ((!empty(OPTIMIZE) && OPTIMIZE === true) && (!mb_strpos($_SERVER['HTTP_HOST'], '.dev') && !mb_strpos($_SERVER['HTTP_HOST'], '.local'))) {
+        if ((!empty(OPTIMIZE) && OPTIMIZE === true) && !mb_strpos($_SERVER['HTTP_HOST'], '.local')) {
             $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
             $buffer = str_replace(["\r\n", "\r", "\n", "\t", '  ', '   ', '    ',], '', $buffer);
         }
