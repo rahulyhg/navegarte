@@ -42,12 +42,11 @@ namespace App\Middlewares {
                     try {
                         // Cria a pasta de manutenção
                         mkdir(config('view.path.folder').'/maintenance');
-    
+                        
                         // Cria o template conforme a engine configurada
                         file_put_contents(
-                            config('view.path.folder').'/maintenance/home.'.config('view.engine'), file_get_contents(
-                                __DIR__.'/template/maintenance.'.config('view.engine')
-                            )
+                            config('view.path.folder').'/maintenance/home.'.config('view.engine'),
+                            $this->{"getTemplate".ucfirst(config('view.engine'))}()
                         );
                     } catch (\Exception $e) {
                         throw new \Exception($e->getMessage(), $e->getCode());
@@ -65,6 +64,16 @@ namespace App\Middlewares {
             $response = $next($request, $response);
             
             return $response;
+        }
+        
+        /**
+         * Template
+         *
+         * @return string
+         */
+        protected function getTemplateTwig()
+        {
+            return sprintf("<p style='text-align:center;font-weight:bold;margin-top:50px;font-size:30px;'>%s</p>", "Estamos em manutenção, voltaremos logo.");
         }
     }
 }
