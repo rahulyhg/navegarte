@@ -10,6 +10,8 @@
     ],
     "js": [
       "./public/assets/bower_components/jquery/dist/jquery.min.js",
+      "./public/assets/bower_components/popper.js/dist/umd/popper.min.js",
+      "./public/assets/bower_components/bootstrap/dist/js/bootstrap.min.js",
       "./resources/assets/js/web/*.js"
     ]
   },

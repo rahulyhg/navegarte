@@ -8,6 +8,8 @@
     "**/bower_components/**/"
   ],
   "dependencies": {
-    "jquery": "^2.2.1"
+    "jquery": "^2.2.1",
+    "bootstrap": "^4.1.1",
+    "popper.js": "^1.14.3"
   }
 }
