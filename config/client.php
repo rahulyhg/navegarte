@@ -16,10 +16,10 @@ return [
      * Configuração do site
      */
     'name' => 'VCWeb Networks', /* Nome do site do cliente */
-    'subname' => 'Desenvolvendo soluções digitais!', /* Slogan do site do cliente */
-    'description' => '', /* Descrição do site do cliente */
+    'subname' => 'Desenvolvimento de Websites, E-Commerce e Marketing Digital.', /* Slogan do site do cliente */
+    'description' => 'Somos uma agência de Desenvolvimento de Umuarama focada em criação de sites institucionais, lojas virtuais, e-commerce, portais e outros sistemas de software para internet e visamos sempre o melhor resultado para seu negócio.', /* Descrição do site do cliente */
     'abstract' => '',
-    'keywords' => '',
+    'keywords' => 'websites, e-commerce, blogs, loja virtual, vcweb, networks, vagner cardoso',
     
     /**
      * Dados da empresa do cliente
@@ -53,7 +53,7 @@ return [
      * Redes sociais
      */
     'social' => [
-        'name' => 'VCWeb Networks!',
+        'name' => 'VCWeb Networks',
         
         /**
          * Google Plus
