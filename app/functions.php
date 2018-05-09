@@ -69,7 +69,7 @@ if (!function_exists('link_youtube')) {
      *
      * @param string $url
      *
-     * @return mixed
+     * @return string|bool
      */
     function link_youtube($url)
     {
@@ -100,6 +100,8 @@ if (!function_exists('link_youtube')) {
             
             return $cod_youtube;
         }
+
+        return false;
     }
 }
 
