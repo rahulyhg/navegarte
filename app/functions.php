@@ -40,15 +40,15 @@ if (!function_exists('json_trigger')) {
     {
         switch ($type) {
             case E_USER_NOTICE:
-            case E_NOTICE;
+            case E_NOTICE:
                 $type = 'info';
                 break;
             case E_USER_WARNING:
-            case E_WARNING;
+            case E_WARNING:
                 $type = 'warning';
                 break;
             case E_USER_ERROR:
-            case E_ERROR;
+            case E_ERROR:
                 $type = 'danger';
                 break;
             case 'success':
@@ -100,7 +100,7 @@ if (!function_exists('link_youtube')) {
             
             return $cod_youtube;
         }
-
+        
         return false;
     }
 }
