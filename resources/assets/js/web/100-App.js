@@ -1,5 +1,1 @@
-$(document).ready(function () {
-  
-  //
-  
-});
+// Seu conteúdo JS

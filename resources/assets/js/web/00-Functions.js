@@ -5,6 +5,7 @@
  * @param decimal
  * @param decimal_separador
  * @param milhar_separador
+ *
  * @returns {string|*}
  */
 /*function number_format(numero, decimal, decimal_separador, milhar_separador) {
@@ -38,6 +39,7 @@
  * Retorna apenas número
  *
  * @param evt
+ *
  * @returns {boolean}
  */
 /*function isNumeric(evt) {
@@ -51,6 +53,7 @@
  *
  * @param element
  * @param length
+ *
  * @returns {string|jQuery}
  */
 /*function isLength(element, length) {
@@ -102,3 +105,40 @@
   };
   
 })(window);
+
+/**
+ * Juntos dois objetos
+ *
+ * @param object
+ * @param source
+ *
+ * @returns {*}
+ */
+function mergeObject(object, source) {
+  for (var key in source) {
+    if (source.hasOwnProperty(key)) {
+      object[key] = source[key];
+    }
+  }
+  
+  return object;
+}
+
+/**
+ * Mostra a imagem
+ *
+ * @param input
+ * @param find
+ */
+function previewImage(input, find) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    
+    reader.onload = function (e) {
+      $(find)
+        .attr('src', e.target.result);
+    };
+    
+    reader.readAsDataURL(input.files[0]);
+  }
+}

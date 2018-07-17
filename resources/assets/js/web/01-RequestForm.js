@@ -27,6 +27,13 @@ $(document).ready(function () {
     if ($this.attr('vc-form') !== undefined && ($this.attr('vc-form') === '' || $this.attr('vc-form'))) {
       event.preventDefault(event);
       
+      // CKEditor
+      if (typeof CKEDITOR !== 'undefined') {
+        for (var instance in CKEDITOR.instances) {
+          CKEDITOR.instances[instance].updateElement();
+        }
+      }
+      
       // Variáveis
       form = ($this.attr('vc-form') && $this.attr('vc-form').length > 0) ? $('form[name="' + $this.attr('vc-form') + '"]') : $this.closest('form');
       method = form.attr('method') ? form.attr('method').toUpperCase() : 'POST';
@@ -53,13 +60,15 @@ $(document).ready(function () {
           } else if ($(element).prop('type') === 'file') {
             var files = $(element).prop('files');
             
-            if (files !== undefined && files[0] !== undefined) {
-              data.append($(element).attr('name'), files[0]);
+            if (files !== undefined && files.length > 0) {
+              for (var i = 0; i <= files.length; i++) {
+                data.append($(element).attr('name'), files[i]);
+              }
             }
           } else if ($(element).tagName && $(element).tagName.toLowerCase() === 'textarea') {
-            data.append($(element).attr('name'), $(element).html() === null ? '' : $(element).html());
+            data.append($(element).attr('name'), $(element).html() === null ? null : $(element).html());
           } else {
-            data.append($(element).attr('name'), $(element).val() === null ? '' : $(element).val());
+            data.append($(element).attr('name'), $(element).val() === null ? null : $(element).val());
           }
         }
       });
@@ -234,7 +243,7 @@ function ajaxForm(click, url, data, method, form) {
           message.html('<div class="alert alert-danger">' + parse + '</div>').fadeIn(0);
         } else {
           alert('Não foi possível completar a requisição, tente novamente em alguns minutos.');
-
+          
           console.log(parse);
         }
       }
