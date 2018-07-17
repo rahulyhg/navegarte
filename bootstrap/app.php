@@ -16,16 +16,14 @@ use Core\App;
  * Initializes the buffer and blocks any output to the browser
  * Compress HTML,JS,CSS etc
  */
-ob_start(
-    function ($buffer) {
-        if ((!empty(OPTIMIZE) && OPTIMIZE === true) && !mb_strpos($_SERVER['HTTP_HOST'], '.local')) {
-            $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
-            $buffer = str_replace(["\r\n", "\r", "\n", "\t", '  ', '   ', '    ',], '', $buffer);
-        }
-        
-        return $buffer;
+ob_start(function ($buffer) {
+    if ((!empty(OPTIMIZE) && OPTIMIZE === true) && preg_replace('/[^a-zA-Z\-]/', '', $_SERVER['HTTP_HOST']) != 'localhost') {
+        $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+        $buffer = str_replace(["\r\n", "\r", "\n", "\t", '  ', '   ', '    ',], '', $buffer);
     }
-);
+    
+    return $buffer;
+});
 
 /**
  * It is used when running the php embedded server
@@ -75,6 +73,11 @@ $app = App::getInstance();
 $app->registerFunctions();
 
 /**
+ * Register routers
+ */
+$app->registerRouter();
+
+/**
  * Register providers
  */
 $app->registerProviders();
@@ -83,11 +86,6 @@ $app->registerProviders();
  * Register middleware
  */
 $app->registerMiddleware();
-
-/**
- * Register routers
- */
-$app->registerRouter();
 
 /**
  * Initialize app
