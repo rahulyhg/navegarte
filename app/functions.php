@@ -12,17 +12,67 @@
 
 // Adicionar as funcoes custum
 
+use Core\Helpers\Str;
+
 if (!function_exists('onlyNumber')) {
     /**
      * Retorna apenas os números de uma string passada
      *
      * @param string $value
      *
-     * @return mixed
+     * @return int|string
      */
     function onlyNumber($value)
     {
-        return preg_replace('/[^0-9]/', '', $value);
+        if (!empty($value)) {
+            return preg_replace('/[^0-9]/', '', $value);
+        }
+    }
+}
+
+if (!function_exists('filter_value')) {
+    /**
+     * Verifica e formata o valor do post
+     *
+     * @param string|int|bool $value
+     * @param string          $filter
+     * @param string          $errorMessage
+     * @param int             $errorCode
+     *
+     * @return null
+     * @throws \Exception
+     */
+    function filter_value($value, $filter = null, $errorMessage = null, $errorCode = E_USER_WARNING)
+    {
+        if ((empty($value) || $value == 'null' || $value == 'false') && $value != '0') {
+            if (!empty($errorMessage)) {
+                throw new Exception($errorMessage, $errorCode);
+            } else {
+                return null;
+            }
+        }
+        
+        if (!empty($filter)) {
+            switch ($filter) {
+                case 'onlyNumber':
+                    $value = onlyNumber($value);
+                    break;
+                
+                case 'dateDatabase':
+                    $value = date('Y-m-d', strtotime(str_replace('/', '-', $value)));
+                    break;
+                
+                case 'dateTimeDatabase':
+                    $value = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $value)));
+                    break;
+                
+                case 'moneyDatabase':
+                    $value = str_replace(',', '.', str_replace('.', '', $value));
+                    break;
+            }
+        }
+        
+        return $value;
     }
 }
 
@@ -38,6 +88,10 @@ if (!function_exists('json_trigger')) {
      */
     function json_trigger($message, $type = null, $status = 200)
     {
+        if (is_string($type)) {
+            $type = E_USER_ERROR;
+        }
+        
         switch ($type) {
             case E_USER_NOTICE:
             case E_NOTICE:
@@ -225,5 +279,212 @@ if (!function_exists('get_day')) {
         }
         
         return '';
+    }
+}
+
+if (!function_exists('upload_image')) {
+    /**
+     * Upload de imagem
+     *
+     * @param array  $file
+     * @param string $folder
+     * @param string $name
+     * @param int    $width
+     * @param int    $height
+     *
+     * @return array
+     * @throws \Exception
+     */
+    function upload_image($file, $folder, $name = null, $width = 500, $height = 500)
+    {
+        $directory = "/uploads/{$folder}";
+        $extensions = ['jpg', 'png'];
+        $images = [];
+        
+        foreach ($file as $key => $value) {
+            $extension = substr(strrchr($value['name'], '.'), 1);
+            $name = Str::slug((empty($name) ? substr($value['name'], 0, strrpos($value['name'], '.')) : $name));
+            $path = "{$directory}/{$name}.{$extension}";
+            
+            if ($extension == 'jpeg') {
+                $extension = 'jpg';
+            }
+            
+            // Checa extension
+            if (!in_array($extension, $extensions)) {
+                throw new \Exception("Apenas as extenções <b>".strtoupper(implode(', ', $extensions))."</b> são aceito para enviar sua imagem.", E_USER_ERROR);
+            }
+            
+            // Checa tamanho
+            if (($value['size'] > $max_filesize = get_upload_max_filesize()) || $value['error'] == 1) {
+                throw new \Exception("Sua imagem ultrapassou o limite de tamanho de <b>".bytes_convert($max_filesize)."</b>.", E_USER_ERROR);
+            }
+            
+            // Cria pasta
+            if (!file_exists(PUBLIC_FOLDER.$directory)) {
+                mkdir(PUBLIC_FOLDER.$directory, 0755, true);
+            }
+            
+            // Verifica arquivo
+            foreach ($extensions as $ext) {
+                $deleted = str_replace(".{$extension}", ".{$ext}", $path);
+                
+                if (file_exists(PUBLIC_FOLDER."{$deleted}")) {
+                    unlink(PUBLIC_FOLDER."{$deleted}");
+                }
+            }
+            
+            // Tamanho original
+            list($widthOri, $heightOri) = getimagesize($value['tmp_name']);
+            
+            if (!imagem($value['tmp_name'], PUBLIC_FOLDER.$path, ($width > $widthOri ? $widthOri : $width), ($height > $heightOri ? $heightOri : $height), 90)) {
+                throw new \Exception("Não foi possível enviar sua imagem, tente novamente em alguns segundos.", E_USER_ERROR);
+            }
+            
+            $images[] = [
+                'name' => $name,
+                'path' => $path,
+                'extension' => $extension,
+                'size' => $value['size'],
+                'md5' => md5_file(PUBLIC_FOLDER.$path),
+            ];
+        }
+        
+        return $images;
+    }
+}
+
+if (!function_exists('upload_archive')) {
+    /**
+     * Upload de imagem
+     *
+     * @param array  $file
+     * @param string $folder
+     * @param string $name
+     *
+     * @return array
+     * @throws \Exception
+     */
+    function upload_archive($file, $folder, $name = null)
+    {
+        $directory = "/uploads/{$folder}";
+        $extensions = ['zip', 'rar', 'pdf', 'docx', 'jpg', 'png'];
+        $archives = [];
+        
+        // Envia os arquivos
+        foreach ($file as $key => $value) {
+            $extension = substr(strrchr($value['name'], '.'), 1);
+            $name = Str::slug((empty($name) ? substr($value['name'], 0, strrpos($value['name'], '.')) : $name));
+            $path = "{$directory}/{$name}.{$extension}";
+            
+            // Checa extension
+            if (!in_array($extension, $extensions)) {
+                throw new \Exception("Apenas as extenções <b>".strtoupper(implode(', ', $extensions))."</b> são aceito para enviar o arquivo.", E_USER_ERROR);
+            }
+            
+            // Checa tamanho
+            if (($value['size'] > $max_filesize = get_upload_max_filesize()) || $value['error'] == 1) {
+                throw new \Exception("Seu arquivo ultrapassou o limite de tamanho de <b>".bytes_convert($max_filesize)."</b>.", E_USER_ERROR);
+            }
+            
+            // Cria pasta
+            if (!file_exists(PUBLIC_FOLDER.$directory)) {
+                mkdir(PUBLIC_FOLDER.$directory, 0755, true);
+            }
+            
+            // Verifica arquivo
+            foreach ($extensions as $ext) {
+                $deleted = str_replace(".{$extension}", ".{$ext}", $path);
+                
+                if (file_exists(PUBLIC_FOLDER.$deleted)) {
+                    unlink(PUBLIC_FOLDER.$deleted);
+                }
+            }
+            
+            // Envia arquivo
+            if (!move_uploaded_file($value['tmp_name'], PUBLIC_FOLDER.$path)) {
+                throw new \Exception("Não foi possível enviar o arquivo, tente novamente em alguns segundos.", E_USER_ERROR);
+            }
+            
+            $archives[] = [
+                'name' => $name,
+                'path' => $path,
+                'extension' => $extension,
+                'size' => $value['size'],
+                'md5' => md5_file(PUBLIC_FOLDER.$path),
+            ];
+        }
+        
+        return $archives;
+    }
+}
+
+if (!function_exists('organize_multiple_files')) {
+    /**
+     * Reorganiza o array dos files
+     *
+     * @param array $files
+     *
+     * @return array
+     */
+    function organize_multiple_files($files)
+    {
+        $newFiles = [];
+        $multiple = is_array($files);
+        $fileCount = $multiple ? count($files['name']) : 1;
+        $fileKeys = array_keys($files);
+        
+        for ($i = 0; $i < $fileCount; $i++) {
+            foreach ($fileKeys as $fileKey) {
+                $newFiles[$i][$fileKey] = $multiple ? $files[$fileKey][$i] : $files[$fileKey];
+            }
+        }
+        
+        return $newFiles;
+    }
+}
+
+if (!function_exists('get_upload_max_filesize')) {
+    /**
+     * Converte o `filesize` máximo configurado
+     * para upload de arquivos/images
+     *
+     * @return float|int
+     */
+    function get_upload_max_filesize()
+    {
+        $mb = ini_get('upload_max_filesize');
+        $maxFileSize = 0;
+        
+        if (preg_match('/([0-9])+([a-zA-Z])/', $mb, $matche)) {
+            switch ($matche[2]) {
+                case 'K':
+                case 'KB':
+                    $maxFileSize = ($matche[1] * pow(1024, 1));
+                    break;
+                
+                case 'M':
+                case 'MB':
+                    $maxFileSize = ($matche[1] * pow(1024, 2));
+                    break;
+                
+                case 'G':
+                case 'GB':
+                    $maxFileSize = ($matche[1] * pow(1024, 3));
+                    break;
+                
+                case 'T':
+                case 'TB':
+                    $maxFileSize = ($matche[1] * pow(1024, 4));
+                    break;
+                
+                case 'P':
+                case 'PB':
+                    $maxFileSize = ($matche[1] * pow(1024, 5));
+                    break;
+            }
+        }
+        
+        return $maxFileSize;
     }
 }
