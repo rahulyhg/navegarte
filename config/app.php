@@ -17,14 +17,14 @@ return [
      *
      * Define a versão do framework
      */
-    'version' => 'v1.0.9',
+    'version' => 'v1.1.0',
     
     /**
      * Skeleton Version
      *
      * Define a versão do skeleton
      */
-    'skeleton' => 'v1.0.5',
+    'skeleton' => 'v1.0.6',
     
     /**
      * Configuração para habilitar ou desabilitar as sessões
