@@ -1,7 +1,8 @@
+/*
 $(document).ready(function () {
-  /**
+  /!**
    * Verifica e monta a estrutura para enviar as requisições.
-   */
+   *!/
   $('html').on('click', '*', function (event) {
     var $this  = $(this),
         form   = '',
@@ -66,9 +67,9 @@ $(document).ready(function () {
               }
             }
           } else if ($(element).tagName && $(element).tagName.toLowerCase() === 'textarea') {
-            data.append($(element).attr('name'), $(element).html() === null ? null : $(element).html());
+            data.append($(element).attr('name'), $(element).html() === null ? '' : $(element).html());
           } else {
-            data.append($(element).attr('name'), $(element).val() === null ? null : $(element).val());
+            data.append($(element).attr('name'), $(element).val() === null ? '' : $(element).val());
           }
         }
       });
@@ -108,7 +109,7 @@ $(document).ready(function () {
   });
 });
 
-/**
+/!**
  * Gera as requisições em ajax
  *
  * @param {Object} click
@@ -116,7 +117,7 @@ $(document).ready(function () {
  * @param {Object} data
  * @param {string} method
  * @param {Object} form
- */
+ *!/
 function ajaxForm(click, url, data, method, form) {
   // Verifica URL
   if (!url || url === null) {
@@ -250,3 +251,4 @@ function ajaxForm(click, url, data, method, form) {
     }
   });
 }
+*/

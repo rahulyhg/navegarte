@@ -1,8 +1,8 @@
 {
   "path": {
     "public": "./public",
-    "css": "./public/assets/",
-    "js": "./public/assets/"
+    "css": "./public/assets",
+    "js": "./public/assets"
   },
   "web": {
     "css": [
@@ -14,9 +14,5 @@
       "./public/assets/bower_components/bootstrap/dist/js/bootstrap.min.js",
       "./resources/assets/js/web/*.js"
     ]
-  },
-  "adm": {
-    "css": [],
-    "js": []
   }
 }

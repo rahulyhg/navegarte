@@ -1,124 +1,121 @@
 'use strict';
 
-let file = require('fs');
-let config = JSON.parse(file.readFileSync('./resources/assets/config.json', 'UTF8')) || {};
+/**
+ * Configurações
+ */
+const file = require('fs');
+const config = JSON.parse(file.readFileSync('./resources/assets/config.json', 'UTF8')) || {};
 
+/**
+ * Plugins do GULP
+ */
 const gulp = require('gulp');
-const concat = require('gulp-concat-util');
-const sequence = require('run-sequence');
-const notify = require('gulp-notify');
-
-/**
- * Gulps STYLES
- */
-const cssComb = require('gulp-csscomb');
 const sass = require('gulp-sass');
-const postCss = require('gulp-postcss');
-const autoprefixer = require('autoprefixer');
-const minifyCss = require('gulp-minify-css');
-
-/**
- * Gulp JS
- */
+const postcss = require('gulp-postcss');
+const minifycss = require('gulp-minify-css');
+const notify = require('gulp-notify');
+const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
-const babel = require('gulp-babel');
-const es2015 = require('babel-preset-es2015');
+// const babel = require('gulp-babel');
+const browserSync = require('browser-sync').create();
 
 /**
- * Task CSS
+ * Compila os scss
+ *
+ * @param src
+ * @param fileName
+ * @param dest
+ * @returns {*}
  */
-const taskCss = (taskName, array, name, path) => {
-  gulp.task(taskName, () => {
-    return gulp
-      .src(array)
-      .pipe(sass({
-        includePaths: [config.path.public + '/assets/bower_components']
-      })).on('error', sass.logError)
-      .pipe(concat('all.css'))
-      .pipe(postCss([
-        autoprefixer({
-          browsers: ['last 2 versions'],
-          cascade: false
-        }),
-        require('css-mqpacker')
-      ]))
-      //.pipe(cssComb('./resources/assets/.csscomb.json'))
-      .pipe(minifyCss({
-        keepBreaks: false,
-        target: config.path.public,
-        root: config.path.public,
-        processImport: true,
-        keepSpecialComments: 0
-      }))
-      .pipe(concat(name + '.css'))
-      .pipe(gulp.dest(path))
-      .pipe(notify({
-        message: 'Build style <%= file.relative %> successfully!',
-        templateOptions: {
-          date: new Date()
-        }
-      }));
+const compileSass = (src, fileName, dest) => {
+  return gulp
+    .src(src)
+    .pipe(sass({includePaths: `${config.path.public}/assets`}).on('error', sass.logError))
+    .pipe(concat('main.css'))
+    .pipe(postcss([
+      require('autoprefixer')({browsers: ['last 2 versions'], cascade: false}),
+      require('css-mqpacker')()
+    ]))
+    .pipe(minifycss({
+      keepBreaks: false,
+      target: config.path.public,
+      root: config.path.public,
+      processImport: true,
+      keepSpecialComments: 0,
+      level: 2
+    }))
+    .pipe(concat(`${fileName}.css`))
+    .pipe(gulp.dest(dest))
+    .pipe(notify(`${dest.replace(config.path.public, '')}/${fileName}.css successfully.`))
+    .pipe(browserSync.stream());
+};
+
+const sassMail = () => compileSass('./resources/assets/sass/mail.scss', 'mail', config.path.css);
+gulp.task('sass-mail', () => sassMail());
+
+const sassWeb = () => compileSass(config.web.css, 'app', `${config.path.css}/web`);
+gulp.task('sass-web', sassWeb);
+
+/**
+ * Compila os javascripts
+ *
+ * @param src
+ * @param fileName
+ * @param dest
+ * @returns {*}
+ */
+const compileJs = (src, fileName, dest) => {
+  return gulp
+    .src(src)
+    .pipe(concat('main.js'))
+    /*.pipe(babel({presets: ['env']}))*/
+    .pipe(uglify())
+    .pipe(concat(`${fileName}.js`))
+    .pipe(gulp.dest(dest))
+    .pipe(notify(`${dest.replace(config.path.public, '')}/${fileName}.js successfully.`))
+    .pipe(browserSync.stream());
+};
+
+const jsWeb = () => compileJs(config.web.js, 'app', `${config.path.js}/web`);
+gulp.task('js-web', jsWeb);
+
+/**
+ * Sincronização do browser
+ */
+/*const browser = () => {
+  browserSync.init({
+    proxy: 'localhost'
   });
 };
 
-//taskCss('styles', './resources/assets/sass/reset/reset.scss', 'reset', config.path.css + '/web');
-taskCss('styles', config.web.css, 'app', config.path.css + '/web');
-taskCss('stylesMail', './resources/assets/sass/mail.scss', 'mail', config.path.css);
-//taskCss('stylesAdm', config.adm.css, 'app', config.path.css + '/adm');
+gulp.task('browser-sync', browser);*/
 
 /**
- * Task JS
- */
-const taskJs = (taskName, array, name, path) => {
-  gulp.task(taskName, () => {
-    return gulp
-      .src(array)
-      .pipe(concat('all.js'))
-      /*.pipe(babel({
-       presets: [es2015]
-       }))*/
-      .pipe(uglify())
-      .pipe(concat(name + '.js'))
-      .pipe(gulp.dest(path))
-      .pipe(notify({
-        message: 'Build script <%= file.relative %> successfully!',
-        templateOptions: {
-          date: new Date()
-        }
-      }));
-  });
-};
-
-taskJs('scripts', config.web.js, 'app', config.path.js + '/web');
-//taskJs('scriptsAdm', config.adm.js, 'app', config.path.js + '/adm');
-
-/**
- * Task WATCH
+ * Inicia a observaão das tarefas
  */
 gulp.task('watch', () => {
   const onChange = (event) => {
     console.log(`File ${event.path} was ${event.type}, running tasks...`);
   };
   
-  return [
-    gulp.watch('./resources/assets/sass/mail.scss', ['stylesMail']).on('change', onChange),
-    gulp.watch('./resources/assets/sass/web/**/**/**/*.{scss,css}', ['styles']).on('change', onChange),
-    //gulp.watch('./resources/assets/sass/adm/**/**/**/*.{scss,css}', ['stylesAdm']).on('change', onChange),
-    
-    gulp.watch('./resources/assets/js/web/**/**/**/*.js', ['scripts']).on('change', onChange),
-    //gulp.watch('./resources/assets/js/adm/**/**/**/*.js', ['scriptsAdm']).on('change', onChange),
-    
-    //gulp.watch('./resources/assets/libraries/web/**/**/**/*.{scss,css,js}', ['styles', 'scripts']).on('change', onChange)
-    //gulp.watch('./resources/assets/libraries/adm/**/**/**/*.{scss,css,js}', ['stylesAdm', 'scriptsAdm']).on('change', onChange)
+  /* Email */
+  gulp.watch('./resources/assets/sass/mail.scss', sassMail);
   
-    //gulp.watch('./resources/assets/sass/reset/**/**/**/*.{scss,css}', ['styles']).on('change', onChange)
-  ];
+  /* Web */
+  gulp.watch('./resources/assets/sass/web/**/**/**/*.{scss,css}', sassWeb);
+  gulp.watch('./resources/assets/js/web/**/**/**/*.js', jsWeb);
+  
+  /* BrowserSync */
+  /*gulp.watch([
+    '../!**!/!*.{php,twig,js,css}',
+    '!../!**!/docker',
+    '!../!**!/node_modules',
+    '!../!**!/bower_componets',
+    '!../!**!/vendor'
+  ]).on('change', browserSync.reload);*/
 });
 
 /**
- * Task DEFAULT
+ * Roda todas tarefas
  */
-gulp.task('default', (callback) => {
-  //return sequence('styles', 'stylesAdm', 'stylesMail', 'scripts', 'scriptsAdm', ['watch'], callback);
-  return sequence('styles', 'stylesMail', 'scripts', ['watch'], callback);
-});
+gulp.task('default', gulp.parallel('watch', 'sass-mail', 'sass-web', 'js-web'));

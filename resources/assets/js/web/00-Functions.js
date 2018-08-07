@@ -62,8 +62,8 @@
   }
 }*/
 
-(function (window) {
-  /**
+/*(function (window) {
+  /!**
    * Passado pro escopo global do `window` para poder usar
    * o Storage em qualquer lugar
    *
@@ -77,7 +77,7 @@
    *      emove: Window.Storage.remove
    *    }
    *  }
-   */
+   *!/
   window.Storage = {
     set: function (key, value) {
       window.localStorage[key] = value;
@@ -104,7 +104,7 @@
     }
   };
   
-})(window);
+})(window);*/
 
 /**
  * Juntos dois objetos
@@ -114,7 +114,7 @@
  *
  * @returns {*}
  */
-function mergeObject(object, source) {
+/*function mergeObject(object, source) {
   for (var key in source) {
     if (source.hasOwnProperty(key)) {
       object[key] = source[key];
@@ -122,7 +122,7 @@ function mergeObject(object, source) {
   }
   
   return object;
-}
+}*/
 
 /**
  * Mostra a imagem
@@ -130,7 +130,7 @@ function mergeObject(object, source) {
  * @param input
  * @param find
  */
-function previewImage(input, find) {
+/*function previewImage(input, find) {
   if (input.files && input.files[0]) {
     var reader = new FileReader();
     
@@ -141,4 +141,4 @@ function previewImage(input, find) {
     
     reader.readAsDataURL(input.files[0]);
   }
-}
+}*/
