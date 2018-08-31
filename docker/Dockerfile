@@ -5,7 +5,6 @@ RUN  apt-get update \
   && apt-get upgrade -y \
   && apt-get autoremove -y \
   && apt-get install -yq \
-
     # Dependencia para o pdo_dblib
     zlib1g-dev \
     unixodbc \
@@ -13,7 +12,7 @@ RUN  apt-get update \
     freetds-dev \
     freetds-bin \
     tdsodbc \
-
+    # Outras dependências
     libmcrypt-dev \
     libpng-dev \
     libjpeg62-turbo-dev \
@@ -72,7 +71,10 @@ RUN a2enmod rewrite
 RUN a2enmod ssl
 
 # Cria certificado SSL
-RUN openssl req -new -x509 -days 365 -nodes -out /etc/ssl/certs/ssl-cert-snakeoil.pem -keyout /etc/ssl/private/ssl-cert-snakeoil.key -subj "/C=BR/ST=Santa Catarina/L=Tubarao/O=MioloAzul/CN=*.mioloazul.com.br"
+RUN openssl req -new -x509 -days 365 -nodes -out /etc/ssl/certs/ssl-cert-snakeoil.pem -keyout /etc/ssl/private/ssl-cert-snakeoil.key -subj "/C=BR/ST=Paraná/L=Umuarama/O=VCWeb Networks/CN=*.localhost"
 
 # Habilita o certificado SSL
 RUN a2ensite default-ssl
+
+# Permissão de pasta
+# RUN chown -R www-data:www-data /var/www
