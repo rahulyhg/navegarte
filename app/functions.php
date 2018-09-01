@@ -36,17 +36,17 @@ if (!function_exists('filter_value')) {
      *
      * @param string|int|bool $value
      * @param string          $filter
-     * @param string          $errorMessage
-     * @param int             $errorCode
+     * @param string          $message
+     * @param int             $code
      *
      * @return null
      * @throws \Exception
      */
-    function filter_value($value, $filter = null, $errorMessage = null, $errorCode = E_USER_WARNING)
+    function filter_value($value, $filter = null, $message = null, $code = E_USER_WARNING)
     {
         if ((empty($value) || $value == 'null' || $value == 'false') && $value != '0') {
-            if (!empty($errorMessage)) {
-                throw new Exception($errorMessage, $errorCode);
+            if (!empty($message)) {
+                throw new Exception($message, $code);
             } else {
                 return null;
             }
@@ -80,40 +80,40 @@ if (!function_exists('json_trigger')) {
     /**
      * Gera a trigger no padrão das requisições ajax
      *
-     * @param string $message
-     * @param int    $type
-     * @param int    $status
+     * @param string     $message
+     * @param string|int $error
+     * @param int        $status
      *
      * @return \Slim\Http\Response
      */
-    function json_trigger($message, $type = null, $status = 200)
+    function json_trigger($message, $error = 'success', $status = 200)
     {
-        if (is_string($type)) {
-            $type = E_USER_ERROR;
+        if (is_string($error) && $error !== 'success') {
+            $error = E_USER_ERROR;
         }
         
-        switch ($type) {
+        switch ($error) {
             case E_USER_NOTICE:
             case E_NOTICE:
-                $type = 'info';
+                $error = 'info';
                 break;
             case E_USER_WARNING:
             case E_WARNING:
-                $type = 'warning';
+                $error = 'warning';
                 break;
             case E_USER_ERROR:
             case E_ERROR:
-                $type = 'danger';
+                $error = 'danger';
                 break;
             case 'success':
-                $type = 'success';
+                $error = 'success';
                 break;
             
             default:
-                $type = 'danger';
+                $error = 'danger';
         }
         
-        return json(['trigger' => [$type, $message]], $status);
+        return json(['trigger' => [$error, $message]], $status);
     }
 }
 
