@@ -7,7 +7,7 @@
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-2017 Vagner Cardoso
+ * @copyright 2017-2018 Vagner Cardoso
  */
 
-$app->route('get', '/', 'HomeController', 'home');
+$app->route('get', '/', 'IndexController', 'index');
