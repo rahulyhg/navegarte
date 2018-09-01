@@ -7,7 +7,7 @@
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-2017 Vagner Cardoso
+ * @copyright 2017-2018 Vagner Cardoso
  */
 
 return [
@@ -24,9 +24,6 @@ return [
             \Core\Providers\Hash\BcryptProvider::class,
             \Core\Providers\Encryption\EncryptionProvider::class,
             \Core\Providers\ErrorProvider::class,
-            /*\Core\Providers\EloquentProvider::class,*/
-            /*\Core\Providers\InterventionImageProvider::class,*/
-            /*\Core\Providers\WideImageProvider::class,*/
         ],
         
         'web' => [],
