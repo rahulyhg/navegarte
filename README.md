@@ -100,7 +100,10 @@ Todos controller seguem o mesmo padrão como:
       use Core\Contracts\Controller;
   
       /**
-       * Class HomeController
+       * Class MinhaRotaController
+       *
+       * @package App\Controllers
+       * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
        */
       final class MinhaRotaController extends Controller
       {
@@ -115,15 +118,15 @@ Todos controller seguem o mesmo padrão como:
           }
   
           /**
-           * View /
+           * [VIEW] /
            *
-           * @return mixed
+           * @return \Slim\Http\Response
            */
           public function get()
           {
               $array = [];
   
-              return $this->view('home', $array, 200);
+              return $this->view('index', $array, 200);
           }
       }
   }
@@ -135,7 +138,7 @@ e você envia um post para essa rota do `controller` é preciso ter outro métod
 
 ````php
   /**
-   * POST /
+   * [POST] /
    *
    * @return mixed
    */
@@ -168,7 +171,7 @@ e para isso funcionar você deve adicionar essa ação ao controller.
 
 ````php
   /**
-   * View /minharota/action
+   * [VIEW] /minharota/action
    *
    * @return mixed
    */
@@ -182,7 +185,7 @@ Caso o `$method` seja `get,post`
 
 ````php
   /**
-   * View /minharota/action
+   * [VIEW] /minharota/action
    *
    * @return mixed
    */
@@ -192,7 +195,7 @@ Caso o `$method` seja `get,post`
   }
   
   /**
-   * POST /minharota/action
+   * [POST] /minharota/action
    *
    * @return mixed
    */
@@ -208,7 +211,7 @@ Repare no Controller que criação lá acima que o `public function get()` retor
 irá retornar o HTML desenvolvido na view para o browser
 
 ````php
-  $archive = 'home';
+  $archive = 'index';
   $array = array('name' => 'Vagner Cardoso');
   $status = 200';
   
