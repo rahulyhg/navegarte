@@ -7,7 +7,7 @@
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-2017 Vagner Cardoso
+ * @copyright 2017-2018 Vagner Cardoso
  */
 
 /**
@@ -46,7 +46,7 @@ define('RESOURCE_FOLDER', APP_FOLDER.'/resources');
 /**
  * Base URL
  */
-define('BASE_URL', (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']));
+define('BASE_URL', (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://').$_SERVER['HTTP_HOST']);
 
 /**
  * Request URI
