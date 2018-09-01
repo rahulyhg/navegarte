@@ -1,0 +1,97 @@
+/* Functions */
+@function convertPx($size) {
+  @return #{($size / 16) + 'rem'};
+}
+
+/* HREF Custom */
+*[data-href] {
+  cursor: pointer !important;
+}
+
+/* COLORS :: Coloreds */
+@each $color, $value in $colors {
+  /* text colors */
+  .text-#{$color} {
+    color: #{$value} !important;
+  }
+  
+  /* backgrounds */
+  .bg-#{$color} {
+    background-color: #{$value} !important;
+  }
+  
+  /* buttons */
+  .btn-outline-#{$color} {
+    color: #{$value};
+    background: transparent none;
+    border-color: #{$value};
+    
+    &:hover {
+      color: #ffffff;
+      background-color: #{$value};
+      border-color: #{$value};
+    }
+  }
+  
+  /* pagination */
+  .pagination-#{$color} {
+    .page-item {
+      .page-link {
+        color: #{$value};
+        border-color: #{$value};
+      }
+      
+      &.active {
+        .page-link {
+          color: #ffffff;
+          background: #{$value};
+          border-color: #{$value};
+        }
+      }
+    }
+  }
+}
+
+/* COLORS :: Grays */
+@each $color, $value in $grays {
+  /* text colors */
+  .text-gray-#{$color} {
+    color: #{$value} !important;
+  }
+  
+  /* backgrounds */
+  .bg-gray-#{$color} {
+    background-color: #{$value} !important;
+  }
+  
+  /* buttons */
+  .btn-outline-gray-#{$color} {
+    color: #{$value};
+    background: transparent none;
+    border-color: #{$value};
+    
+    &:hover {
+      color: #ffffff;
+      background-color: #{$value};
+      border-color: #{$value};
+    }
+  }
+  
+  /* pagination */
+  .pagination-gray-#{$color} {
+    .page-item {
+      .page-link {
+        color: #{$value};
+        border-color: #{$value};
+      }
+      
+      &.active {
+        .page-link {
+          color: #ffffff;
+          background: #{$value};
+          border-color: #{$value};
+        }
+      }
+    }
+  }
+}

@@ -41,8 +41,7 @@ const compileSass = (src, fileName, dest) => {
       target: config.path.public,
       root: config.path.public,
       processImport: true,
-      keepSpecialComments: 0,
-      level: 2
+      keepSpecialComments: 0
     }))
     .pipe(concat(`${fileName}.css`))
     .pipe(gulp.dest(dest))

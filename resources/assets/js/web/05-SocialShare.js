@@ -1,15 +1,16 @@
-/*$(document).ready(function () {
+/*
+/!* Carrega o documento *!/
+$(document).ready(function () {
+  // data-share="https://www.facebook.com/sharer/sharer.php?u=URL }}"
+  // data-share="https://twitter.com/intent/tweet?text=TEXT&url=URL&hashtags=HASHTAG&via=VIA(NOME_PAGE)"
+  // data-share="https://plus.google.com/share?url=URL&hl=pt-BR"
+  // data-share="https://api.whatsapp.com/send?text=TEXT|URL_ENCODE"
   
-  // data-social-share="https://www.facebook.com/sharer/sharer.php?u=URL }}"
-  // data-social-share="https://twitter.com/intent/tweet?text=TEXT&url=URL&hashtags=HASHTAG&via=VIA(NOME_PAGE)"
-  // data-social-share="https://plus.google.com/share?url=URL&hl=pt-BR"
-  // data-social-share="https://api.whatsapp.com/send?text=TEXT|URL_ENCODE"
-  
-  // Open popup shared
-  $('*[data-social-share]').on('click', function (event) {
+  /!* Realiza o compartilhamento para as redes sociais. *!/
+  $(document).on('click', '*[data-share]', function (event) {
     event.preventDefault(event);
     
-    var url = $(this).attr('data-social-share');
+    var url = $(this).data('share');
     var width = 600;
     var height = 600;
     
@@ -26,4 +27,5 @@
       + leftPosition + ',top=' + topPosition + ',screenX=' + leftPosition + ',screenY='
       + topPosition + ',toolbar=no,menubar=no,scrollbars=no,location=no,directories=no');
   });
-});*/
+});
+*/
