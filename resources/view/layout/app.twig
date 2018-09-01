@@ -52,6 +52,7 @@
     <meta property="og:url" content="{{ constant('FULL_URL') }}"/>
     <meta property="og:site_name" content="{{ config('client.name') }}"/>
     <meta property="og:locale" content="pt_BR"/>
+    
     {% if social['facebook']['active'] %}
       <meta property="article:author" content="https://www.facebook.com/{{ social['facebook']['author'] }}"/>
       <meta property="article:publisher" content="https://www.facebook.com/{{ social['facebook']['page'] }}"/>
@@ -67,9 +68,11 @@
     
     {# Meta TAGS Twitter #}
     <meta property="twitter:card" content="summary_large_image"/>
+    
     {% if social['twitter'] %}
       <meta property="twitter:site" content="@{{ social['twitter'] }}"/>
     {% endif %}
+    
     <meta property="twitter:creator" content="@vcwebnetworks"/>
     <meta property="twitter:title" content="{{ title_seo }}"/>
     <meta property="twitter:description" content="{{ description ?: config('client.description') }}"/>
