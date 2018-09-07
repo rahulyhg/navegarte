@@ -1,9 +1,8 @@
-/*
-/!**
+/**
  * Inicia as máscara para os forms
  *
  * https://igorescobar.github.io/jQuery-Mask-Plugin/
- *!/
+ */
 
 var initMaskInput = function () {
   $('.maskTime').mask('00:00');
@@ -22,9 +21,9 @@ var initMaskInput = function () {
     }
   });
   
-  /!**
+  /**
    * @return {string}
-   *!/
+   */
   var SPMaskBehavior = function (val) {
     return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
   }, spOptions       = {
@@ -37,9 +36,8 @@ var initMaskInput = function () {
   $('.maskTelephone').mask('(00) 0000-0000');
 };
 
-/!* Carrega o documento *!/
+/* Carrega o documento */
 $(document).ready(function () {
-  /!* INIT :: Mask Input *!/
+  /* INIT :: Mask Input */
   initMaskInput();
 });
-*/

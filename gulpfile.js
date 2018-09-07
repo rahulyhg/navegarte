@@ -104,6 +104,9 @@ gulp.task('watch', () => {
   gulp.watch('./resources/assets/sass/web/**/**/**/*.{scss,css}', sassWeb);
   gulp.watch('./resources/assets/js/web/**/**/**/*.js', jsWeb);
   
+  /* Plugins JS */
+  gulp.watch('./resources/assets/js/plugins/**/**/**/*.js', gulp.parallel(jsWeb));
+  
   /* BrowserSync */
   /*gulp.watch([
     '../!**!/!*.{php,twig,js,css}',

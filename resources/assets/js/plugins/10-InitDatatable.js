@@ -1,23 +1,22 @@
-/*
-/!**
+/**
  * Inicia as configurações do datatable
  *
  * https://datatables.net
- *!/
+ */
 
 var initDatatable = function () {
   var datatables = $('*[data-toggle="datatable"]');
   
-  /!* Verifica se existe datatable *!/
+  /* Verifica se existe datatable */
   if (datatables.length) {
-    /!* Percore as datatable encontradas *!/
+    /* Percore as datatable encontradas */
     $.each(datatables, function (key, element) {
       var option = $(element).data('option');
       var options = {};
       
-      /!* Configurações customizadas *!/
+      /* Configurações customizadas */
       if (option !== undefined) {
-        /!* AJAX *!/
+        /* AJAX */
         if (option.url !== undefined && option.url !== '') {
           options = {
             'processing': true,
@@ -30,18 +29,18 @@ var initDatatable = function () {
           };
         }
         
-        /!* ORDER BY *!/
+        /* ORDER BY */
         if (option.order !== undefined) {
           options.order = [option.order];
         }
         
-        /!* Ativar ORDENAÇÃO *!/
+        /* Ativar ORDENAÇÃO */
         if (option.ordering !== undefined) {
           options.ordering = option.ordering;
         }
       }
       
-      /!* Inicia o datatable *!/
+      /* Inicia o datatable */
       $(element).DataTable(mergeObject({
         'destroy': true,
         'iDisplayLength': 50,
@@ -55,9 +54,8 @@ var initDatatable = function () {
   }
 };
 
-/!* Carrega o documento *!/
+/* Carrega o documento */
 $(document).ready(function () {
-  /!* INIT :: Datatable *!/
+  /* INIT :: Datatable */
   initDatatable();
 });
-*/

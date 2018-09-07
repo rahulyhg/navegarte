@@ -1,4 +1,5 @@
-/*$(document).ready(function () {
+/* Carrega o documento */
+$(document).ready(function () {
   function beforeSend(text) {
     $('*[data-cep="logradouro"]').val(text);
     $('*[data-cep="complemento"]').val(text);
@@ -10,9 +11,7 @@
     $('*[data-cep="gia"]').val(text);
   }
   
-  /!**
-   * Busca CEP
-   *!/
+  /* Realiza a pesquisa do dados */
   $(document).on('change', '*[data-cep="cep"]', function (event) {
     var cep = $(event.currentTarget).val().replace(/\D/g, '');
     var validadeCep = /^[0-9]{8}$/;
@@ -45,4 +44,4 @@
       alert('Cep digitado é inválido');
     }
   });
-});*/
+});

@@ -1,9 +1,8 @@
-/*
-/!**
+/**
  * Inicia as configurações do select2
  *
  * https://select2.org/
- *!/
+ */
 
 var initSelect2 = function () {
   var selects2 = $('*[data-toggle="select2"]');
@@ -13,7 +12,7 @@ var initSelect2 = function () {
       var option = $(element).data('option');
       var options = {};
       
-      /!* Configurações do AJAX *!/
+      /* Configurações do AJAX */
       if (option !== undefined) {
         if (option.url !== undefined || option.url !== '') {
           options = {
@@ -53,7 +52,7 @@ var initSelect2 = function () {
         }
       }
       
-      /!* Inicia o select2 *!/
+      /* Inicia o select2 */
       $(element).select2(mergeObject({
         language: 'pt-BR',
         width: 'resolve'
@@ -62,9 +61,8 @@ var initSelect2 = function () {
   }
 };
 
-/!* Carrega o documento *!/
+/* Carrega o documento */
 $(document).ready(function () {
-  /!* INIT :: Select2 *!/
+  /* INIT :: Select2 */
   initSelect2();
 });
-*/

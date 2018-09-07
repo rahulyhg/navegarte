@@ -1,9 +1,8 @@
-/*
-/!**
+/**
  * Inicia as configurações do full calendar
  *
  * https://fullcalendar.io/
- *!/
+ */
 
 var initFullCalendar = function () {
   var calendars = $('*[data-toggle="fullcalendar"]');
@@ -12,14 +11,14 @@ var initFullCalendar = function () {
     $.each(calendars, function (index, element) {
       var option = $(element).data('option');
       
-      /!* Verifica a URL da requisição *!/
+      /* Verifica a URL da requisição */
       if (option.url === undefined || option.url === '') {
         alert('È Preciso passar a URL para o funcionamento do FULL CALENDAR.');
         
         return;
       }
       
-      /!* Inicia o fullCalendar *!/
+      /* Inicia o fullCalendar */
       $(element).fullCalendar({
         header: {
           left: 'prev,next today',
@@ -39,7 +38,7 @@ var initFullCalendar = function () {
           dataType: 'json',
           cache: true,
           success: function (response) {
-            /!* Verifica se ocorreu erro *!/
+            /* Verifica se ocorreu erro */
             if (response.error) {
               $(element).empty().html('<div class="alert alert-danger text-center mb-0"><b>ERRO Calendário: </b>' + response.error + '</div>');
             }
@@ -55,9 +54,8 @@ var initFullCalendar = function () {
   }
 };
 
-/!* Carrega o documento *!/
+/* Carrega o documento */
 $(document).ready(function () {
-  /!* INIT :: Full Calendar *!/
+  /* INIT :: Full Calendar */
   initFullCalendar();
 });
-*/

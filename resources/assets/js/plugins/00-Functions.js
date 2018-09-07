@@ -9,7 +9,7 @@
  * @returns {string|*}
  */
 
-/*function number_format(numero, decimal, decimal_separador, milhar_separador) {
+function number_format(numero, decimal, decimal_separador, milhar_separador) {
   numero = (numero + '').replace(/[^0-9+\-Ee.]/g, '');
   var n          = !isFinite(+numero) ? 0 : +numero,
       prec       = !isFinite(+decimal) ? 0 : Math.abs(decimal),
@@ -34,7 +34,7 @@
   }
   
   return s.join(dec);
-}*/
+}
 
 /**
  * Retorna apenas número
@@ -44,11 +44,11 @@
  * @returns {boolean}
  */
 
-/*function isNumeric(evt) {
+function isNumeric(evt) {
   var charCode = (evt.which) ? evt.which : event.keyCode;
   
   return !(charCode > 31 && (charCode < 48 || charCode > 57));
-}*/
+}
 
 /**
  * Verifica o máximo de caracteres
@@ -59,14 +59,14 @@
  * @returns {string|jQuery}
  */
 
-/*function isLength(element, length) {
+function isLength(element, length) {
   if ($(element).val().length >= length) {
     return $(element).val($(element).val().substr(0, length - 1));
   }
-}*/
+}
 
-/*(function (window) {
-  /!**
+(function (window) {
+  /**
    * Passado pro escopo global do `window` para poder usar
    * o Storage em qualquer lugar
    *
@@ -80,7 +80,7 @@
    *      emove: Window.Storage.remove
    *    }
    *  }
-   *!/
+   */
   window.Storage = {
     set: function (key, value) {
       window.localStorage[key] = value;
@@ -107,7 +107,7 @@
     }
   };
   
-})(window);*/
+})(window);
 
 /**
  * Juntos dois objetos
@@ -135,7 +135,7 @@ function mergeObject(object, source) {
  * @param find
  */
 
-/*function previewImage(input, find) {
+function previewImage(input, find) {
   if (input.files && input.files[0]) {
     var reader = new FileReader();
     
@@ -146,4 +146,4 @@ function mergeObject(object, source) {
     
     reader.readAsDataURL(input.files[0]);
   }
-}*/
+}

@@ -1,9 +1,8 @@
-/*
-/!**
+/**
  * Função para a animação
  *
  * @param {String} id
- *!/
+ */
 
 var scrolling = function (id) {
   var location = $('#' + id);
@@ -15,11 +14,11 @@ var scrolling = function (id) {
   }
 };
 
-/!* Carrega o documento *!/
+/* Carrega o documento */
 $(document).ready(function () {
   var hash = window.location.hash.replace('#', '');
   
-  /!* Navegação animada ao clicar *!/
+  /* Navegação animada ao clicar */
   $(document).on('click', '*[data-goto]', function (event) {
     event.preventDefault();
     event.stopPropagation();
@@ -27,7 +26,7 @@ $(document).ready(function () {
     scrolling($(this).data('goto'));
   });
   
-  /!* Navegação animada pelo hash da URL *!/
+  /* Navegação animada pelo hash da URL */
   if (hash) {
     window.history.pushState({}, '', '/');
   }
@@ -40,4 +39,3 @@ $(document).ready(function () {
     }
   });
 });
-*/
