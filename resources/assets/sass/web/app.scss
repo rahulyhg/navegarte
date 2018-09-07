@@ -4,3 +4,15 @@
 /* Imports */
 @import "fonts";
 @import "helpers";
+
+/* Welcome */
+.vc-welcome {
+  height: 100vh;
+  background: url('https://picsum.photos/1920/1080?image=2&blur') fixed no-repeat;
+  background-size: cover;
+  
+  > header {
+    background: rgba(#000000, .6);
+    padding: 50px 0;
+  }
+}
