@@ -33,11 +33,22 @@ var requestAjax = function (click, url, formData, method, form, insertHtml, boot
       if (message.length <= 0) {
         message = form.parent().parent().find('#vc-message');
       }
-    } else if (click.parent().find('#vc-message').length > 0) {
-      message = click.parent().find('#vc-message');
+    } else if (click.parent().parent().find('#vc-message').length > 0) {
+      message = click.parent().parent().find('#vc-message');
     } else if (click.attr('vc-message')) {
       message = $(click.attr('vc-message'));
     }
+  }
+  
+  /* Custom _METHOD */
+  var _METHOD;
+  
+  if (formData.has('_METHOD')) {
+    _METHOD = formData.get('_METHOD');
+    
+    formData.delete('_METHOD');
+  } else {
+    _METHOD = method;
   }
   
   /* Ajax */
@@ -47,10 +58,13 @@ var requestAjax = function (click, url, formData, method, form, insertHtml, boot
     dataType: 'json',
     type: method,
     enctype: 'multipart/form-data',
+    headers: {
+      'X-Http-Method-Override': _METHOD
+    },
     processData: false,
     contentType: false,
     beforeSend: function () {
-      if (message !== undefined && message.length > 0) {
+      if (message !== undefined && message.length > 0 && !bootstrapModal) {
         message.fadeOut(0).html('');
       }
       
@@ -97,10 +111,19 @@ var requestAjax = function (click, url, formData, method, form, insertHtml, boot
         }
       }
       
+      /* Mensagem de error */
+      if (json.error) {
+        if (message !== undefined && message.length > 0) {
+          message.html('<div class="alert alert-danger">' + json.error.message + '</div>').fadeIn(0);
+        } else {
+          alert(json.error.message);
+        }
+      }
+      
       /* Ações diversas */
       if (json.data) {
         if (typeof json.data === 'object') {
-          $.each(json.formData, function (key, value) {
+          $.each(json.data, function (key, value) {
             var element = $(value);
             
             switch (key) {
@@ -188,6 +211,8 @@ $(document).ready(function () {
     formData.append('value', (element.val() !== undefined ? element.val() : ''));
     
     /* Realiza a requisição */
+    formData.append('_METHOD', method);
+    
     requestAjax(element, url, formData, method, {}, false, false);
   });
   
@@ -214,7 +239,7 @@ $(document).ready(function () {
       }
     }
     
-    /* Dispara um formulário */
+    /* REQUEST :: FORM */
     if ($this.attr('vc-form') !== undefined && ($this.attr('vc-form') === '' || $this.attr('vc-form'))) {
       event.preventDefault(event);
       
@@ -270,10 +295,12 @@ $(document).ready(function () {
       });
       
       /* Envia requisição */
-      requestAjax($this, url, formData, method, form, true, false);
+      formData.append('_METHOD', method);
+      
+      requestAjax($this, url, formData, 'POST', form, true, false);
     }
     
-    /* Requet GET */
+    /* REQUEST :: GET */
     if ($this.attr('vc-get') !== undefined && ($this.attr('vc-get') === '' || $this.attr('vc-get'))) {
       event.preventDefault(event);
       
@@ -281,7 +308,7 @@ $(document).ready(function () {
       requestAjax($this, $this.attr('vc-get'), formData, 'GET', form, true, false);
     }
     
-    /* Requet POST */
+    /* REQUEST :: POST */
     if ($this.attr('vc-post') !== undefined && ($this.attr('vc-post') === '' || $this.attr('vc-post'))) {
       event.preventDefault(event);
       
@@ -289,7 +316,7 @@ $(document).ready(function () {
       requestAjax($this, $this.attr('vc-post'), formData, 'POST', form, true, false);
     }
     
-    /* Requet DELETE */
+    /* REQUEST :: DELETE */
     if ($this.attr('vc-delete') !== undefined && ($this.attr('vc-delete') === '' || $this.attr('vc-delete'))) {
       event.preventDefault(event);
       
@@ -299,6 +326,8 @@ $(document).ready(function () {
       }
       
       /* Envia requisição */
+      formData.append('_METHOD', 'DELETE');
+      
       requestAjax($this, $this.attr('vc-delete'), formData, 'POST', form, true, false);
     }
   });

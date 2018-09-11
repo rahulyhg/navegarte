@@ -13,26 +13,40 @@ $(document).ready(function () {
     var option = $(this).data('option');
     var formData = new FormData();
     
-    if (modal !== undefined) {
+    /* Verifica se a modal existe */
+    if (modal !== undefined && $(modal).length) {
       /* Abre modal */
       $(modal).modal('show');
       
-      /* Configuração do AJAX */
-      if (option !== undefined && option.url !== undefined) {
-        $(modal).find('.modal-body').html('<p class="text-center">Aguarde...</p>');
+      /* Verifica opções */
+      if (option !== undefined) {
+        $(modal).find('.modal-body').html('<p class="text-center mb-0 mbottom-0">Aguarde carregando dados...</p>');
         
-        /* FormData */
-        var formObj = option.data;
-        
-        if (formObj !== undefined) {
-          for (var key in formObj) {
-            if (formObj.hasOwnProperty(key)) {
-              formData.append(key, (formObj[key] !== undefined ? formObj[key] : ''));
-            }
-          }
+        /* Insere um html caso tenha */
+        if (option.html !== undefined) {
+          $(modal).find('.modal-body').html(option.html);
         }
         
-        requestAjax($(this), option.url, formData, 'POST', {}, true, modal);
+        /* Configuração do AJAX */
+        if (option.url !== undefined) {
+          /* FormData */
+          var params = option.params;
+          
+          if (params !== undefined) {
+            for (var key in params) {
+              if (params.hasOwnProperty(key)) {
+                formData.append(key, (params[key] !== undefined ? params[key] : ''));
+              }
+            }
+          }
+          
+          /* Realiza a requisição */
+          if (option.method !== undefined) {
+            formData.append('_METHOD', option.method);
+          }
+          
+          requestAjax($(this), option.url, formData, 'POST', {}, true, modal);
+        }
       }
     }
   });

@@ -9,6 +9,8 @@ $(document).ready(function () {
     $('*[data-cep="unidade"]').val(text);
     $('*[data-cep="ibge"]').val(text);
     $('*[data-cep="gia"]').val(text);
+    $('*[data-cep="latitude"]').val('');
+    $('*[data-cep="longitude"]').val('');
   }
   
   /* Realiza a pesquisa do dados */
@@ -20,28 +22,30 @@ $(document).ready(function () {
       if (validadeCep.test(cep)) {
         beforeSend('Aguarde....');
         
-        $.get('https://viacep.com.br/ws/' + cep + '/json', function (data) {
-          if (!data.erro) {
-            $.each(data, function (key, value) {
-              $('*[data-cep="' + key + '"]').val(value);
+        $.get('/api/util/zipcode/' + cep, function (json) {
+          if (!json.error) {
+            $.each(json, function (key, value) {
+              var elementCep = $('*[data-cep="' + key + '"]');
+              
+              elementCep.val(value);
               
               if (value !== '' && key !== 'cep') {
-                $('*[data-cep="' + key + '"]').attr('disabled', true);
+                elementCep.attr('disabled', true);
               } else {
-                $('*[data-cep="' + key + '"]').attr('disabled', false);
+                elementCep.attr('disabled', false);
               }
             });
           } else {
             beforeSend('');
             
-            alert('Cep digitado é inválido');
+            alert(json.error.message);
           }
         }, 'json');
       }
     } else {
       beforeSend('');
       
-      alert('Cep digitado é inválido');
+      alert('O CEP ' + cep + ' não é válido.');
     }
   });
 });
