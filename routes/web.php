@@ -10,4 +10,10 @@
  * @copyright 2017-2018 Vagner Cardoso
  */
 
+/**
+ * Web
+ *
+ * Grupo de rotas pra criação do sistema
+ */
+
 $app->route('get', '/', 'IndexController', 'index');
