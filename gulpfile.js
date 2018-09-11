@@ -49,6 +49,9 @@ const compileSass = (src, fileName, dest) => {
     .pipe(browserSync.stream());
 };
 
+const sassError = () => compileSass('./resources/assets/sass/error.scss', 'error', config.path.css);
+gulp.task('sass-error', () => sassError());
+
 const sassMail = () => compileSass('./resources/assets/sass/mail.scss', 'mail', config.path.css);
 gulp.task('sass-mail', () => sassMail());
 
@@ -97,6 +100,9 @@ gulp.task('watch', () => {
     console.log(`File ${event.path} was ${event.type}, running tasks...`);
   };
   
+  /* Error */
+  gulp.watch('./resources/assets/sass/error.scss', sassError);
+  
   /* Email */
   gulp.watch('./resources/assets/sass/mail.scss', sassMail);
   
@@ -120,4 +126,4 @@ gulp.task('watch', () => {
 /**
  * Roda todas tarefas
  */
-gulp.task('default', gulp.parallel('watch', 'sass-mail', 'sass-web', 'js-web'));
+gulp.task('default', gulp.parallel('watch', 'sass-error', 'sass-mail', 'sass-web', 'js-web'));
