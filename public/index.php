@@ -11,56 +11,48 @@
  */
 
 /**
- * Optimize the application
- *
- * When activating, the source code is (HTML, JS, CSS, etc..)
+ * Diretório raiz
  */
-define('OPTIMIZE', true);
 
-/**
- * Project root
- *
- * Do not change the configuration
- */
 define('ROOT', str_ireplace('\\', '/', realpath(dirname(__DIR__))));
 
 /**
- * Root folder
- *
- * Defines where the public application files will be kept
+ * Diretório que armazena a pasta publica
  */
+
 define('PUBLIC_FOLDER', ROOT.'/public');
 
 /**
- * Application folder
+ * Diretório que vai armazenar a aplicação
  *
- * Defines where protected application files will be kept
+ * OBS: Esse diretório não pode ser acesso pela URL
  */
-define('APP_FOLDER', ROOT);
+
+define('APP_FOLDER', ROOT.'');
 
 /**
- * Resource folder
+ * Diretório que armazena os recursos dos assets e views
  */
+
 define('RESOURCE_FOLDER', APP_FOLDER.'/resources');
 
 /**
- * Base URL
+ *  Define a URL base da aplicação
  */
-define('BASE_URL', (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://').$_SERVER['HTTP_HOST']);
+
+define('BASE_URL', "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}");
 
 /**
- * Request URI
+ * Define a URL completa da aplicação
  */
+
 define('REQUEST_URI', $_SERVER['REQUEST_URI']);
+define('FULL_URL', BASE_URL."{$_SERVER['REQUEST_URI']}");
 
 /**
- * Full URL
- */
-define('FULL_URL', BASE_URL.REQUEST_URI);
-
-/**
- * Starting application
+ * Bootstrap
  *
- * Do NOT TOUCH
+ * Inicia a aplicação
  */
-include APP_FOLDER.'/bootstrap/app.php';
+
+require_once APP_FOLDER.'/bootstrap/app.php';

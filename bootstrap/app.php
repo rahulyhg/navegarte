@@ -13,11 +13,13 @@
 use Core\App;
 
 /**
- * Initializes the buffer and blocks any output to the browser
- * Compress HTML,JS,CSS etc
+ * Ob Start
+ *
+ * Configura a otimização dos assets e html
  */
+
 ob_start(function ($buffer) {
-    if ((!empty(OPTIMIZE) && OPTIMIZE === true) && preg_replace('/[^a-zA-Z\-]/', '', $_SERVER['HTTP_HOST']) != 'localhost') {
+    if (mb_strpos($_SERVER['HTTP_HOST'], 'localhost') === false) {
         $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
         $buffer = str_replace(["\r\n", "\r", "\n", "\t", '  ', '   ', '    ',], '', $buffer);
     }
@@ -26,8 +28,11 @@ ob_start(function ($buffer) {
 });
 
 /**
- * It is used when running the php embedded server
+ * CLI Server
+ *
+ * É usado ao executar o servidor incorporado php
  */
+
 if (PHP_SAPI == 'cli-server') {
     $url = parse_url($_SERVER['REQUEST_URI']);
     $file = APP_FOLDER.$url['path'];
@@ -38,8 +43,11 @@ if (PHP_SAPI == 'cli-server') {
 }
 
 /**
- * Composer autoload dependencies
+ * Composer
+ *
+ * Carrega o autoload
  */
+
 $composerAutoload = APP_FOLDER.'/vendor/autoload.php';
 
 if (!file_exists($composerAutoload)) {
@@ -49,50 +57,71 @@ if (!file_exists($composerAutoload)) {
 include "{$composerAutoload}";
 
 /**
- * Starting dotenv configuration
+ * Env
+ *
+ * Carrega as configurações do dotenv
+ *
  */
-if (file_exists(APP_FOLDER.'/.env')) {
-    try {
-        (new Dotenv\Dotenv(APP_FOLDER))->load();
-    } catch (Dotenv\Exception\InvalidPathException $e) {
-        //
-    }
+
+$envConfig = APP_FOLDER.'/.env';
+
+if (file_exists($envConfig)) {
+    (new \Dotenv\Dotenv(APP_FOLDER, '.env'))->load();
 } else {
-    $envContent = file_get_contents(APP_FOLDER.'/.env-example');
-    file_put_contents(APP_FOLDER.'/.env', $envContent, FILE_APPEND);
-};
+    $envExample = APP_FOLDER.'/.env-example';
+    
+    if ((file_exists($envExample) && !is_dir($envExample)) && !file_exists($envConfig)) {
+        $envContent = file_get_contents($envExample);
+        
+        file_put_contents($envConfig, $envContent, FILE_APPEND);
+    }
+}
+
+try {
+    /**
+     * App
+     *
+     * Instancia da classe da aplicação
+     */
+    
+    $app = App::getInstance();
+    
+    /**
+     * Inicia as funções customizadas
+     */
+    
+    $app->registerFunctions();
+    
+    /**
+     * Inicia os serviços
+     */
+    
+    $app->registerProviders();
+    
+    /**
+     * Inicia as middlewares
+     */
+    
+    $app->registerMiddleware();
+    
+    /**
+     * Inicia as rotas
+     */
+    
+    $app->registerRouter();
+    
+    /**
+     * Inicia a aplicação
+     */
+    
+    $app->run();
+} catch (\Slim\Exception\MethodNotAllowedException $e) {
+} catch (\Slim\Exception\NotFoundException $e) {
+} catch (Exception $e) {
+}
 
 /**
- * Instance class app
+ * Finaliza o buffer de saída
  */
-$app = App::getInstance();
 
-/**
- * Register functions
- */
-$app->registerFunctions();
-
-/**
- * Register routers
- */
-$app->registerRouter();
-
-/**
- * Register providers
- */
-$app->registerProviders();
-
-/**
- * Register middleware
- */
-$app->registerMiddleware();
-
-/**
- * Initialize app
- */
-$app->run();
-
-/**
- * Finalized the buffer
- */
 ob_end_flush();

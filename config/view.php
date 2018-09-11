@@ -19,6 +19,7 @@ return [
      *
      * php | twig
      */
+    
     'engine' => 'twig',
     
     /**
@@ -26,6 +27,7 @@ return [
      *
      * When enabled, any type of error will be
      */
+    
     'debug' => true,
     
     /**
@@ -33,6 +35,7 @@ return [
      *
      * When enabled, it will be saved as configured by configuring [path.compiled]
      */
+    
     'cache' => true,
     
     /**
@@ -40,6 +43,7 @@ return [
      *
      * Directories that will pull the views and save the cache
      */
+    
     'path' => [
         'folder' => RESOURCE_FOLDER.'/view',
         'compiled' => APP_FOLDER.'/storage/cache',

@@ -15,6 +15,7 @@ return [
     /**
      * Configuração do site
      */
+    
     'name' => 'VCWeb Networks', /* Nome do site do cliente */
     'subname' => 'Desenvolvimento de Websites, E-Commerce e Marketing Digital.', /* Slogan do site do cliente */
     'description' => 'Somos uma agência de Desenvolvimento de Umuarama focada em criação de sites institucionais, lojas virtuais, e-commerce, portais e outros sistemas de software para internet e visamos sempre o melhor resultado para seu negócio.', /* Descrição do site do cliente */
@@ -24,6 +25,7 @@ return [
     /**
      * Dados da empresa do cliente
      */
+    
     'company' => [
         'name' => ' Vagner Dos Santos Cardoso', /* Nome de remetente */
         'rs' => 'VCWeb Networks', /* Razão Social */
@@ -37,6 +39,7 @@ return [
         /**
          * Endereço
          */
+        
         'address' => [
             'street' => 'Rua Larazo Bom', /* Nome da rua */
             'number' => '2294', /* Número da casa */
@@ -52,12 +55,14 @@ return [
     /**
      * Redes sociais
      */
+    
     'social' => [
         'name' => 'VCWeb Networks',
         
         /**
          * Google Plus
          */
+        
         'google' => [
             'active' => 1, /* Ativa | Desativa */
             'author' => '114194145304748321596', /* ID do Usuário */
@@ -67,6 +72,7 @@ return [
         /**
          * Facebook
          */
+        
         'facebook' => [
             'active' => 1, /* Ativa | Desativa */
             'app' => '342941756145265', /* Opcional APP do facebook */
@@ -78,16 +84,19 @@ return [
         /**
          * Twitter
          */
+        
         'twitter' => 'vcwebnetworks', /* https://www.twitter.com/????? */
         
         /**
          * Youtube
          */
+        
         'youtube' => 0, /* https://www.youtube.com/user/????? */
         
         /**
          * Instagram
          */
+        
         'instagram' => 'vcwebnetworks', /* https://www.instagram.com/????? */
     ],
 

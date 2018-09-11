@@ -12,39 +12,66 @@
 
 return [
     /**
-     * Register for all containers
+     * Providers
+     *
+     * Registra todos os serviços disponíveis
      */
+    
     'providers' => [
+        
+        /**
+         * Providers da aplicação
+         */
+        
         'app' => [
             \Core\Providers\View\ViewProvider::class,
             \Core\Providers\Session\SessionProvider::class,
             \Core\Providers\DatabaseProvider::class,
             \Core\Providers\LoggerProvider::class,
             \Core\Providers\Mailer\MailerProvider::class,
-            \Core\Providers\Hash\BcryptProvider::class,
+            \Core\Providers\Hash\HashProvider::class,
             \Core\Providers\Encryption\EncryptionProvider::class,
             \Core\Providers\ErrorProvider::class,
         ],
+        
+        /**
+         * Providers custom
+         */
         
         'web' => [],
     ],
     
     /**
-     * Register for all functions and helpers
+     * Functions
+     *
+     * Registra as funções customizadas
      */
+    
     'functions' => [
         APP_FOLDER.'/app/functions.php',
     ],
     
     /**
-     * Register for all middleware
+     * Middlewares
+     *
+     * Registra todas middleware disponíveis
      */
+    
     'middleware' => [
+        
+        /**
+         * Middlewares da aplicação
+         */
+        
         'app' => [
             \App\Middlewares\MaintenanceMiddleware::class,
             \Core\Middlewares\TrailingSlashMiddleware::class,
             \Core\Middlewares\OldInputMiddleware::class,
         ],
+        
+        /**
+         * Middlewares custom
+         */
         
         'web' => [],
     ],
