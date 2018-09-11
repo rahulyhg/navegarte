@@ -17,15 +17,15 @@ namespace App\Middlewares {
     use Slim\Http\Response;
     
     /**
-     * Class DefaultMiddleware
+     * Class SystemMiddleware
      *
      * @package App\Middlewares
      * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
      */
-    final class DefaultMiddleware extends Middleware
+    class SystemMiddleware extends Middleware
     {
         /**
-         * Register middleware
+         * Registra middleware padrão da aplicação
          *
          * @param \Slim\Http\Request  $request  PSR7 request
          * @param \Slim\Http\Response $response PSR7 response

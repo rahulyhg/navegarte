@@ -15,15 +15,15 @@ namespace App\Providers {
     use Core\Contracts\Provider;
     
     /**
-     * Class DefaultProvider
+     * Class SystemProvider
      *
      * @package App\Providers
      * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
      */
-    final class DefaultProvider extends Provider
+    class SystemProvider extends Provider
     {
         /**
-         * Registers services on the given container.
+         * Registra os serviços padrões da aplicação
          *
          * @return void
          */
@@ -35,7 +35,9 @@ namespace App\Providers {
         }
         
         /**
-         * Inicializa junto com o service
+         * Registra outros serviços no escopo do provider
+         *
+         * @return void
          */
         public function boot()
         {
