@@ -30,7 +30,7 @@ $(document).ready(function () {
         /* Configuração do AJAX */
         if (option.url !== undefined) {
           /* FormData */
-          var params = option.params;
+          var params = option.data;
           
           if (params !== undefined) {
             for (var key in params) {

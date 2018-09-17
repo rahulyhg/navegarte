@@ -88,12 +88,21 @@ var requestAjax = function (click, url, formData, method, form, insertHtml, boot
       if (json.object) {
         if (typeof json.object === 'object') {
           $.each(json.object, function (key, value) {
-            if ($('input[id="' + key + '"]').length > 0) {
-              $('input[id="' + key + '"]').val(value);
+            if (bootstrapModal.length > 1) {
+              $(bootstrapModal).find('#' + key).html(value);
             } else {
-              $('#' + key).html(value);
+              if ($('input[id="' + key + '"]').length > 0) {
+                $('input[id="' + key + '"]').val(value);
+              } else {
+                $('#' + key).html(value);
+              }
             }
           });
+        }
+        
+        /* Inicia plugins caso for a modal */
+        if (bootstrapModal.length > 1) {
+        
         }
       }
       
@@ -204,7 +213,7 @@ $(document).ready(function () {
     /* Variáveis */
     var element = $(this);
     var url = element.attr('vc-change');
-    var method = form.attr('vc-method') ? form.attr('vc-method').toUpperCase() : 'POST';
+    var method = element.attr('vc-method') ? element.attr('vc-method').toUpperCase() : 'POST';
     var formData = new FormData();
     
     /* FormData */
