@@ -54,7 +54,7 @@ if (!file_exists($composerAutoload)) {
     die('run composer install');
 }
 
-include "{$composerAutoload}";
+require_once "{$composerAutoload}";
 
 /**
  * Env
@@ -77,48 +77,43 @@ if (file_exists($envConfig)) {
     }
 }
 
-try {
-    /**
-     * App
-     *
-     * Instancia da classe da aplicação
-     */
-    
-    $app = App::getInstance();
-    
-    /**
-     * Inicia as funções customizadas
-     */
-    
-    $app->registerFunctions();
-    
-    /**
-     * Inicia os serviços
-     */
-    
-    $app->registerProviders();
-    
-    /**
-     * Inicia as middlewares
-     */
-    
-    $app->registerMiddleware();
-    
-    /**
-     * Inicia as rotas
-     */
-    
-    $app->registerRouter();
-    
-    /**
-     * Inicia a aplicação
-     */
-    
-    $app->run();
-} catch (\Slim\Exception\MethodNotAllowedException $e) {
-} catch (\Slim\Exception\NotFoundException $e) {
-} catch (Exception $e) {
-}
+/**
+ * App
+ *
+ * Instancia da classe da aplicação
+ */
+
+$app = App::getInstance();
+
+/**
+ * Inicia as funções customizadas
+ */
+
+$app->registerFunctions();
+
+/**
+ * Inicia os serviços
+ */
+
+$app->registerProviders();
+
+/**
+ * Inicia as middlewares
+ */
+
+$app->registerMiddleware();
+
+/**
+ * Inicia as rotas
+ */
+
+$app->registerRouter();
+
+/**
+ * Inicia a aplicação
+ */
+
+$app->run();
 
 /**
  * Finaliza o buffer de saída

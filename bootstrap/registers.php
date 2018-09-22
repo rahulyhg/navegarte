@@ -22,16 +22,16 @@ return [
         /**
          * Providers da aplicação
          */
-        
+    
         'app' => [
-            \Core\Providers\View\ViewProvider::class,
             \Core\Providers\Session\SessionProvider::class,
+            \Core\Providers\View\ViewProvider::class,
+            \Core\Providers\ErrorProvider::class,
             \Core\Providers\DatabaseProvider::class,
             \Core\Providers\LoggerProvider::class,
             \Core\Providers\Mailer\MailerProvider::class,
             \Core\Providers\Hash\HashProvider::class,
             \Core\Providers\Encryption\EncryptionProvider::class,
-            \Core\Providers\ErrorProvider::class,
         ],
         
         /**
