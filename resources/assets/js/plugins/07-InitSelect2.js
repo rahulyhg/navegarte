@@ -1,12 +1,12 @@
 /**
  * Inicia as configurações do select2
  *
+ * @param selects2
+ *
  * https://select2.org/
  */
 
-var initSelect2 = function () {
-  var selects2 = $('*[data-toggle="select2"]');
-  
+var initSelect2 = function (selects2) {
   if (selects2.length) {
     $.each(selects2, function (key, element) {
       var option = $(element).data('option');
@@ -64,5 +64,5 @@ var initSelect2 = function () {
 /* Carrega o documento */
 $(document).ready(function () {
   /* INIT :: Select2 */
-  initSelect2();
+  initSelect2($('*[data-toggle="select2"]'));
 });

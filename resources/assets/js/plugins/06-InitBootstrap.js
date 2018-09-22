@@ -16,7 +16,10 @@ $(document).ready(function () {
     /* Verifica se a modal existe */
     if (modal !== undefined && $(modal).length) {
       /* Abre modal */
-      $(modal).modal('show');
+      $(modal).modal({
+        backdrop: true, // 'static' caso não queira fechar ao clicar fora da modal
+        show: true
+      });
       
       /* Verifica opções */
       if (option !== undefined) {
@@ -30,12 +33,12 @@ $(document).ready(function () {
         /* Configuração do AJAX */
         if (option.url !== undefined) {
           /* FormData */
-          var params = option.data;
+          var data = option.data;
           
-          if (params !== undefined) {
-            for (var key in params) {
-              if (params.hasOwnProperty(key)) {
-                formData.append(key, (params[key] !== undefined ? params[key] : ''));
+          if (data !== undefined) {
+            for (var key in data) {
+              if (data.hasOwnProperty(key)) {
+                formData.append(key, (data[key] !== undefined ? data[key] : ''));
               }
             }
           }
@@ -45,7 +48,7 @@ $(document).ready(function () {
             formData.append('_METHOD', option.method);
           }
           
-          requestAjax($(this), option.url, formData, 'POST', {}, true, modal);
+          vcAjax($(this), option.url, formData, 'POST', {}, true, $(modal));
         }
       }
     }

@@ -1,20 +1,20 @@
 /* Carrega o documento */
 $(document).ready(function () {
   function beforeSend(text) {
-    $('*[data-cep="logradouro"]').val(text);
-    $('*[data-cep="complemento"]').val(text);
-    $('*[data-cep="bairro"]').val(text);
-    $('*[data-cep="localidade"]').val(text);
-    $('*[data-cep="uf"]').val(text);
-    $('*[data-cep="unidade"]').val(text);
-    $('*[data-cep="ibge"]').val(text);
-    $('*[data-cep="gia"]').val(text);
-    $('*[data-cep="latitude"]').val('');
-    $('*[data-cep="longitude"]').val('');
+    $('#vc-logradouro').val(text);
+    $('#vc-complemento').val(text);
+    $('#vc-bairro').val(text);
+    $('#vc-localidade').val(text);
+    $('#vc-uf').val(text);
+    $('#vc-unidade').val(text);
+    $('#vc-ibge').val(text);
+    $('#vc-gia').val(text);
+    $('#vc-latitude').val('');
+    $('#vc-longitude').val('');
   }
   
   /* Realiza a pesquisa do dados */
-  $(document).on('change', '*[data-cep="cep"]', function (event) {
+  $(document).on('change', '*[data-address]', function (event) {
     var cep = $(event.currentTarget).val().replace(/\D/g, '');
     var validadeCep = /^[0-9]{8}$/;
     
@@ -25,14 +25,14 @@ $(document).ready(function () {
         $.get('/api/util/zipcode/' + cep, function (json) {
           if (!json.error) {
             $.each(json, function (key, value) {
-              var elementCep = $('*[data-cep="' + key + '"]');
+              var element = $('#vc-' + key);
               
-              elementCep.val(value);
+              element.val(value);
               
               if (value !== '' && key !== 'cep') {
-                elementCep.attr('disabled', true);
+                element.attr('disabled', true);
               } else {
-                elementCep.attr('disabled', false);
+                element.attr('disabled', false);
               }
             });
           } else {

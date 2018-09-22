@@ -1,16 +1,16 @@
 /**
  * Cria uma requisição ajax
  *
- * @param {Object} click
+ * @param {Object} element
  * @param {string} url
  * @param {Object} formData
  * @param {string} method
  * @param {Object} form
- * @param {Boolean} insertHtml
- * @param {String|Boolean} bootstrapModal
+ * @param {Boolean} change
+ * @param {Object} modal
  */
 
-var requestAjax = function (click, url, formData, method, form, insertHtml, bootstrapModal) {
+var vcAjax = function (element, url, formData, method, form, change, modal) {
   /* Verifica URL */
   if (!url || url === null) {
     alert('Não encontramos a URL para essa requisição.');
@@ -18,14 +18,14 @@ var requestAjax = function (click, url, formData, method, form, insertHtml, boot
     return;
   }
   
-  /* Button */
-  var html     = click.html(),
-      loadding = (click.attr('vc-loadding') ? click.attr('vc-loadding') : (insertHtml ? html : false)),
-      message;
+  /* Variáveis */
+  var html = element.html();
+  var loadding = (element.attr('vc-loadding') ? element.attr('vc-loadding') : (change ? false : html));
+  var message;
   
   /* Message */
-  if (typeof bootstrapModal === 'string' && bootstrapModal.length > 1) {
-    message = $(bootstrapModal).find('.modal-body');
+  if (modal) {
+    message = modal.find('.modal-body');
   } else {
     if (form.length > 0) {
       message = form.find('#vc-message');
@@ -33,10 +33,10 @@ var requestAjax = function (click, url, formData, method, form, insertHtml, boot
       if (message.length <= 0) {
         message = form.parent().parent().find('#vc-message');
       }
-    } else if (click.parent().parent().find('#vc-message').length > 0) {
-      message = click.parent().parent().find('#vc-message');
-    } else if (click.attr('vc-message')) {
-      message = $(click.attr('vc-message'));
+    } else if (element.parent().parent().find('#vc-message').length > 0) {
+      message = element.parent().parent().find('#vc-message');
+    } else if (element.attr('vc-message')) {
+      message = $(element.attr('vc-message'));
     }
   }
   
@@ -64,15 +64,15 @@ var requestAjax = function (click, url, formData, method, form, insertHtml, boot
     processData: false,
     contentType: false,
     beforeSend: function () {
-      if (message !== undefined && message.length > 0 && !bootstrapModal) {
+      if (message !== undefined && message.length > 0 && !modal) {
         message.fadeOut(0).html('');
       }
       
       if (loadding) {
-        click.html(loadding);
+        element.html(loadding);
       }
       
-      click.attr('disabled', true);
+      element.attr('disabled', true);
     },
     success: function (json) {
       /* Adiciona no localStorage */
@@ -88,8 +88,8 @@ var requestAjax = function (click, url, formData, method, form, insertHtml, boot
       if (json.object) {
         if (typeof json.object === 'object') {
           $.each(json.object, function (key, value) {
-            if (bootstrapModal.length > 1) {
-              $(bootstrapModal).find('#' + key).html(value);
+            if (modal) {
+              modal.find('#' + key).html(value);
             } else {
               if ($('input[id="' + key + '"]').length > 0) {
                 $('input[id="' + key + '"]').val(value);
@@ -101,7 +101,7 @@ var requestAjax = function (click, url, formData, method, form, insertHtml, boot
         }
         
         /* Inicia plugins caso for a modal */
-        if (bootstrapModal.length > 1) {
+        if (modal) {
         
         }
       }
@@ -172,10 +172,10 @@ var requestAjax = function (click, url, formData, method, form, insertHtml, boot
     },
     complete: function () {
       if (loadding) {
-        click.html(html);
+        element.html(html);
       }
       
-      click.attr('disabled', false);
+      element.attr('disabled', false);
     },
     error: function (xhr) {
       var parse;
@@ -222,12 +222,12 @@ $(document).ready(function () {
     /* Realiza a requisição */
     formData.append('_METHOD', method);
     
-    requestAjax(element, url, formData, method, {}, false, false);
+    vcAjax(element, url, formData, method, {}, true, false);
   });
   
   /* Dispara o request ao clicar (click) */
   $(document).on('click', '*', function (event) {
-    var $this = $(this);
+    var element = $(this);
     var form = '';
     var url = '';
     var method = '';
@@ -235,13 +235,13 @@ $(document).ready(function () {
     var inputName;
     
     /* Elementos desabilitados */
-    if ($this.attr('disabled')) {
+    if (element.attr('disabled')) {
       return;
     }
     
     /* Verifica se é para confirmar a ação */
-    if ($this.attr('vc-confirm') !== undefined && ($this.attr('vc-confirm') === '' || $this.attr('vc-confirm'))) {
-      var verify = confirm(($this.attr('vc-confirm').length > 0) ? $this.attr('vc-confirm') : 'Cuidado!!!\nDeseja realizar essa ação?');
+    if (element.attr('vc-confirm') !== undefined && (element.attr('vc-confirm') === '' || element.attr('vc-confirm'))) {
+      var verify = confirm((element.attr('vc-confirm').length > 0) ? element.attr('vc-confirm') : 'Cuidado!!!\nDeseja realizar essa ação?');
       
       if (verify === false) {
         return;
@@ -249,17 +249,17 @@ $(document).ready(function () {
     }
     
     /* REQUEST :: FORM */
-    if ($this.attr('vc-form') !== undefined && ($this.attr('vc-form') === '' || $this.attr('vc-form'))) {
+    if (element.attr('vc-form') !== undefined && (element.attr('vc-form') === '' || element.attr('vc-form'))) {
       event.preventDefault(event);
       
       /* Variáveis */
-      form = ($this.attr('vc-form') && $this.attr('vc-form').length > 0) ? $('form[name="' + $this.attr('vc-form') + '"]') : $this.closest('form');
+      form = (element.attr('vc-form') && element.attr('vc-form').length > 0) ? $('form[name="' + element.attr('vc-form') + '"]') : element.closest('form');
       method = form.attr('method') ? form.attr('method').toUpperCase() : 'POST';
       url = form.attr('action') ? form.attr('action') : null;
       
       /* Verifica o formulário */
       if (form.length <= 0) {
-        alert('Formulário com ([name="' + $this.attr('vc-form') + '"]) não foi encontrado em seu documento html.');
+        alert('Formulário com ([name="' + element.attr('vc-form') + '"]) não foi encontrado em seu documento html.');
         
         return;
       }
@@ -306,27 +306,27 @@ $(document).ready(function () {
       /* Envia requisição */
       formData.append('_METHOD', method);
       
-      requestAjax($this, url, formData, 'POST', form, true, false);
+      vcAjax(element, url, formData, 'POST', form, false, false);
     }
     
     /* REQUEST :: GET */
-    if ($this.attr('vc-get') !== undefined && ($this.attr('vc-get') === '' || $this.attr('vc-get'))) {
+    if (element.attr('vc-get') !== undefined && (element.attr('vc-get') === '' || element.attr('vc-get'))) {
       event.preventDefault(event);
       
       /* Envia requisição */
-      requestAjax($this, $this.attr('vc-get'), formData, 'GET', form, true, false);
+      vcAjax(element, element.attr('vc-get'), formData, 'GET', form, false, false);
     }
     
     /* REQUEST :: POST */
-    if ($this.attr('vc-post') !== undefined && ($this.attr('vc-post') === '' || $this.attr('vc-post'))) {
+    if (element.attr('vc-post') !== undefined && (element.attr('vc-post') === '' || element.attr('vc-post'))) {
       event.preventDefault(event);
       
       /* Envia requisição */
-      requestAjax($this, $this.attr('vc-post'), formData, 'POST', form, true, false);
+      vcAjax(element, element.attr('vc-post'), formData, 'POST', form, false, false);
     }
     
     /* REQUEST :: DELETE */
-    if ($this.attr('vc-delete') !== undefined && ($this.attr('vc-delete') === '' || $this.attr('vc-delete'))) {
+    if (element.attr('vc-delete') !== undefined && (element.attr('vc-delete') === '' || element.attr('vc-delete'))) {
       event.preventDefault(event);
       
       verify = confirm('Cuidado!!!\nDeseja deletar esse registro?');
@@ -337,7 +337,7 @@ $(document).ready(function () {
       /* Envia requisição */
       formData.append('_METHOD', 'DELETE');
       
-      requestAjax($this, $this.attr('vc-delete'), formData, 'POST', form, true, false);
+      vcAjax(element, element.attr('vc-delete'), formData, 'POST', form, false, false);
     }
   });
 });

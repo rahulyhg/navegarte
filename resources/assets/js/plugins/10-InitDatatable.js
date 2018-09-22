@@ -1,12 +1,12 @@
 /**
  * Inicia as configurações do datatable
  *
+ * @param datatables
+ *
  * https://datatables.net
  */
 
-var initDatatable = function () {
-  var datatables = $('*[data-toggle="datatable"]');
-  
+var initDatatable = function (datatables) {
   /* Verifica se existe datatable */
   if (datatables.length) {
     /* Percore as datatable encontradas */
@@ -57,5 +57,5 @@ var initDatatable = function () {
 /* Carrega o documento */
 $(document).ready(function () {
   /* INIT :: Datatable */
-  initDatatable();
+  initDatatable($('*[data-toggle="datatable"]'));
 });

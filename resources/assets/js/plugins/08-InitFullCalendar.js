@@ -1,12 +1,12 @@
 /**
  * Inicia as configurações do full calendar
  *
+ * @param calendars
+ *
  * https://fullcalendar.io/
  */
 
-var initFullCalendar = function () {
-  var calendars = $('*[data-toggle="fullcalendar"]');
-  
+var initFullCalendar = function (calendars) {
   if (calendars.length) {
     $.each(calendars, function (index, element) {
       var option = $(element).data('option');
@@ -57,5 +57,5 @@ var initFullCalendar = function () {
 /* Carrega o documento */
 $(document).ready(function () {
   /* INIT :: Full Calendar */
-  initFullCalendar();
+  initFullCalendar($('*[data-toggle="fullcalendar"]'));
 });
