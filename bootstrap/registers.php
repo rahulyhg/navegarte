@@ -32,7 +32,7 @@ return [
             \Core\Providers\Mailer\MailerProvider::class,
             \Core\Providers\Hash\HashProvider::class,
             \Core\Providers\Encryption\EncryptionProvider::class,
-            \App\App\Providers\Jwt\JwtProvider::class,
+            \Core\Providers\Jwt\JwtProvider::class,
         ],
         
         /**
