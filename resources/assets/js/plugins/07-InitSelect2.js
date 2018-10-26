@@ -17,7 +17,7 @@ var initSelect2 = function (selects2) {
         if (option.url !== undefined || option.url !== '') {
           options = {
             placeholder: option.placeholder !== undefined ? option.placeholder : 'Pesquisar...',
-            minimumInputLength: 1,
+            minimumInputLength: 0,
             
             ajax: {
               url: option.url,

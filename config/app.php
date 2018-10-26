@@ -13,20 +13,24 @@
 return [
     
     /**
-     * App Version
-     *
-     * Define a versão do framework
+     * Define a versão da aplicação
      */
     
-    'version' => 'v1.2.2',
+    'version' => [
+        
+        /**
+         * Versão do framework
+         */
+        
+        'framework' => 'v1.2.5',
+        
+        /**
+         * Versão do skeleton
+         */
+        
+        'skeleton' => 'v1.2.2',
     
-    /**
-     * Skeleton Version
-     *
-     * Define a versão do skeleton
-     */
-    
-    'skeleton' => 'v1.2.1',
+    ],
     
     /**
      * Session
@@ -35,25 +39,6 @@ return [
      */
     
     'session' => env('APP_SESSION', true),
-    
-    /**
-     * Encryption
-     *
-     * Define as configurações para a criptografia
-     */
-    
-    'encryption' => [
-        'key' => env('APP_KEY'),
-        'cipher' => 'AES-256-CBC',
-    ],
-    
-    /**
-     * URL
-     *
-     * Define a URL base
-     */
-    
-    'url' => BASE_URL,
     
     /**
      * Language
@@ -66,7 +51,7 @@ return [
     /**
      * Maintenance
      *
-     * Define se o site vai estar em manutenção
+     * Define se a aplicação vai estar em manutenção
      */
     
     'maintenance' => env('APP_MAINTENANCE', false),
@@ -74,7 +59,7 @@ return [
     /**
      * Environment
      *
-     * Define se o site está em produção ou em desenvolvimento
+     * Define se a aplicaão está em produção ou em desenvolvimento
      */
     
     'environment' => env('APP_ENV', 'production'),
@@ -82,7 +67,7 @@ return [
     /**
      * Timezone
      *
-     * Define o fuso horário do site
+     * Define o fuso horário da aplicaão
      */
     
     'timezone' => env('APP_TIMEZONE', 'America/Sao_Paulo'),

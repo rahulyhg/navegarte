@@ -23,9 +23,9 @@ namespace App\Controllers {
     class IndexController extends Controller
     {
         /**
-         * Inicia no __construct
+         * Inicia junto com o __construct da classe pai
          */
-        public function boot()
+        protected function boot()
         {
             //
         }

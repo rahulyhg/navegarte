@@ -5,7 +5,7 @@
   <div class="error-500">
     <div class='content'>
       <div class='header'>
-        <p>{{ config('client.name', 'Whoops!') }}</p>
+        <p>{{ error_title|raw }}</p>
         <a href="{{ constant('BASE_URL') }}">Voltar!</a>
       </div>
       
@@ -21,8 +21,8 @@
       </div>
       
       <div class='footer'>
-        <p>Version core: <b>{{ config('app.version') }}</b></p>
-        <p>Version skeleton: <b>{{ config('app.skeleton') }}</b></p>
+        <p>Version Framework: <b>{{ config('app.version.framework', '-') }}</b></p>
+        <p>Version Skeleton: <b>{{ config('app.version.skeleton', '-') }}</b></p>
       </div>
     </div>
   </div>

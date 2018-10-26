@@ -6,9 +6,7 @@
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
-      
       <title>{{ config('client.name')~' - '~config('client.subname') }}</title>
-      
       <style>{{ asset_source('/assets/mail.css') }}</style>
       {% block style %}{% endblock %}
     </head>
@@ -28,23 +26,6 @@
                         <td class="footer">
                           <img src="{{ constant('BASE_URL') ~ asset('/assets/mail.jpg') }}"/>
                           <p class="margin-top-5 margin-bottom-5" style="font-size: 10px !important; font-weight: bold;">Enviado em {{ 'now'|date('d/m/Y H:i:s') }}!</p>
-                          
-                          <p>{{ config('client.company.name') }}</p>
-                          <p>Telefone: {{ config('client.company.phoneA') }}</p>
-                          <p class="margin-bottom-10">E-mail: {{ config('client.company.email') }}</p>
-                          
-                          <a href="{{ constant('BASE_URL') }}">{{ config('client.company.site') }}</a>
-                          
-                          <p>
-                            {{ config('client.company.address.street') }},
-                            {{ config('client.company.address.number') }}
-                          </p>
-                          <p>
-                            {{ config('client.company.address.city') }} /
-                            {{ config('client.company.address.state') }} -
-                            {{ config('client.company.address.zipCode') }}
-                          </p>
-                          <p>{{ config('client.company.address.country') }}</p>
                         </td>
                       </tr>
                     </table>

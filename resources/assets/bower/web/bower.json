@@ -1,10 +1,11 @@
 {
-  "name": "vcwebnetworks/resources",
+  "name": "vcwebnetworks/bower",
   "private": true,
   "ignore": [
     "**/.*",
     "**/node_modules/**",
     "**/vendor/**",
+    "**/components/**/",
     "**/bower_components/**/"
   ],
   "dependencies": {

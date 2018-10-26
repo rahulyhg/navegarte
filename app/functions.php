@@ -10,25 +10,8 @@
  * @copyright 2017-2018 Vagner Cardoso
  */
 
-// Adicionar as funcoes custum
-
+use Core\Helpers\Helper;
 use Core\Helpers\Str;
-
-if (!function_exists('onlyNumber')) {
-    /**
-     * Retorna apenas os números de uma string passada
-     *
-     * @param string $value
-     *
-     * @return int|string
-     */
-    function onlyNumber($value)
-    {
-        if (!empty($value)) {
-            return preg_replace('/[^0-9]/', '', $value);
-        }
-    }
-}
 
 if (!function_exists('filter_value')) {
     /**
@@ -44,7 +27,7 @@ if (!function_exists('filter_value')) {
      */
     function filter_value($value, $filter = null, $message = null, $code = E_USER_WARNING)
     {
-        if ((empty($value) || $value == 'null' || $value == 'false') && $value != '0') {
+        if (empty($value) && $value != '0') {
             if (!empty($message)) {
                 throw new Exception($message, $code);
             } else {
@@ -52,24 +35,22 @@ if (!function_exists('filter_value')) {
             }
         }
         
-        if (!empty($filter)) {
-            switch ($filter) {
-                case 'onlyNumber':
-                    $value = onlyNumber($value);
-                    break;
-                
-                case 'dateDatabase':
-                    $value = date('Y-m-d', strtotime(str_replace('/', '-', $value)));
-                    break;
-                
-                case 'dateTimeDatabase':
-                    $value = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $value)));
-                    break;
-                
-                case 'moneyDatabase':
-                    $value = str_replace(',', '.', str_replace('.', '', $value));
-                    break;
-            }
+        switch ($filter) {
+            case 'onlyNumber':
+                $value = onlyNumber($value);
+                break;
+            
+            case 'dateDatabase':
+                $value = date('Y-m-d', strtotime(str_replace('/', '-', $value)));
+                break;
+            
+            case 'dateTimeDatabase':
+                $value = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $value)));
+                break;
+            
+            case 'moneyDatabase':
+                $value = str_replace(',', '.', str_replace('.', '', $value));
+                break;
         }
         
         return $value;
@@ -81,81 +62,42 @@ if (!function_exists('json_trigger')) {
      * Gera a trigger no padrão das requisições ajax
      *
      * @param string     $message
-     * @param string|int $error
+     * @param string|int $code
+     * @param array      $data
      * @param int        $status
      *
      * @return \Slim\Http\Response
      */
-    function json_trigger($message, $error = 'success', $status = 200)
+    function json_trigger($message, $code = 'success', array $data = [], $status = 200)
     {
-        if (is_string($error) && $error !== 'success') {
-            $error = E_USER_ERROR;
+        if (is_string($code) && $code !== 'success') {
+            $code = E_USER_ERROR;
         }
         
-        switch ($error) {
+        switch ($code) {
             case E_USER_NOTICE:
             case E_NOTICE:
-                $error = 'info';
+                $code = 'info';
                 break;
             case E_USER_WARNING:
             case E_WARNING:
-                $error = 'warning';
+                $code = 'warning';
                 break;
             case E_USER_ERROR:
             case E_ERROR:
-                $error = 'danger';
+                $code = 'danger';
                 break;
             case 'success':
-                $error = 'success';
+                $code = 'success';
                 break;
             
             default:
-                $error = 'danger';
+                $code = 'danger';
         }
         
-        return json(['trigger' => [$error, $message]], $status);
-    }
-}
-
-if (!function_exists('link_youtube')) {
-    /**
-     * Recupera o código do vídeo do Youtube
-     *
-     * @param string $url
-     *
-     * @return string|bool
-     */
-    function link_youtube($url)
-    {
-        if (strpos($url, 'youtu.be/')) {
-            preg_match('/(https:|http:|)(\/\/www\.|\/\/|)(.*?)\/(.{11})/i', $url, $matches);
-            
-            return $matches[4];
-        } else if (strstr($url, "/v/")) {
-            $aux = explode("v/", $url);
-            $aux2 = explode("?", $aux[1]);
-            $cod_youtube = $aux2[0];
-            
-            return $cod_youtube;
-        } else if (strstr($url, "v=")) {
-            $aux = explode("v=", $url);
-            $aux2 = explode("&", $aux[1]);
-            $cod_youtube = $aux2[0];
-            
-            return $cod_youtube;
-        } else if (strstr($url, "/embed/")) {
-            $aux = explode("/embed/", $url);
-            $cod_youtube = $aux[1];
-            
-            return $cod_youtube;
-        } else if (strstr($url, "be/")) {
-            $aux = explode("be/", $url);
-            $cod_youtube = $aux[1];
-            
-            return $cod_youtube;
-        }
-        
-        return false;
+        return json(array_merge([
+            'trigger' => [$code, $message],
+        ], $data), $status);
     }
 }
 
@@ -317,7 +259,7 @@ if (!function_exists('upload_image')) {
             
             // Checa tamanho
             if (($value['size'] > $max_filesize = get_upload_max_filesize()) || $value['error'] == 1) {
-                throw new \Exception("Sua imagem ultrapassou o limite de tamanho de <b>".bytes_convert($max_filesize)."</b>.", E_USER_ERROR);
+                throw new \Exception("Sua imagem ultrapassou o limite de tamanho de <b>".Helper::convertBytes($max_filesize)."</b>.", E_USER_ERROR);
             }
             
             // Cria pasta
@@ -384,7 +326,7 @@ if (!function_exists('upload_archive')) {
             
             // Checa tamanho
             if (($value['size'] > $max_filesize = get_upload_max_filesize()) || $value['error'] == 1) {
-                throw new \Exception("Seu arquivo ultrapassou o limite de tamanho de <b>".bytes_convert($max_filesize)."</b>.", E_USER_ERROR);
+                throw new \Exception("Seu arquivo ultrapassou o limite de tamanho de <b>".Helper::convertBytes($max_filesize)."</b>.", E_USER_ERROR);
             }
             
             // Cria pasta
@@ -416,75 +358,5 @@ if (!function_exists('upload_archive')) {
         }
         
         return $archives;
-    }
-}
-
-if (!function_exists('organize_multiple_files')) {
-    /**
-     * Reorganiza o array dos files
-     *
-     * @param array $files
-     *
-     * @return array
-     */
-    function organize_multiple_files($files)
-    {
-        $newFiles = [];
-        $multiple = is_array($files);
-        $fileCount = $multiple ? count($files['name']) : 1;
-        $fileKeys = array_keys($files);
-        
-        for ($i = 0; $i < $fileCount; $i++) {
-            foreach ($fileKeys as $fileKey) {
-                $newFiles[$i][$fileKey] = $multiple ? $files[$fileKey][$i] : $files[$fileKey];
-            }
-        }
-        
-        return $newFiles;
-    }
-}
-
-if (!function_exists('get_upload_max_filesize')) {
-    /**
-     * Converte o `filesize` máximo configurado
-     * para upload de arquivos/images
-     *
-     * @return float|int
-     */
-    function get_upload_max_filesize()
-    {
-        $mb = ini_get('upload_max_filesize');
-        $maxFileSize = 0;
-        
-        if (preg_match('/([0-9])+([a-zA-Z])/', $mb, $matche)) {
-            switch ($matche[2]) {
-                case 'K':
-                case 'KB':
-                    $maxFileSize = ($matche[1] * pow(1024, 1));
-                    break;
-                
-                case 'M':
-                case 'MB':
-                    $maxFileSize = ($matche[1] * pow(1024, 2));
-                    break;
-                
-                case 'G':
-                case 'GB':
-                    $maxFileSize = ($matche[1] * pow(1024, 3));
-                    break;
-                
-                case 'T':
-                case 'TB':
-                    $maxFileSize = ($matche[1] * pow(1024, 4));
-                    break;
-                
-                case 'P':
-                case 'PB':
-                    $maxFileSize = ($matche[1] * pow(1024, 5));
-                    break;
-            }
-        }
-        
-        return $maxFileSize;
     }
 }

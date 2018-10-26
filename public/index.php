@@ -17,13 +17,13 @@
 define('ROOT', str_ireplace('\\', '/', realpath(dirname(__DIR__))));
 
 /**
- * Diretório que armazena a pasta publica
+ * Diretório raiz da pasta publica
  */
 
 define('PUBLIC_FOLDER', ROOT.'/public');
 
 /**
- * Diretório que vai armazenar a aplicação
+ * Diretório raiz da aplicação
  *
  * OBS: Esse diretório não pode ser acesso pela URL
  */

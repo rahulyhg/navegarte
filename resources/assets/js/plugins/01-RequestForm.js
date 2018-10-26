@@ -130,25 +130,23 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
       }
       
       /* Ações diversas */
-      if (json.data) {
-        if (typeof json.data === 'object') {
-          $.each(json.data, function (key, value) {
-            var element = $(value);
-            
+      if (json.switch) {
+        if (typeof json.switch === 'object') {
+          $.each(json.switch, function (key, value) {
             switch (key) {
               /* Hide */
               case 'hide':
-                element.hide();
+                $(value).hide();
                 break;
               
               /* Show */
               case 'show':
-                element.show();
+                $(value).show();
                 break;
               
               /* Toggle */
               case 'toggle':
-                element.toggle();
+                $(value).toggle();
                 break;
               
               /* Eval */
@@ -162,7 +160,11 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
       
       /* Redireciona para uma nova página */
       if (json.location) {
-        window.location.href = json.location;
+        if (typeof loadPage !== 'undefined' && typeof loadPage === 'function') {
+          loadPage(json.location, true);
+        } else {
+          window.location.href = json.location;
+        }
       }
       
       /* Recarrega a página atual */

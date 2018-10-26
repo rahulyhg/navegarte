@@ -9,9 +9,9 @@
       "./resources/assets/sass/web/*.scss"
     ],
     "js": [
-      "./public/assets/bower_components/jquery/dist/jquery.min.js",
-      "./public/assets/bower_components/popper.js/dist/umd/popper.min.js",
-      "./public/assets/bower_components/bootstrap/dist/js/bootstrap.min.js",
+      "./public/assets/web/bower_components/jquery/dist/jquery.min.js",
+      "./public/assets/web/bower_components/popper.js/dist/umd/popper.min.js",
+      "./public/assets/web/bower_components/bootstrap/dist/js/bootstrap.min.js",
       "./resources/assets/js/web/*.js"
     ]
   }

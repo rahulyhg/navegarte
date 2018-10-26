@@ -57,23 +57,22 @@ if (!file_exists($composerAutoload)) {
 require_once "{$composerAutoload}";
 
 /**
- * Env
+ * ENV
  *
- * Carrega as configurações do dotenv
- *
+ * Carrega as configurações do .env
  */
 
-$envConfig = APP_FOLDER.'/.env';
+$envFile = APP_FOLDER.'/.env';
 
-if (file_exists($envConfig)) {
+if (file_exists($envFile)) {
     (new \Dotenv\Dotenv(APP_FOLDER, '.env'))->load();
 } else {
     $envExample = APP_FOLDER.'/.env-example';
     
-    if ((file_exists($envExample) && !is_dir($envExample)) && !file_exists($envConfig)) {
+    if ((file_exists($envExample) && !is_dir($envExample)) && !file_exists($envFile)) {
         $envContent = file_get_contents($envExample);
         
-        file_put_contents($envConfig, $envContent, FILE_APPEND);
+        file_put_contents($envFile, $envContent, FILE_APPEND);
     }
 }
 
@@ -92,6 +91,12 @@ $app = App::getInstance();
 $app->registerFunctions();
 
 /**
+ * Inicia as rotas
+ */
+
+$app->registerRouter();
+
+/**
  * Inicia os serviços
  */
 
@@ -102,12 +107,6 @@ $app->registerProviders();
  */
 
 $app->registerMiddleware();
-
-/**
- * Inicia as rotas
- */
-
-$app->registerRouter();
 
 /**
  * Inicia a aplicação

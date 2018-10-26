@@ -16,4 +16,4 @@
  * Grupo de rotas pra criação do sistema
  */
 
-$app->route('get', '/', 'IndexController', 'index');
+$app->route('get', '/', 'IndexController', 'web.index');
