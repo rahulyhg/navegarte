@@ -81,6 +81,15 @@ namespace App\Models {
                 $where = "AND {$this->table}.id != '{$post['id']}'";
             }
             
+            // Validação dos nao null
+            /*
+             * $null = function ($index) use ($post) {
+             *   return (empty($post['id']) && (isset($post[$index]) && empty($post[$index])));
+             * };
+             *
+             * if ($null('CAMPO_POST')) {}
+             */
+            
             // E-mail
             if (!Helper::checkMail($post['email'])) {
                 throw new \InvalidArgumentException("O E-mail informado não contém um formato válido.", E_USER_WARNING);

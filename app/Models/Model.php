@@ -187,12 +187,12 @@ namespace App\Models {
             }
             
             // Executa a query
-            $connect = $this->read->query($sql, $this->places);
+            $read = $this->read->query($sql, $this->places);
             
             // Limpa as propriedades da classe
             $this->clear();
             
-            return $connect;
+            return $read;
         }
         
         /**
@@ -249,7 +249,7 @@ namespace App\Models {
         /**
          * @param mixed $select
          *
-         * @return Model
+         * @return $this
          */
         public function select($select)
         {
