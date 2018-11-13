@@ -17,4 +17,4 @@
  */
 
 // Criação de métodos dinamicos
-$app->route('get,post,put,delete', '/util/{method:[a-z0-9\-\/]+}[/{params:.*}]', 'Api/UtilController', 'api.util');
+$app->route('get,post,put,delete', '/util/{method:[a-z0-9\-]+}[/{params:.*}]', 'Api/UtilController', 'api.util');

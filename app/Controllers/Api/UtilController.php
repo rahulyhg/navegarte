@@ -123,31 +123,34 @@ namespace App\Controllers\Api {
          * @return \Slim\Http\Response
          * @throws \Exception
          */
-        protected function zipcode($params)
+        protected function zipcode(array $params)
         {
             try {
                 // Verifica se o CEP foi passado
-                if (empty($params[0])) {
+                if (empty($params['cep'])) {
                     throw new \InvalidArgumentException("Você deve passar o CEP para buscar.", E_USER_ERROR);
                 }
                 
                 // Verifica se é válido
-                if (strlen(onlyNumber($params[0])) < 8) {
-                    throw new \InvalidArgumentException("O CEP {$params[0]} informado deve conter, no mínimo 8 números.", E_USER_ERROR);
+                if (strlen(onlyNumber($params['cep'])) < 8) {
+                    throw new \InvalidArgumentException("O CEP {$params['cep']} informado deve conter, no mínimo 8 números.", E_USER_ERROR);
                 }
                 
                 // Pega o resultado do CEP
-                $result = $this->curl->get("https://viacep.com.br/ws/{$params[0]}/json");
+                $result = $this->curl->get("https://viacep.com.br/ws/{$params['cep']}/json");
                 
                 if (!empty($result['erro'])) {
-                    throw new \Exception("O CEP {$params[0]} informado não foi encontrado.", E_USER_ERROR);
+                    throw new \Exception("O CEP {$params['cep']} informado não foi encontrado.", E_USER_ERROR);
                 }
+                
+                // Formata endereço
+                $result['endereco'] = "{$result['logradouro']} - {$result['bairro']}, {$result['localidade']} - {$result['uf']}, {$result['cep']}, Brasil";
                 
                 // Google Maps
                 $mapsParams = [
                     'key' => 'AIzaSyCUiWvcqkPMCH_CgTwbkOp74-9oEHlhMOA',
                     'sensor' => true,
-                    'address' => urlencode("{$result['logradouro']} - {$result['bairro']}, {$result['localidade']} - {$result['uf']}, {$result['cep']}, Brasil"),
+                    'address' => urlencode($result['endereco']),
                 ];
                 
                 $maps = $this->curl->get("https://maps.google.com/maps/api/geocode/json", $mapsParams);
@@ -175,7 +178,7 @@ namespace App\Controllers\Api {
          * @return \Slim\Http\Response
          * @throws \Exception
          */
-        protected function modelDetail($params)
+        protected function modelDetail(array $params)
         {
             try {
                 // Verifica a view
