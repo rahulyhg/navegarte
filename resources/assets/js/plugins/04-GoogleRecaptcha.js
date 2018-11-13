@@ -17,7 +17,7 @@ var initGoogleRecaptcha = function () {
         grecaptcha.render(element, {
           'sitekey': sitekey,
           'theme': 'light',
-          'size': 'compact '
+          'size': 'compact ',
         });
       } catch (e) {
         grecaptcha.reset(index);

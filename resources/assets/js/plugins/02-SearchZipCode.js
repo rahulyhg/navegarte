@@ -1,6 +1,6 @@
 /* Carrega o documento */
 $(document).ready(function () {
-  function beforeSend(text) {
+  function beforeSend (text) {
     $('#vc-logradouro').val(text);
     $('#vc-complemento').val(text);
     $('#vc-bairro').val(text);
@@ -22,7 +22,7 @@ $(document).ready(function () {
       if (validadeCep.test(cep)) {
         beforeSend('Aguarde....');
         
-        $.get('/api/util/zipcode/' + cep, function (json) {
+        $.get('/api/util/zipcode', {cep: cep}, function (json) {
           if (!json.error) {
             $.each(json, function (key, value) {
               var element = $('#vc-' + key);

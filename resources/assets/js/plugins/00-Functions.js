@@ -9,7 +9,7 @@
  * @returns {string|*}
  */
 
-function number_format(numero, decimal, decimal_separador, milhar_separador) {
+function number_format (numero, decimal, decimal_separador, milhar_separador) {
   numero = (numero + '').replace(/[^0-9+\-Ee.]/g, '');
   var n          = !isFinite(+numero) ? 0 : +numero,
       prec       = !isFinite(+decimal) ? 0 : Math.abs(decimal),
@@ -44,7 +44,7 @@ function number_format(numero, decimal, decimal_separador, milhar_separador) {
  * @returns {boolean}
  */
 
-function isNumeric(evt) {
+function isNumeric (evt) {
   var charCode = (evt.which) ? evt.which : event.keyCode;
   
   return !(charCode > 31 && (charCode < 48 || charCode > 57));
@@ -59,7 +59,7 @@ function isNumeric(evt) {
  * @returns {string|jQuery}
  */
 
-function isLength(element, length) {
+function isLength (element, length) {
   if ($(element).val().length >= length) {
     return $(element).val($(element).val().substr(0, length - 1));
   }
@@ -104,7 +104,7 @@ function isLength(element, length) {
     
     remove: function (key) {
       window.localStorage.removeItem(key);
-    }
+    },
   };
   
 })(window);
@@ -118,7 +118,7 @@ function isLength(element, length) {
  * @returns {*}
  */
 
-function mergeObject(object, source) {
+function mergeObject (object, source) {
   for (var key in source) {
     if (source.hasOwnProperty(key)) {
       object[key] = source[key];
@@ -135,13 +135,12 @@ function mergeObject(object, source) {
  * @param find
  */
 
-function previewImage(input, find) {
+function previewImage (input, find) {
   if (input.files && input.files[0]) {
     var reader = new FileReader();
     
     reader.onload = function (e) {
-      $(find)
-        .attr('src', e.target.result);
+      $(find).attr('src', e.target.result);
     };
     
     reader.readAsDataURL(input.files[0]);

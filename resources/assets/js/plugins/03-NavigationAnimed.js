@@ -9,7 +9,7 @@ var scrolling = function (id) {
   
   if (location !== undefined && location.length) {
     $('html,body').animate({
-      scrollTop: (location.offset().top - 120)
+      scrollTop: (location.offset().top - 120),
     }, 500);
   }
 };

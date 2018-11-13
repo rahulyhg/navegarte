@@ -19,7 +19,7 @@ var initMaskInput = function () {
       var mask = (cep.length > 7) ? masks[0] : masks[1];
       
       $('.maskCep').mask(mask, options);
-    }
+    },
   });
   
   /**
@@ -30,7 +30,7 @@ var initMaskInput = function () {
   }, spOptions       = {
     onKeyPress: function (val, e, field, options) {
       field.mask(SPMaskBehavior.apply({}, arguments), options);
-    }
+    },
   };
   
   $('.maskPhone').mask(SPMaskBehavior, spOptions);
@@ -40,5 +40,11 @@ var initMaskInput = function () {
 /* Carrega o documento */
 $(document).ready(function () {
   /* INIT :: Mask Input */
-  initMaskInput();
+  if (typeof onLoadHtmlSuccess !== 'undefined' && typeof onLoadHtmlSuccess === 'function') {
+    onLoadHtmlSuccess(function () {
+      initMaskInput();
+    });
+  } else {
+    initMaskInput();
+  }
 });

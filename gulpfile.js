@@ -31,17 +31,17 @@ const compileSass = (src, fileName, dest) => {
   return gulp
     .src(src)
     .pipe(sass({includePaths: `${config.path.public}/assets`}).on('error', sass.logError))
-    .pipe(concat('main.css'))
+    .pipe(concat(`${fileName}.css`))
     .pipe(postcss([
       require('autoprefixer')({browsers: ['last 2 versions'], cascade: false}),
-      require('css-mqpacker')()
+      require('css-mqpacker')(),
     ]))
     .pipe(minifycss({
       keepBreaks: false,
       target: config.path.public,
       root: config.path.public,
       processImport: true,
-      keepSpecialComments: 0
+      keepSpecialComments: 0,
     }))
     .pipe(concat(`${fileName}.css`))
     .pipe(gulp.dest(dest))
@@ -69,7 +69,7 @@ gulp.task('sass-web', sassWeb);
 const compileJs = (src, fileName, dest) => {
   return gulp
     .src(src)
-    .pipe(concat('main.js'))
+    .pipe(concat(`${fileName}.js`))
     /*.pipe(babel({presets: ['env']}))*/
     .pipe(uglify())
     .pipe(concat(`${fileName}.js`))
@@ -85,12 +85,12 @@ gulp.task('js-web', jsWeb);
  * Sincronização do browser
  */
 /*const browser = () => {
-  browserSync.init({
-    proxy: 'localhost'
-  });
-};
-
-gulp.task('browser-sync', browser);*/
+ browserSync.init({
+ proxy: 'localhost'
+ });
+ };
+ 
+ gulp.task('browser-sync', browser);*/
 
 /**
  * Inicia a observaão das tarefas
@@ -115,12 +115,12 @@ gulp.task('watch', () => {
   
   /* BrowserSync */
   /*gulp.watch([
-    '../!**!/!*.{php,twig,js,css}',
-    '!../!**!/docker',
-    '!../!**!/node_modules',
-    '!../!**!/bower_componets',
-    '!../!**!/vendor'
-  ]).on('change', browserSync.reload);*/
+   '../!**!/!*.{php,twig,js,css}',
+   '!../!**!/docker',
+   '!../!**!/node_modules',
+   '!../!**!/bower_componets',
+   '!../!**!/vendor'
+   ]).on('change', browserSync.reload);*/
 });
 
 /**

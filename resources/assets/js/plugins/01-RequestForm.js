@@ -56,10 +56,10 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
     url: url,
     data: formData,
     dataType: 'json',
-    type: method,
+    type: method.toUpperCase(),
     enctype: 'multipart/form-data',
     headers: {
-      'X-Http-Method-Override': _METHOD
+      'X-Http-Method-Override': _METHOD.toUpperCase(),
     },
     processData: false,
     contentType: false,
@@ -102,7 +102,7 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
         
         /* Inicia plugins caso for a modal */
         if (modal) {
-        
+          //
         }
       }
       
@@ -111,21 +111,23 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
         form.trigger('reset');
       }
       
-      /* Mensagem de retorno */
-      if (json.trigger) {
-        if (message !== undefined && message.length > 0) {
-          message.html('<div class="alert alert-' + json.trigger[0] + '">' + json.trigger[1] + '</div>').fadeIn(0);
-        } else {
-          alert(json.trigger[1]);
+      /* Mensagem de retorno ou erro */
+      if (json.trigger || json.error) {
+        var errorMessage = '';
+        var errorType = '';
+        
+        if (json.trigger) {
+          errorMessage = json.trigger[1];
+          errorType = json.trigger[0];
+        } else if (json.error) {
+          errorMessage = json.error.message;
+          errorType = 'danger';
         }
-      }
-      
-      /* Mensagem de error */
-      if (json.error) {
+        
         if (message !== undefined && message.length > 0) {
-          message.html('<div class="alert alert-danger">' + json.error.message + '</div>').fadeIn(0);
+          message.html('<div class="alert alert-' + errorType + '">' + errorMessage + '</div>').fadeIn(0);
         } else {
-          alert(json.error.message);
+          alert(errorMessage);
         }
       }
       
@@ -161,7 +163,7 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
       /* Redireciona para uma nova página */
       if (json.location) {
         if (typeof loadPage !== 'undefined' && typeof loadPage === 'function') {
-          loadPage(json.location, true);
+          loadPage((window.history.state && window.history.state.content) || '#content-ajax', json.location, true);
         } else {
           window.location.href = json.location;
         }
@@ -169,7 +171,18 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
       
       /* Recarrega a página atual */
       if (json.reload) {
-        window.location.reload();
+        if (typeof loadPage !== 'undefined' && typeof loadPage === 'function') {
+          loadPage((window.history.state && window.history.state.content) || '#content-ajax', false, true);
+        } else {
+          window.location.reload();
+        }
+      }
+      
+      /* Carrega JS */
+      if (typeof loadHtmlSuccessCallbacks !== 'undefined') {
+        loadHtmlSuccessCallbacks.forEach(function (callback) {
+          callback();
+        });
       }
     },
     complete: function () {
@@ -197,11 +210,9 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
           message.html('<div class="alert alert-danger">' + parse + '</div>').fadeIn(0);
         } else {
           alert('Não foi possível completar a requisição, tente novamente em alguns minutos.');
-          
-          console.log(parse);
         }
       }
-    }
+    },
   });
 };
 
@@ -217,14 +228,15 @@ $(document).ready(function () {
     var url = element.attr('vc-change');
     var method = element.attr('vc-method') ? element.attr('vc-method').toUpperCase() : 'POST';
     var formData = new FormData();
+    var param = element.attr('vc-param') ? element.attr('vc-param') : 'value';
     
     /* FormData */
-    formData.append('value', (element.val() !== undefined ? element.val() : ''));
+    formData.append(param, (element.val() !== undefined ? element.val() : ''));
     
     /* Realiza a requisição */
     formData.append('_METHOD', method);
     
-    vcAjax(element, url, formData, method, {}, true, false);
+    vcAjax(element, url, formData, 'POST', {}, true, false);
   });
   
   /* Dispara o request ao clicar (click) */
@@ -281,9 +293,9 @@ $(document).ready(function () {
             var files = $(element).prop('files');
             
             if (files !== undefined && files.length > 0) {
-              for (var i = 0; i <= files.length; i++) {
-                formData.append($(element).attr('name'), files[i]);
-              }
+              $.each(files, function (key, file) {
+                formData.append($(element).attr('name'), file, file.name);
+              });
             }
           } else if ($(element).tagName && $(element).tagName.toLowerCase() === 'textarea') {
             inputName = $(element).attr('name');
@@ -337,9 +349,25 @@ $(document).ready(function () {
       }
       
       /* Envia requisição */
-      formData.append('_METHOD', 'DELETE');
+      if (element.attr('vc-method') !== undefined && element.attr('vc-method').length > 2) {
+        formData.append('_METHOD', element.attr('vc-method').toUpperCase());
+      } else {
+        formData.append('_METHOD', 'DELETE');
+      }
       
       vcAjax(element, element.attr('vc-delete'), formData, 'POST', form, false, false);
+    }
+    
+    /* REQUEST :: GERAL */
+    if (element.attr('vc-ajax') !== undefined && (element.attr('vc-ajax') === '' || element.attr('vc-ajax'))) {
+      event.preventDefault(event);
+      
+      /* Envia requisição */
+      if (element.attr('vc-method') !== undefined && element.attr('vc-method').length > 2) {
+        formData.append('_METHOD', element.attr('vc-method').toUpperCase());
+      }
+      
+      vcAjax(element, element.attr('vc-ajax'), formData, 'POST', form, false, false);
     }
   });
 });

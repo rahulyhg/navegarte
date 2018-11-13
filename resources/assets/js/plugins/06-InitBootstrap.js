@@ -1,39 +1,55 @@
 /* Carrega o documento */
 $(document).ready(function () {
   /* INIT :: Tooltip */
+  
   $('*[data-toggle="tooltip"]').tooltip();
   
   /* INIT :: Modal */
+  
+  /*
+   * USAGE TWIG TEMPLATE
+   *
+   * {% set modalId = {
+   *   'id':'#modalId',
+   *   'url':'',
+   *   'data':{
+   *     'param':'',
+   *     'param1':''
+   *   }
+   * } %}
+   *
+   * <button data-modal="{{ modalId|json_encode }}">---</button>
+   */
+  
   $(document).on('click', '*[data-modal]', function (event) {
     event.preventDefault();
     event.stopPropagation();
     
     /* Variáveis */
     var modal = $(this).data('modal');
-    var option = $(this).data('option');
     var formData = new FormData();
     
     /* Verifica se a modal existe */
-    if (modal !== undefined && $(modal).length) {
+    if (modal.id !== undefined && $(modal.id).length) {
       /* Abre modal */
-      $(modal).modal({
+      $(modal.id).modal({
         backdrop: true, // 'static' caso não queira fechar ao clicar fora da modal
-        show: true
+        show: true,
       });
       
       /* Verifica opções */
-      if (option !== undefined) {
-        $(modal).find('.modal-body').html('<p class="text-center mb-0 mbottom-0">Aguarde carregando dados...</p>');
+      if (modal.url !== undefined || modal.html !== undefined) {
+        $(modal.id).find('.modal-body').html('<p class="text-center mb-0 mbottom-0">Aguarde carregando dados...</p>');
         
         /* Insere um html caso tenha */
-        if (option.html !== undefined) {
-          $(modal).find('.modal-body').html(option.html);
+        if (modal.html !== undefined) {
+          $(modal.id).find('.modal-body').html(modal.html);
         }
         
         /* Configuração do AJAX */
-        if (option.url !== undefined) {
+        if (modal.url !== undefined) {
           /* FormData */
-          var data = option.data;
+          var data = modal.data;
           
           if (data !== undefined) {
             for (var key in data) {
@@ -44,11 +60,11 @@ $(document).ready(function () {
           }
           
           /* Realiza a requisição */
-          if (option.method !== undefined) {
-            formData.append('_METHOD', option.method);
+          if (modal.method !== undefined) {
+            formData.append('_METHOD', modal.method);
           }
           
-          vcAjax($(this), option.url, formData, 'POST', {}, true, $(modal));
+          vcAjax($(this), modal.url, formData, 'POST', {}, true, $(modal.id));
         }
       }
     }

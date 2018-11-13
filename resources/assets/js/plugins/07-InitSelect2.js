@@ -1,7 +1,7 @@
 /**
  * Inicia as configurações do select2
  *
- * @param selects2
+ * @param {Object} selects2
  *
  * https://select2.org/
  */
@@ -27,10 +27,10 @@ var initSelect2 = function (selects2) {
               cache: option.cache !== undefined ? option.cache : false,
               data: function (param) {
                 return {
-                  term: param.term || "",
-                  page: param.page || 1
+                  term: param.term || '',
+                  page: param.page || 1,
                 };
-              }
+              },
             },
             
             escapeMarkup: function (markup) {
@@ -47,7 +47,7 @@ var initSelect2 = function (selects2) {
             
             templateSelection: function (state) {
               return state.name || state.text;
-            }
+            },
           };
         }
       }
@@ -55,7 +55,8 @@ var initSelect2 = function (selects2) {
       /* Inicia o select2 */
       $(element).select2(mergeObject({
         language: 'pt-BR',
-        width: 'resolve'
+        width: 'resolve',
+        /*dropdownParent: $(element).parent()*/
       }, options));
     });
   }
@@ -64,5 +65,13 @@ var initSelect2 = function (selects2) {
 /* Carrega o documento */
 $(document).ready(function () {
   /* INIT :: Select2 */
-  initSelect2($('*[data-toggle="select2"]'));
+  var selects2 = $(document).find('*[data-toggle="select2"]');
+  
+  if (typeof onLoadHtmlSuccess !== 'undefined' && typeof onLoadHtmlSuccess === 'function') {
+    onLoadHtmlSuccess(function () {
+      initSelect2(selects2);
+    });
+  } else {
+    initSelect2(selects2);
+  }
 });
