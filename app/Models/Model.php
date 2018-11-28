@@ -43,6 +43,11 @@ namespace App\Models {
         protected $where = [];
         
         /**
+         * @var bool
+         */
+        protected $notWhere = false;
+        
+        /**
          * @var array
          */
         protected $group = [];
@@ -78,6 +83,11 @@ namespace App\Models {
         protected $post = [];
         
         /**
+         * @var bool
+         */
+        protected $auth = false;
+        
+        /**
          * Retorna um registro
          *
          * @return array
@@ -87,7 +97,7 @@ namespace App\Models {
         {
             $fetch = current($this->fetchAll());
             
-            return $fetch;
+            return ($fetch ?: []);
         }
         
         /**
@@ -226,12 +236,14 @@ namespace App\Models {
             $this->select = [];
             $this->join = [];
             $this->where = [];
+            $this->notWhere = false;
             $this->group = [];
             $this->having = [];
             $this->order = [];
             $this->limit = null;
             $this->offset = null;
             $this->places = [];
+            $this->auth = false;
         }
         
         /**
@@ -247,13 +259,13 @@ namespace App\Models {
         }
         
         /**
-         * @param mixed $select
+         * @param mixed $order
          *
          * @return $this
          */
-        public function select($select)
+        public function order($order)
         {
-            $this->montPropertyArray($select, 'select');
+            $this->montPropertyArray($order, 'order');
             
             return $this;
         }
@@ -275,6 +287,18 @@ namespace App\Models {
                     $this->{$property}[] = (string) $condition;
                 }
             }
+        }
+        
+        /**
+         * @param mixed $select
+         *
+         * @return $this
+         */
+        public function select($select)
+        {
+            $this->montPropertyArray($select, 'select');
+            
+            return $this;
         }
         
         /**
@@ -302,6 +326,26 @@ namespace App\Models {
         }
         
         /**
+         * @return $this
+         */
+        public function notWhere()
+        {
+            $this->notWhere = true;
+            
+            return $this;
+        }
+        
+        /**
+         * @return $this
+         */
+        public function auth()
+        {
+            $this->auth = true;
+            
+            return $this;
+        }
+        
+        /**
          * @param mixed $group
          *
          * @return $this
@@ -321,18 +365,6 @@ namespace App\Models {
         public function having($having)
         {
             $this->montPropertyArray($having, 'having');
-            
-            return $this;
-        }
-        
-        /**
-         * @param mixed $order
-         *
-         * @return $this
-         */
-        public function order($order)
-        {
-            $this->montPropertyArray($order, 'order');
             
             return $this;
         }
