@@ -29,28 +29,30 @@ if (!function_exists('filter_value')) {
     {
         if (empty($value) && $value != '0') {
             if (!empty($message)) {
-                throw new Exception($message, $code);
+                throw new \InvalidArgumentException($message, $code);
             } else {
-                return null;
+                $value = '';
             }
         }
         
-        switch ($filter) {
-            case 'onlyNumber':
-                $value = onlyNumber($value);
-                break;
-            
-            case 'dateDatabase':
-                $value = date('Y-m-d', strtotime(str_replace('/', '-', $value)));
-                break;
-            
-            case 'dateTimeDatabase':
-                $value = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $value)));
-                break;
-            
-            case 'moneyDatabase':
-                $value = str_replace(',', '.', str_replace('.', '', $value));
-                break;
+        if (!empty($value)) {
+            switch ($filter) {
+                case 'onlyNumber':
+                    $value = onlyNumber($value);
+                    break;
+                
+                case 'dateDatabase':
+                    $value = date('Y-m-d', strtotime(str_replace('/', '-', $value)));
+                    break;
+                
+                case 'dateTimeDatabase':
+                    $value = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $value)));
+                    break;
+                
+                case 'moneyDatabase':
+                    $value = str_replace(',', '.', str_replace('.', '', $value));
+                    break;
+            }
         }
         
         return $value;
@@ -62,42 +64,103 @@ if (!function_exists('json_trigger')) {
      * Gera a trigger no padrão das requisições ajax
      *
      * @param string     $message
-     * @param string|int $code
-     * @param array      $data
+     * @param string|int $type
+     * @param array      $params
      * @param int        $status
      *
      * @return \Slim\Http\Response
      */
-    function json_trigger($message, $code = 'success', array $data = [], $status = 200)
+    function json_trigger($message, $type = 'success', array $params = [], $status = 200)
     {
-        if (is_string($code) && $code !== 'success') {
-            $code = E_USER_ERROR;
+        return json(array_merge([
+            'trigger' => [error_type($type), $message],
+        ], $params), $status);
+    }
+}
+
+if (!function_exists('json_error')) {
+    /**
+     * Gera o erro no padrão das requisições ajax
+     *
+     * @param \Exception $exception
+     * @param array      $params
+     * @param int        $status
+     *
+     * @return \Slim\Http\Response
+     */
+    function json_error($exception, array $params = [], $status = 200)
+    {
+        return json(array_merge([
+            'error' => [
+                'code' => $exception->getCode(),
+                'type' => error_type($exception->getCode()),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'message' => $exception->getMessage(),
+            ],
+        ], $params), $status);
+    }
+}
+
+if (!function_exists('json_error_api')) {
+    /**
+     * Gera o erro no padrão das api
+     *
+     * @param \Exception $exception
+     * @param array      $params
+     * @param int        $status
+     *
+     * @return \Slim\Http\Response
+     */
+    function json_error_api($exception, array $params = [], $status = 400)
+    {
+        return json(array_merge([
+            'error' => [
+                'code' => $exception->getCode(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'message' => $exception->getMessage(),
+            ],
+        ], $params), $status);
+    }
+}
+
+if (!function_exists('error_type')) {
+    /**
+     * Verifica o tipo de erro e retorna a classe css
+     *
+     * @param string|int $type
+     *
+     * @return string
+     */
+    function error_type($type)
+    {
+        if (is_string($type) && $type !== 'success') {
+            $type = E_USER_ERROR;
         }
         
-        switch ($code) {
+        switch ($type) {
             case E_USER_NOTICE:
             case E_NOTICE:
-                $code = 'info';
+                $result = 'info';
                 break;
             case E_USER_WARNING:
             case E_WARNING:
-                $code = 'warning';
+                $result = 'warning';
                 break;
             case E_USER_ERROR:
             case E_ERROR:
-                $code = 'danger';
+                $result = 'danger';
                 break;
             case 'success':
-                $code = 'success';
+                $result = 'success';
                 break;
             
             default:
-                $code = 'danger';
+                $result = 'danger';
         }
         
-        return json(array_merge([
-            'trigger' => [$code, $message],
-        ], $data), $status);
+        return $result;
     }
 }
 
@@ -108,25 +171,22 @@ if (!function_exists('get_image')) {
      * @param string     $table
      * @param int|string $id
      * @param string     $name
-     * @param string     $ext
+     * @param bool       $baseUrl
+     * @param bool       $version
+     * @param string     $extension
      *
      * @return bool|string
      */
-    function get_image($table, $id, $name, $ext = 'jpg')
+    function get_image($table, $id, $name, $baseUrl = true, $version = false, $extension = 'jpg')
     {
-        $folder = "fotos/{$table}/{$id}";
         $name = mb_strtoupper($name, 'UTF-8');
+        $path = "fotos/{$table}/{$id}/{$name}";
         
-        /**
-         * Pega as imagem
-         */
-        if (file_exists(PUBLIC_FOLDER."/{$folder}") && is_dir(PUBLIC_FOLDER."/{$folder}")) {
-            if (file_exists(PUBLIC_FOLDER."/{$folder}/{$name}.{$ext}")) {
-                return "/{$folder}/{$name}.{$ext}";
-            }
+        if ($asset = asset("{$path}.{$extension}", $baseUrl, $version)) {
+            return $asset;
         }
         
-        return false;
+        return '';
     }
 }
 
@@ -358,5 +418,38 @@ if (!function_exists('upload_archive')) {
         }
         
         return $archives;
+    }
+}
+
+if (!file_exists('delete_recursive_directory')) {
+    /**
+     * Remove os arquivos e os diretórios do path passado
+     *
+     * @param string $path
+     */
+    function delete_recursive_directory($path)
+    {
+        if (file_exists($path)) {
+            $interator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($path),
+                \RecursiveIteratorIterator::CHILD_FIRST
+            );
+            
+            $interator->rewind();
+            
+            while ($interator->valid()) {
+                if (!$interator->isDot()) {
+                    if ($interator->isFile()) {
+                        unlink($interator->getPathname());
+                    } else {
+                        rmdir($interator->getPathname());
+                    }
+                }
+                
+                $interator->next();
+            }
+            
+            rmdir($path);
+        }
     }
 }
