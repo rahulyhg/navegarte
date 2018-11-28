@@ -14,7 +14,7 @@ $(window).on('load', function () {
  * Função para carregar a página
  *
  * @param {Object} content
- * @param {String} location
+ * @param {Boolean|String} location
  * @param {Boolean} pushState
  */
 
@@ -210,21 +210,38 @@ function onLoadHtmlSuccess (callback) {
 /* jQuery */
 (function ($) {
   /* Evento do click nos links */
-  $(document).on('click', 'a', function (event) {
+  $(document).on('click', 'a, *[data-href]', function (event) {
     var element = $(this);
+    var content = '#content-ajax';
     var location = element.attr('href') || element.data('href');
     var hash = location.substr(0, 1) === '#';
+    var ajax =
+          element.attr('vc-get') !== undefined ||
+          element.attr('vc-post') !== undefined ||
+          element.attr('vc-put') !== undefined ||
+          element.attr('vc-ajax') !== undefined ||
+          element.attr('vc-delete') !== undefined ||
+          element.attr('vc-form') !== undefined ||
+          element.attr('vc-abort') !== undefined ||
+          element.attr('vc-upload') !== undefined ||
+          false;
     
-    if (hash) {
-      return false;
-    }
-    
-    if (!element.attr('target') && !location.match(/javascript/g)) {
-      event.preventDefault();
-      event.stopPropagation();
+    if (!hash && location && ajax === false) {
+      if (element.hasClass('no-ajaxpage')) {
+        window.location.href = location;
+        
+        return false;
+      }
       
-      loadPage('#content-ajax', location, true);
+      if (!element.attr('target') && !location.match(/javascript/g)) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        loadPage(content, location, true);
+      }
     }
+    
+    return false;
   });
   
   /* Histórico de navegação */

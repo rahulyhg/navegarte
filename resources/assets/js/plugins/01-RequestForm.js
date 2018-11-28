@@ -1,4 +1,27 @@
 /**
+ * Pega href no elemento
+ *
+ * @param {Object} element
+ * @param {String} verbo
+ *
+ * @returns {*|void}
+ */
+function getLocationFromElement (element, verbo) {
+  verbo = verbo || 'get';
+  var location = element.attr('vc-' + verbo);
+  var href = element.attr('href') || element.data('href') || '';
+  var hash = href.substr(0, 1) === '#';
+  
+  if (!hash && href) {
+    if (!href.match(/javascript/g)) {
+      location = href;
+    }
+  }
+  
+  return location;
+}
+
+/**
  * Cria uma requisição ajax
  *
  * @param {Object} element
@@ -10,7 +33,7 @@
  * @param {Object} modal
  */
 
-var vcAjax = function (element, url, formData, method, form, change, modal) {
+function vcAjax (element, url, formData, method, form, change, modal) {
   /* Verifica URL */
   if (!url || url === null) {
     alert('Não encontramos a URL para essa requisição.');
@@ -20,8 +43,13 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
   
   /* Variáveis */
   var html = element.html();
-  var loadding = (element.attr('vc-loadding') ? element.attr('vc-loadding') : (change ? false : html));
+  var loadding = (element.attr('vc-loadding') !== undefined
+    ? element.attr('vc-loadding') ? element.attr('vc-loadding') : 'Aguarde...'
+    : (change ? false : html));
   var message;
+  
+  /* Cancelar requisição */
+  var ajaxAbort = element.parent().parent().parent().find('*[vc-abort]');
   
   /* Message */
   if (modal) {
@@ -52,7 +80,7 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
   }
   
   /* Ajax */
-  $.ajax({
+  var ajaxRequest = $.ajax({
     url: url,
     data: formData,
     dataType: 'json',
@@ -63,17 +91,27 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
     },
     processData: false,
     contentType: false,
+    
     beforeSend: function () {
+      /* Limpa mensagens */
       if (message !== undefined && message.length > 0 && !modal) {
         message.fadeOut(0).html('');
       }
       
+      /* Adiciona mensagem do loadding */
       if (loadding) {
         element.html(loadding);
       }
       
+      /* Desabilita o elemento clicado/modificado */
       element.attr('disabled', true);
+      
+      /* Mostra o botão/link para cancelar a requisição */
+      if (ajaxAbort !== undefined) {
+        ajaxAbort.fadeIn(0);
+      }
     },
+    
     success: function (json) {
       /* Adiciona no localStorage */
       if (json.storage) {
@@ -121,7 +159,7 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
           errorType = json.trigger[0];
         } else if (json.error) {
           errorMessage = json.error.message;
-          errorType = 'danger';
+          errorType = json.error.type || 'danger';
         }
         
         if (message !== undefined && message.length > 0) {
@@ -177,21 +215,30 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
           window.location.reload();
         }
       }
+    },
+    
+    complete: function () {
+      /* Adiciona o html padrão do elemento clicado/modificado */
+      if (loadding) {
+        element.html(html);
+      }
       
-      /* Carrega JS */
+      /* Habilita novamente o elemento clicado/modificado */
+      element.attr('disabled', false);
+      
+      /* Oculta o botão/link para cancelar a requisição */
+      if (ajaxAbort !== undefined) {
+        ajaxAbort.fadeOut(0);
+      }
+      
+      /* Carrega js armazenado */
       if (typeof loadHtmlSuccessCallbacks !== 'undefined') {
         loadHtmlSuccessCallbacks.forEach(function (callback) {
           callback();
         });
       }
     },
-    complete: function () {
-      if (loadding) {
-        element.html(html);
-      }
-      
-      element.attr('disabled', false);
-    },
+    
     error: function (xhr) {
       var parse;
       
@@ -213,6 +260,30 @@ var vcAjax = function (element, url, formData, method, form, change, modal) {
         }
       }
     },
+  });
+  
+  /* Aborta requisição */
+  $(document).on('click', '*[vc-abort]', function () {
+    /* Reseta formulário */
+    if (form.length > 0) {
+      form.trigger('reset');
+    }
+    
+    /* Remove as mensagens caso tenha aparecido */
+    if (message !== undefined && message.length > 0) {
+      message.html('').fadeOut(0);
+    }
+    
+    /* Volta os atributos do elemento clicado/modificado */
+    element.attr('disabled', false).html(html);
+    
+    /* Oculta o botão/link para cancelar a requisição */
+    if (ajaxAbort !== undefined) {
+      ajaxAbort.fadeOut(0);
+    }
+    
+    /* Aborta conexão */
+    ajaxRequest.abort();
   });
 };
 
@@ -328,7 +399,7 @@ $(document).ready(function () {
       event.preventDefault(event);
       
       /* Envia requisição */
-      vcAjax(element, element.attr('vc-get'), formData, 'GET', form, false, false);
+      vcAjax(element, getLocationFromElement(element, 'get'), formData, 'GET', form, false, false);
     }
     
     /* REQUEST :: POST */
@@ -336,14 +407,14 @@ $(document).ready(function () {
       event.preventDefault(event);
       
       /* Envia requisição */
-      vcAjax(element, element.attr('vc-post'), formData, 'POST', form, false, false);
+      vcAjax(element, getLocationFromElement(element, 'post'), formData, 'POST', form, false, false);
     }
     
     /* REQUEST :: DELETE */
     if (element.attr('vc-delete') !== undefined && (element.attr('vc-delete') === '' || element.attr('vc-delete'))) {
       event.preventDefault(event);
       
-      verify = confirm('Cuidado!!!\nDeseja deletar esse registro?');
+      verify = confirm('Cuidado!!!\nDeseja deletar esse registro, essa ação não tem volta?');
       if (verify === false) {
         return;
       }
@@ -355,7 +426,7 @@ $(document).ready(function () {
         formData.append('_METHOD', 'DELETE');
       }
       
-      vcAjax(element, element.attr('vc-delete'), formData, 'POST', form, false, false);
+      vcAjax(element, getLocationFromElement(element, 'delete'), formData, 'POST', form, false, false);
     }
     
     /* REQUEST :: GERAL */
@@ -367,7 +438,7 @@ $(document).ready(function () {
         formData.append('_METHOD', element.attr('vc-method').toUpperCase());
       }
       
-      vcAjax(element, element.attr('vc-ajax'), formData, 'POST', form, false, false);
+      vcAjax(element, getLocationFromElement(element, 'ajax'), formData, 'POST', form, false, false);
     }
   });
 });
