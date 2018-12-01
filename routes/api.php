@@ -18,3 +18,6 @@
 
 // Criação de métodos dinamicos
 $app->route('get,post,put,delete', '/util/{method:[a-z0-9\-]+}[/{params:.*}]', 'Api/UtilController', 'api.util');
+
+// Deploy gitlab
+$app->route('post', '/deploy-gitlab', 'Api/GitlabController', 'api.deploy-gitlab', 'cors');
