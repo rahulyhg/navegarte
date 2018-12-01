@@ -75,7 +75,9 @@ return [
          * Middlewares custom
          */
         
-        'web' => [],
+        'web' => [
+            'cors' => \App\Middlewares\CorsMiddleware::class,
+        ],
     ],
 
 ];
