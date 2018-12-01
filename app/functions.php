@@ -23,7 +23,6 @@ if (!function_exists('filter_value')) {
      * @param int             $code
      *
      * @return null
-     * @throws \Exception
      */
     function filter_value($value, $filter = null, $message = null, $code = E_USER_WARNING)
     {
@@ -94,30 +93,7 @@ if (!function_exists('json_error')) {
             'error' => [
                 'code' => $exception->getCode(),
                 'type' => error_type($exception->getCode()),
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'message' => $exception->getMessage(),
-            ],
-        ], $params), $status);
-    }
-}
-
-if (!function_exists('json_error_api')) {
-    /**
-     * Gera o erro no padrão das api
-     *
-     * @param \Exception $exception
-     * @param array      $params
-     * @param int        $status
-     *
-     * @return \Slim\Http\Response
-     */
-    function json_error_api($exception, array $params = [], $status = 400)
-    {
-        return json(array_merge([
-            'error' => [
-                'code' => $exception->getCode(),
-                'file' => $exception->getFile(),
+                'file' => str_replace([APP_FOLDER, PUBLIC_FOLDER, RESOURCE_FOLDER], '', $exception->getFile()),
                 'line' => $exception->getLine(),
                 'message' => $exception->getMessage(),
             ],
@@ -180,7 +156,7 @@ if (!function_exists('get_image')) {
     function get_image($table, $id, $name, $baseUrl = true, $version = false, $extension = 'jpg')
     {
         $name = mb_strtoupper($name, 'UTF-8');
-        $path = "fotos/{$table}/{$id}/{$name}";
+        $path = "/fotos/{$table}/{$id}/{$name}";
         
         if ($asset = asset("{$path}.{$extension}", $baseUrl, $version)) {
             return $asset;
@@ -202,19 +178,19 @@ if (!function_exists('get_galeria')) {
      */
     function get_galeria($table, $id, $name)
     {
-        $path = "fotos/{$table}/{$id}";
         $name = mb_strtoupper($name, 'UTF-8');
+        $path = "/fotos/{$table}/{$id}/galeria_{$name}";
         $array = [];
         
         /**
          * Pega as imagem
          */
-        if (file_exists(PUBLIC_FOLDER."/{$path}/galeria_{$name}")) {
-            $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path}/galeria_{$name}/0"), ['.', '..']));
+        if (file_exists(PUBLIC_FOLDER."/{$path}")) {
+            $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path}/0"), ['.', '..']));
             
             foreach ($images as $key => $image) {
                 if (strpos($image, '.jpg') !== false || strpos($image, '.png') !== false) {
-                    $array[] = "/{$path}/galeria_{$name}/%s/{$image}";
+                    $array[] = "/{$path}/%s/{$image}";
                 }
             }
         }
@@ -305,7 +281,7 @@ if (!function_exists('upload_image')) {
         
         foreach ($file as $key => $value) {
             $extension = substr(strrchr($value['name'], '.'), 1);
-            $name = Str::slug((empty($name) ? substr($value['name'], 0, strrpos($value['name'], '.')) : $name));
+            $name = (empty($name) ? Str::slug(substr($value['name'], 0, strrpos($value['name'], '.'))) : $name);
             $path = "{$directory}/{$name}.{$extension}";
             
             if ($extension == 'jpeg') {
@@ -336,11 +312,18 @@ if (!function_exists('upload_image')) {
                 }
             }
             
-            // Tamanho original
-            list($widthOri, $heightOri) = getimagesize($value['tmp_name']);
-            
-            if (!imagem($value['tmp_name'], PUBLIC_FOLDER.$path, ($width > $widthOri ? $widthOri : $width), ($height > $heightOri ? $heightOri : $height), 90)) {
-                throw new \Exception("Não foi possível enviar sua imagem, tente novamente em alguns segundos.", E_USER_ERROR);
+            // Verifica se e gif
+            if ($extension == 'gif') {
+                if (!move_uploaded_file($value['tmp_name'], PUBLIC_FOLDER.$path)) {
+                    throw new \Exception("Não foi possível enviar sua imagem, tente novamente em alguns segundos.", E_USER_ERROR);
+                }
+            } else {
+                // Tamanho original
+                list($widthOri, $heightOri) = getimagesize($value['tmp_name']);
+                
+                if (!imagem($value['tmp_name'], PUBLIC_FOLDER.$path, ($width > $widthOri ? $widthOri : $width), ($height > $heightOri ? $heightOri : $height), 90)) {
+                    throw new \Exception("Não foi possível enviar sua imagem, tente novamente em alguns segundos.", E_USER_ERROR);
+                }
             }
             
             $images[] = [
@@ -451,5 +434,29 @@ if (!file_exists('delete_recursive_directory')) {
             
             rmdir($path);
         }
+    }
+}
+
+if (!function_exists('date_diff_carbon')) {
+    /**
+     * Diferença das data em olhos humanos
+     *
+     * @param int|string $dateAndTime
+     *
+     * @return string
+     */
+    function date_diff_carbon($dateAndTime)
+    {
+        if (empty($dateAndTime)) {
+            return '-';
+        }
+        
+        if (is_int($dateAndTime)) {
+            $dateAndTime = \Carbon\Carbon::createFromTimestamp($dateAndTime)
+                ->toDateTimeString();
+        }
+        
+        return \Carbon\Carbon::parse($dateAndTime)
+            ->diffForHumans();
     }
 }

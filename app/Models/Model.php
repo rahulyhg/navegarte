@@ -83,11 +83,6 @@ namespace App\Models {
         protected $post = [];
         
         /**
-         * @var bool
-         */
-        protected $auth = false;
-        
-        /**
          * Retorna um registro
          *
          * @return array
@@ -125,7 +120,7 @@ namespace App\Models {
             $this->order = [];
             
             // Executa a query
-            $stmt = $this->select('COUNT(*) AS count')
+            $stmt = $this->select('COUNT(1) AS count')
                 ->order('count')
                 ->limit(1)
                 ->execute()
@@ -243,7 +238,6 @@ namespace App\Models {
             $this->limit = null;
             $this->offset = null;
             $this->places = [];
-            $this->auth = false;
         }
         
         /**
@@ -259,13 +253,13 @@ namespace App\Models {
         }
         
         /**
-         * @param mixed $order
+         * @param mixed $select
          *
          * @return $this
          */
-        public function order($order)
+        public function select($select)
         {
-            $this->montPropertyArray($order, 'order');
+            $this->montPropertyArray($select, 'select');
             
             return $this;
         }
@@ -287,18 +281,6 @@ namespace App\Models {
                     $this->{$property}[] = (string) $condition;
                 }
             }
-        }
-        
-        /**
-         * @param mixed $select
-         *
-         * @return $this
-         */
-        public function select($select)
-        {
-            $this->montPropertyArray($select, 'select');
-            
-            return $this;
         }
         
         /**
@@ -336,16 +318,6 @@ namespace App\Models {
         }
         
         /**
-         * @return $this
-         */
-        public function auth()
-        {
-            $this->auth = true;
-            
-            return $this;
-        }
-        
-        /**
          * @param mixed $group
          *
          * @return $this
@@ -365,6 +337,18 @@ namespace App\Models {
         public function having($having)
         {
             $this->montPropertyArray($having, 'having');
+            
+            return $this;
+        }
+        
+        /**
+         * @param mixed $order
+         *
+         * @return $this
+         */
+        public function order($order)
+        {
+            $this->montPropertyArray($order, 'order');
             
             return $this;
         }
