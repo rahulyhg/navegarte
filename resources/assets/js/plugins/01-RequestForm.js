@@ -44,9 +44,14 @@ function vcAjax (element, url, formData, method, form, change, modal) {
   /* Variáveis */
   var html = element.html();
   var loadding = (element.attr('vc-loadding') !== undefined
-    ? element.attr('vc-loadding') ? element.attr('vc-loadding') : 'Aguarde...'
+    ? (element.attr('vc-loadding')
+      ? element.attr('vc-loadding')
+      : 'Aguarde...')
     : (change ? false : html));
   var message;
+  
+  /* Upload file */
+  /*var enableUpload = (element.attr('vc-upload') !== undefined);*/
   
   /* Cancelar requisição */
   var ajaxAbort = element.parent().parent().parent().find('*[vc-abort]');
@@ -65,6 +70,21 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       message = element.parent().parent().find('#vc-message');
     } else if (element.attr('vc-message')) {
       message = $(element.attr('vc-message'));
+    }
+  }
+  
+  // Verifica se tem formData no element
+  if (element.attr('vc-data') !== undefined && (element.attr('vc-data') === '' || element.attr('vc-data'))) {
+    var vcData = getJSON(element.attr('vc-data'));
+    
+    if (vcData) {
+      for (var key in vcData) {
+        if (vcData.hasOwnProperty(key)) {
+          if (vcData[key] !== undefined && vcData[key] !== '') {
+            formData.append(key, vcData[key]);
+          }
+        }
+      }
     }
   }
   
@@ -91,6 +111,35 @@ function vcAjax (element, url, formData, method, form, change, modal) {
     },
     processData: false,
     contentType: false,
+    
+    /*xhr: function () {
+      var xhr = $.ajaxSettings.xhr();
+      
+      /!* Upload progress *!/
+      if (enableUpload) {
+        var startTime = new Date().getTime();
+        
+        xhr.upload.addEventListener('progress', function (e) {
+          if (e.lengthComputable && enableUpload) {
+            var diffTime = (new Date().getTime() - startTime);
+            var uploadPercent = parseInt((e.loaded / e.total) * 100);
+            var durationTime = (((100 - uploadPercent) * diffTime) / uploadPercent);
+            // var calculateTimeFormat = calculateTimeUpload(durationTime);
+            
+            if (uploadPercent === 100) {
+              if (ajaxAbort !== undefined) {
+                ajaxAbort.fadeOut(0);
+              }
+              
+              //
+            }
+          }
+        }, false);
+        
+      }
+      
+      return xhr;
+    },*/
     
     beforeSend: function () {
       /* Limpa mensagens */
@@ -129,10 +178,10 @@ function vcAjax (element, url, formData, method, form, change, modal) {
             if (modal) {
               modal.find('#' + key).html(value);
             } else {
-              if ($('input[id="' + key + '"]').length > 0) {
-                $('input[id="' + key + '"]').val(value);
+              if ($(document).find('input[id="' + key + '"]').length > 0) {
+                $(document).find('input[id="' + key + '"]').val(value);
               } else {
-                $('#' + key).html(value);
+                $(document).find('#' + key).html(value);
               }
             }
           });
@@ -200,7 +249,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       
       /* Redireciona para uma nova página */
       if (json.location) {
-        if (typeof loadPage !== 'undefined' && typeof loadPage === 'function') {
+        if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
           loadPage((window.history.state && window.history.state.content) || '#content-ajax', json.location, true);
         } else {
           window.location.href = json.location;
@@ -209,7 +258,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       
       /* Recarrega a página atual */
       if (json.reload) {
-        if (typeof loadPage !== 'undefined' && typeof loadPage === 'function') {
+        if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
           loadPage((window.history.state && window.history.state.content) || '#content-ajax', false, true);
         } else {
           window.location.reload();
@@ -264,6 +313,9 @@ function vcAjax (element, url, formData, method, form, change, modal) {
   
   /* Aborta requisição */
   $(document).on('click', '*[vc-abort]', function () {
+    /* Desativa o upload */
+    /*enableUpload = false;*/
+    
     /* Reseta formulário */
     if (form.length > 0) {
       form.trigger('reset');
@@ -414,7 +466,7 @@ $(document).ready(function () {
     if (element.attr('vc-delete') !== undefined && (element.attr('vc-delete') === '' || element.attr('vc-delete'))) {
       event.preventDefault(event);
       
-      verify = confirm('Cuidado!!!\nDeseja deletar esse registro, essa ação não tem volta?');
+      verify = confirm('Essa ação é irreversível.\nDeseja continuar?');
       if (verify === false) {
         return;
       }

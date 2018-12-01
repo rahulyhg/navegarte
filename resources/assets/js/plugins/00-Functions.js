@@ -146,3 +146,59 @@ function previewImage (input, find) {
     reader.readAsDataURL(input.files[0]);
   }
 }
+
+/**
+ * Calcula o tempo para o upload
+ *
+ * @param duration
+ * @returns {string}
+ */
+/*function calculateTimeUpload (duration) {
+  
+  if (!Number.isFinite(duration)) {
+    return 'calculando tempo...';
+  }
+  
+  var seconds = parseInt((duration / 1000) % 60),
+      minutes = parseInt((duration / (1000 * 60)) % 60),
+      hours   = parseInt((duration / (1000 * 60 * 60)) % 24);
+  
+  if (hours > 0) {
+    return hours + ' horas, ' + minutes + ' minutos e ' + seconds + ' segundos';
+  }
+  
+  if (minutes > 0) {
+    return minutes + ' minutos e ' + seconds + ' segundos';
+  }
+  
+  if (seconds > 0) {
+    return seconds + ' segundos';
+  }
+  
+  return '-';
+  
+}*/
+
+/**
+ * Verifica se o json é válido
+ *
+ * @param json
+ * @returns {boolean}
+ */
+function getJSON (json) {
+  json = typeof json !== 'string'
+    ? JSON.stringify(json)
+    : json;
+  
+  try {
+    json = JSON.parse(json);
+  } catch (e) {
+    return false;
+  }
+  
+  if (typeof json === 'object' && json !== null) {
+    return json;
+  }
+  
+  return false;
+}

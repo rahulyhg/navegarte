@@ -26,10 +26,27 @@ var initSelect2 = function (selects2) {
               delay: option.delay !== undefined ? option.delay : 250,
               cache: option.cache !== undefined ? option.cache : false,
               data: function (param) {
-                return {
+                var params = {
                   term: param.term || '',
                   page: param.page || 1,
                 };
+                
+                /* Monta data vindo das opções */
+                if (option.data !== undefined && (option.data === '' || option.data)) {
+                  var optionData = getJSON(option.data);
+                  
+                  if (optionData) {
+                    for (var key in optionData) {
+                      if (optionData.hasOwnProperty(key)) {
+                        if (optionData[key] !== undefined && optionData[key] !== '') {
+                          params[key] = optionData[key];
+                        }
+                      }
+                    }
+                  }
+                }
+                
+                return params;
               },
             },
             
