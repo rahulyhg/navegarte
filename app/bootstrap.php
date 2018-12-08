@@ -85,31 +85,31 @@ if (file_exists($envFile)) {
 $app = App::getInstance();
 
 /**
- * Inicia as funções customizadas
+ * Inicia as configuraçoes padrões
  */
 
-$app->registerFunctions();
+$app->initConfigs();
 
 /**
  * Inicia as rotas
  */
 
-$app->registerRouter();
+$app->initRoutes();
 
 /**
  * Inicia os serviços
  */
 
-$app->registerProviders();
+$app->initProviders();
 
 /**
  * Inicia as middlewares
  */
 
-$app->registerMiddleware();
+$app->initMiddlewares();
 
 /**
- * Inicia a aplicação
+ * Inicia
  */
 
 $app->run();

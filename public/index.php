@@ -55,4 +55,4 @@ define('FULL_URL', BASE_URL."{$_SERVER['REQUEST_URI']}");
  * Inicia a aplicação
  */
 
-require_once APP_FOLDER.'/bootstrap/app.php';
+require_once APP_FOLDER.'/app/bootstrap.php';

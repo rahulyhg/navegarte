@@ -13,6 +13,7 @@
 namespace App\Models {
     
     use Core\Contracts\Model as BaseModel;
+    use Core\Providers\Database\Database;
     
     /**
      * Class Model
@@ -125,7 +126,7 @@ namespace App\Models {
          *
          * @param bool $count
          *
-         * @return \Core\Database\Statement\Read
+         * @return Database
          * @throws \Exception
          */
         protected function execute($count = false)
@@ -185,12 +186,12 @@ namespace App\Models {
             }
             
             // Executa a query
-            $read = $this->read->query($sql, $this->places);
+            $db = $this->db->query($sql, $this->places);
             
             // Limpa as propriedades da classe
             $this->clear();
             
-            return $read;
+            return $db;
         }
         
         /**

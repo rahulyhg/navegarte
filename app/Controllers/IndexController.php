@@ -23,14 +23,6 @@ namespace App\Controllers {
     class IndexController extends Controller
     {
         /**
-         * Inicia junto com o __construct da classe pai
-         */
-        protected function boot()
-        {
-            //
-        }
-        
-        /**
          * [VIEW] /
          *
          * @return \Slim\Http\Response
@@ -39,7 +31,15 @@ namespace App\Controllers {
         {
             $array = [];
             
-            return $this->view('index', $array, 200);
+            return $this->view('@web.index', $array, 200);
+        }
+        
+        /**
+         * Inicia junto com o __construct da classe pai
+         */
+        protected function boot()
+        {
+            //
         }
     }
 }

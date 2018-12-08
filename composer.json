@@ -17,12 +17,15 @@
   ],
   "require": {
     "php": ">=5.6",
-    "navegarte/core": "1.*"
+    "navegarte/core": "2.*"
   },
   "autoload": {
     "psr-4": {
       "App\\": "app/"
-    }
+    },
+    "files": [
+      "app/helpers.php"
+    ]
   },
   "config": {
     "sort-packages": true,
