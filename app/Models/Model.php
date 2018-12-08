@@ -114,17 +114,8 @@ namespace App\Models {
          */
         public function count()
         {
-            // Limpa algumas propriedade
-            $this->select = [];
-            $this->group = [];
-            $this->order = [];
-            
             // Executa a query
-            $stmt = $this->select('COUNT(1) AS count')
-                ->order('count')
-                ->limit(1)
-                ->execute()
-                ->fetch();
+            $stmt = $this->limit(1)->execute(true)->fetch();
             
             return $stmt['count'];
         }
@@ -132,10 +123,12 @@ namespace App\Models {
         /**
          * Monta e executa a query
          *
+         * @param bool $count
+         *
          * @return \Core\Database\Statement\Read
          * @throws \Exception
          */
-        protected function execute()
+        protected function execute($count = false)
         {
             if (empty($this->table)) {
                 throw new \InvalidArgumentException('You need to add the table name in the `$table` property of the '.get_class($this).' class.', E_USER_ERROR);
@@ -147,7 +140,7 @@ namespace App\Models {
             }
             
             // Select
-            $this->select = implode(', ', ($this->select ?: ['*']));
+            $this->select = ($count ? 'COUNT(1) AS count' : implode(', ', ($this->select ?: ['*'])));
             $sql = "SELECT {$this->select} FROM {$this->table} ";
             
             // Join
@@ -163,7 +156,7 @@ namespace App\Models {
             }
             
             // Group BY
-            if (!empty($this->group) && is_array($this->group)) {
+            if (!empty($this->group) && is_array($this->group) && !$count) {
                 $this->group = implode(', ', $this->group);
                 $sql .= "GROUP BY {$this->group} ";
             }
@@ -176,7 +169,7 @@ namespace App\Models {
             
             // Order by
             if (!empty($this->order) && is_array($this->order)) {
-                $this->order = implode(', ', $this->order);
+                $this->order = ($count ? 'count DESC' : implode(', ', $this->order));
                 $sql .= "ORDER BY {$this->order} ";
             }
             
