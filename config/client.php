@@ -23,51 +23,41 @@ return [
     'keywords' => '',
     
     /**
-     * Redes sociais
+     * Google Plus
      */
     
-    'social' => [
-        'name' => 'VCWeb Networks',
-        
-        /**
-         * Google Plus
-         */
-        
-        'google' => [
-            'active' => false, /* Ativa | Desativa */
-            'author' => '', /* ID do Usuário */
-            'page' => '', /* ID da Página */
-        ],
-        
-        /**
-         * Facebook
-         */
-        
-        'facebook' => [
-            'active' => false, /* Ativa | Desativa */
-            'app' => '', /* Opcional APP do facebook */
-            'author' => '', /* https://www.facebook.com/????? */
-            'page' => '', /* https://www.facebook.com/????? */
-            'pageId' => '', /* ID do Facebook Pages */
-        ],
-        
-        /**
-         * Twitter
-         */
-        
-        'twitter' => false, /* https://www.twitter.com/????? */
-        
-        /**
-         * Youtube
-         */
-        
-        'youtube' => false, /* https://www.youtube.com/user/????? */
-        
-        /**
-         * Instagram
-         */
-        
-        'instagram' => false, /* https://www.instagram.com/????? */
+    'google' => [
+        'author' => '', /* ID do Usuário */
+        'page' => '', /* ID da Página */
     ],
+    
+    /**
+     * Facebook
+     */
+    
+    'facebook' => [
+        'app' => '', /* Opcional APP do facebook */
+        'author' => '', /* https://www.facebook.com/????? */
+        'page' => '', /* https://www.facebook.com/????? */
+        'pageId' => '', /* ID do Facebook Pages */
+    ],
+    
+    /**
+     * Twitter
+     */
+    
+    'twitter' => '', /* https://www.twitter.com/????? */
+    
+    /**
+     * Youtube
+     */
+    
+    'youtube' => '', /* https://www.youtube.com/user/????? */
+    
+    /**
+     * Instagram
+     */
+    
+    'instagram' => '', /* https://www.instagram.com/????? */
 
 ];

@@ -8,7 +8,17 @@
     
     {# Metas tags #}
     {% set titleApp = (title ? title~' - '~config('client.name') : config('client.name')~(config('client.subname') ? ' - '~config('client.subname') : null)) %}
-    {% set social = config('client.social') %}
+    
+    {# Monta image #}
+    {% if image %}
+      {% if not 'http://' in image or not 'https://' in image %}
+        {% set image = asset(image, true) %}
+      {% endif %}
+    {% else %}
+      {% set image = asset('/assets/web/images/1200x630.png', true) %}
+    {% endif %}
+    
+    {{ imageUrl ?: asset(image ?: '/assets/web/images/1200x630.png', true) }}
     
     <title>{{ titleApp }}</title>
     
@@ -39,14 +49,12 @@
     <link rel="sitemap" type="application/xml" href="{{ constant('BASE_URL') }}/sitemap.xml"/>#}
     
     {# Google PLUS #}
-    {% if social.google.active %}
-      {% if social.google.author %}
-        <link rel="author" href="https://plus.google.com/{{ social.google.author }}/posts"/>
-      {% endif %}
-      
-      {% if social.google.page %}
-        <link rel="publisher" href="https://plus.google.com/{{ social.google.page }}"/>
-      {% endif %}
+    {% if config('client.google.author') %}
+      <link rel="author" href="https://plus.google.com/{{ config('client.google.author') }}/posts"/>
+    {% endif %}
+    
+    {% if config('client.google.page') %}
+      <link rel="publisher" href="https://plus.google.com/{{ config('client.google.page') }}"/>
     {% endif %}
     
     {# Meta TAGS Google #}
@@ -56,7 +64,7 @@
       <meta itemprop="description" content="{{ description ?: config('client.description') }}"/>
     {% endif %}
     
-    <meta itemprop="image" content="{{ imageUrl ?: asset(image ?: '/assets/web/images/1200x630.png', true) }}"/>
+    <meta itemprop="image" content="{{ image|raw }}"/>
     <meta itemprop="url" content="{{ constant('FULL_URL') }}"/>
     
     {# Meta TAGS Facebook #}
@@ -67,7 +75,7 @@
       <meta property="og:description" content="{{ description ?: config('client.description') }}"/>
     {% endif %}
     
-    <meta property="og:image" content="{{ imageUrl ?: asset(image ?: '/assets/web/images/1200x630.png', true) }}"/>
+    <meta property="og:image" content="{{ image|raw }}"/>
     <meta property="og:url" content="{{ constant('FULL_URL') }}"/>
     
     {% if config('client.name') %}
@@ -76,29 +84,27 @@
     
     <meta property="og:locale" content="pt_BR"/>
     
-    {% if social.facebook.active %}
-      {% if social.facebook.author %}
-        <meta property="article:author" content="https://www.facebook.com/{{ social.facebook.author }}"/>
-      {% endif %}
-      
-      {% if social.facebook.page %}
-        <meta property="article:publisher" content="https://www.facebook.com/{{ social.facebook.page }}"/>
-      {% endif %}
-      
-      {% if social.facebook.app %}
-        <meta property="fb:app_id" content="{{ social.facebook.app }}"/>
-      {% endif %}
-      
-      {% if social.facebook.pageId %}
-        <meta property="fb:pages" content="{{ social.facebook.pageId }}"/>
-      {% endif %}
+    {% if config('client.facebook.author') %}
+      <meta property="article:author" content="https://www.facebook.com/{{ config('client.facebook.author') }}"/>
+    {% endif %}
+    
+    {% if config('client.facebook.page') %}
+      <meta property="article:publisher" content="https://www.facebook.com/{{ config('client.facebook.page') }}"/>
+    {% endif %}
+    
+    {% if config('client.facebook.app') %}
+      <meta property="fb:app_id" content="{{ config('client.facebook.app') }}"/>
+    {% endif %}
+    
+    {% if config('client.facebook.pageId') %}
+      <meta property="fb:pages" content="{{ config('client.facebook.pageId') }}"/>
     {% endif %}
     
     {# Meta TAGS Twitter #}
     <meta property="twitter:card" content="summary_large_image"/>
     
-    {% if social.twitter %}
-      <meta property="twitter:site" content="@{{ social.twitter }}"/>
+    {% if config('client.twitter') %}
+      <meta property="twitter:site" content="@{{ config('client.twitter') }}"/>
       <meta property="twitter:creator" content="@vcwebnetworks"/>
     {% endif %}
     
@@ -108,12 +114,12 @@
       <meta property="twitter:description" content="{{ description ?: config('client.description') }}"/>
     {% endif %}
     
-    <meta property="twitter:image" content="{{ imageUrl ?: asset(image ?: '/assets/web/images/1200x630.png', true) }}"/>
+    <meta property="twitter:image" content="{{ image|raw }}"/>
     <meta property="twitter:url" content="{{ constant('FULL_URL') }}"/>
     <meta property="twitter:domain" content="{{ constant('BASE_URL') }}"/>
     
     {# Favicon #}
-    <link rel="shortcut icon" type="image/png" href="{{ asset('/assets/web/images/24x24.png', true) }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('/assets/web/images/64x64.png', true) }}">
     
     {# Stylesheets #}
     <style>{{ asset_source('/assets/web/app.css') }}</style>
