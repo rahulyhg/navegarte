@@ -13,14 +13,18 @@ var initGoogleRecaptcha = function () {
     $.each(recaptchas, function (index, element) {
       $(element).html('');
       
-      try {
-        grecaptcha.render(element, {
-          'sitekey': sitekey,
-          'theme': 'light',
-          'size': 'compact ',
-        });
-      } catch (e) {
-        grecaptcha.reset(index);
+      if (sitekey !== undefined && sitekey !== '') {
+        try {
+          grecaptcha.render(element, {
+            'sitekey': sitekey,
+            'theme': $(element).data('theme') !== undefined ? $(element).data('theme') : 'light',
+            'size': $(element).data('size') !== undefined ? $(element).data('size') : 'compact ',
+          });
+        } catch (e) {
+          grecaptcha.reset(index);
+        }
+      } else {
+        $(element).html('<p style="margin: 10px 0;" class="alert alert-danger">Não foi possível carregar o google recaptcha.</p>');
       }
     });
   }

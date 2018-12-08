@@ -51,7 +51,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
   var message;
   
   /* Upload file */
-  /*var enableUpload = (element.attr('vc-upload') !== undefined);*/
+  var enableUpload = (element.attr('vc-upload') !== undefined);
   
   /* Cancelar requisição */
   var ajaxAbort = element.parent().parent().parent().find('*[vc-abort]');
@@ -112,10 +112,10 @@ function vcAjax (element, url, formData, method, form, change, modal) {
     processData: false,
     contentType: false,
     
-    /*xhr: function () {
+    xhr: function () {
       var xhr = $.ajaxSettings.xhr();
       
-      /!* Upload progress *!/
+      /* Upload progress */
       if (enableUpload) {
         var startTime = new Date().getTime();
         
@@ -131,7 +131,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
                 ajaxAbort.fadeOut(0);
               }
               
-              //
+              console.log(diffTime, uploadPercent, durationTime);
             }
           }
         }, false);
@@ -139,7 +139,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       }
       
       return xhr;
-    },*/
+    },
     
     beforeSend: function () {
       /* Limpa mensagens */
@@ -174,17 +174,19 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       /* Percore os id da div preenchendo seus dados */
       if (json.object) {
         if (typeof json.object === 'object') {
-          $.each(json.object, function (key, value) {
-            if (modal) {
-              modal.find('#' + key).html(value);
-            } else {
-              if ($(document).find('input[id="' + key + '"]').length > 0) {
-                $(document).find('input[id="' + key + '"]').val(value);
+          window.setTimeout(function () {
+            $.each(json.object, function (key, value) {
+              if (modal) {
+                modal.find('#' + key).html(value);
               } else {
-                $(document).find('#' + key).html(value);
+                if ($(document).find('input[id="' + key + '"]').length > 0) {
+                  $(document).find('input[id="' + key + '"]').val(value);
+                } else {
+                  $(document).find('#' + key).html(value);
+                }
               }
-            }
-          });
+            });
+          }, 500);
         }
         
         /* Inicia plugins caso for a modal */
@@ -314,7 +316,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
   /* Aborta requisição */
   $(document).on('click', '*[vc-abort]', function () {
     /* Desativa o upload */
-    /*enableUpload = false;*/
+    enableUpload = false;
     
     /* Reseta formulário */
     if (form.length > 0) {
@@ -348,7 +350,6 @@ $(document).ready(function () {
     
     /* Variáveis */
     var element = $(this);
-    var url = element.attr('vc-change');
     var method = element.attr('vc-method') ? element.attr('vc-method').toUpperCase() : 'POST';
     var formData = new FormData();
     var param = element.attr('vc-param') ? element.attr('vc-param') : 'value';
@@ -359,7 +360,7 @@ $(document).ready(function () {
     /* Realiza a requisição */
     formData.append('_METHOD', method);
     
-    vcAjax(element, url, formData, 'POST', {}, true, false);
+    vcAjax(element, getLocationFromElement(element, 'change'), formData, 'POST', {}, true, false);
   });
   
   /* Dispara o request ao clicar (click) */
@@ -493,4 +494,25 @@ $(document).ready(function () {
       vcAjax(element, getLocationFromElement(element, 'ajax'), formData, 'POST', form, false, false);
     }
   });
+});
+
+/* Apos carregar */
+$(window).on('load', function () {
+  /* REQUEST AFTER LOADING PAGE */
+  var afterLoaddings = $(document).find('*[vc-after-load]');
+  
+  if (afterLoaddings.length) {
+    $.each(afterLoaddings, function (index, element) {
+      /* Formdata */
+      var formData = new FormData();
+      
+      /* Get method */
+      if ($(element).attr('vc-method') !== undefined && $(element).attr('vc-method').length > 2) {
+        formData.append('_METHOD', element.attr('vc-method').toUpperCase());
+      }
+      
+      /* Send */
+      vcAjax($(element), getLocationFromElement($(element), 'after-load'), formData, 'POST', {}, false, false);
+    });
+  }
 });

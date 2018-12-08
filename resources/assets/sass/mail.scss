@@ -16,6 +16,12 @@ img {
 
 ul {
   list-style: none;
+  margin: 0 !important;
+  padding: 0 !important;
+  
+  li {
+    margin: 0 !important;
+  }
 }
 
 body {
@@ -165,20 +171,45 @@ $text: (left, right, center, justify, justify-all, start, end, match-parent);
   }
 }
 
-/* Margins & Paddings */
-$names: ('top', 'right', 'left', 'bottom');
-@each $name in $names {
-  @for $i from 0 through 4 {
-    $calc: $i * 5;
-    
-    // Margins
-    .margin-#{$name}-#{$calc} {
-      margin-#{$name}: #{$calc + 'px'} !important;
-    }
-    
-    // Paddings
-    .padding-#{$name}-#{$calc} {
-      padding-#{$name}: #{$calc + 'px'} !important;
+/* Margin & Padding */
+@each $prop, $abbrev in (margin: m, padding: p) {
+  @each $prop2, $abbrev2 in (top: t, left: l, bottom: b, right: r) {
+    @for $i from 0 through 10 {
+      $i: $i * 5;
+      
+      /* Margin e Padding positivos */
+      .#{$abbrev}-#{$i} {
+        #{$prop}: #{$i + 'px'} !important;
+      }
+      
+      .#{$abbrev}tb-#{$i} {
+        #{$prop}: #{$i + 'px'} 0px !important;
+      }
+      
+      .#{$abbrev}lr-#{$i} {
+        #{$prop}: 0px #{$i + 'px'} !important;
+      }
+      
+      .#{$abbrev}#{$abbrev2}-#{$i} {
+        #{$prop}-#{$prop2}: #{$i + 'px'} !important;
+      }
+      
+      /* Margin e Padding negativos */
+      .#{$abbrev}-n#{$i} {
+        #{$prop}: -#{$i + 'px'} !important;
+      }
+      
+      .#{$abbrev}tb-n#{$i} {
+        #{$prop}: -#{$i + 'px'} 0px !important;
+      }
+      
+      .#{$abbrev}lr-n#{$i} {
+        #{$prop}: 0px -#{$i + 'px'} !important;
+      }
+      
+      .#{$abbrev}#{$abbrev2}-n#{$i} {
+        #{$prop}-#{$prop2}: -#{$i + 'px'} !important;
+      }
     }
   }
 }
