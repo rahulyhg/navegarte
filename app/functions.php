@@ -58,6 +58,38 @@ if (!function_exists('filter_value')) {
     }
 }
 
+if (!function_exists('validate_post')) {
+    /**
+     * Realiza a validação do post
+     *
+     * @param array $post
+     * @param array $params
+     */
+    function validate_post(array $post, array $params)
+    {
+        // Percorre os parâmetro do post
+        foreach ($params as $index => $param) {
+            // Força checagem
+            if (!empty($param['force'])) {
+                if (!array_key_exists($index, $post)) {
+                    $post[$index] = '';
+                }
+            }
+            
+            // Verifica caso esteja preenchido
+            if (isset($post[$index]) && (empty($post[$index]) && $post[$index] != '0')) {
+                if (is_string($param)) {
+                    throw new InvalidArgumentException($param, E_USER_WARNING);
+                } else {
+                    $code = (!empty($param['code']) ? $param['code'] : E_USER_WARNING);
+                    
+                    throw new InvalidArgumentException($param['message'], $code);
+                }
+            }
+        }
+    }
+}
+
 if (!function_exists('json_trigger')) {
     /**
      * Gera a trigger no padrão das requisições ajax
@@ -126,6 +158,7 @@ if (!function_exists('error_type')) {
                 break;
             case E_USER_ERROR:
             case E_ERROR:
+            case '0':
                 $result = 'danger';
                 break;
             case 'success':
@@ -158,8 +191,10 @@ if (!function_exists('get_image')) {
         $name = mb_strtoupper($name, 'UTF-8');
         $path = "/fotos/{$table}/{$id}/{$name}";
         
-        if ($asset = asset("{$path}.{$extension}", $baseUrl, $version)) {
-            return $asset;
+        foreach ([$extension, strtoupper($extension)] as $ext) {
+            if ($asset = asset("{$path}.{$ext}", $baseUrl, $version)) {
+                return $asset;
+            }
         }
         
         return '';
@@ -179,19 +214,26 @@ if (!function_exists('get_galeria')) {
     function get_galeria($table, $id, $name)
     {
         $name = mb_strtoupper($name, 'UTF-8');
-        $path = "/fotos/{$table}/{$id}/galeria_{$name}";
+        $path = ["/fotos/{$table}/{$id}/galeria_{$name}", "/fotos/fotos_album/{$id}"];
         $array = [];
+        $images = [];
         
-        /**
-         * Pega as imagem
-         */
-        if (file_exists(PUBLIC_FOLDER."/{$path}")) {
-            $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path}/0"), ['.', '..']));
-            
-            foreach ($images as $key => $image) {
-                if (strpos($image, '.jpg') !== false || strpos($image, '.png') !== false) {
-                    $array[] = "/{$path}/%s/{$image}";
-                }
+        // Imagens antigas
+        if (file_exists(PUBLIC_FOLDER."/{$path[1]}")) {
+            $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path[1]}"), ['.', '..']));
+            $path = $path[1];
+        }
+        
+        // Imagens novas
+        if (file_exists(PUBLIC_FOLDER."/{$path[0]}")) {
+            $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path[0]}/0"), ['.', '..']));
+            $path = $path[0];
+        }
+        
+        // Percore as imagens
+        foreach ($images as $key => $image) {
+            if (preg_match('/(\.jpg|\.jpeg|\.png|\.gif)/i', $image)) {
+                $array[] = "/{$path}/%s/{$image}";
             }
         }
         
