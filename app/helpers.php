@@ -478,27 +478,3 @@ if (!file_exists('delete_recursive_directory')) {
         }
     }
 }
-
-if (!function_exists('date_diff_carbon')) {
-    /**
-     * Diferença das data em olhos humanos
-     *
-     * @param int|string $dateAndTime
-     *
-     * @return string
-     */
-    function date_diff_carbon($dateAndTime)
-    {
-        if (empty($dateAndTime)) {
-            return '-';
-        }
-        
-        if (is_int($dateAndTime)) {
-            $dateAndTime = \Carbon\Carbon::createFromTimestamp($dateAndTime)
-                ->toDateTimeString();
-        }
-        
-        return \Carbon\Carbon::parse($dateAndTime)
-            ->diffForHumans();
-    }
-}
