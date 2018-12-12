@@ -478,3 +478,87 @@ if (!file_exists('delete_recursive_directory')) {
         }
     }
 }
+
+if (!function_exists('date_for_human')) {
+    /**
+     * Diferença das data em olhos humanos
+     *
+     * @param int|string $dateTime
+     * @param int        $precision
+     *
+     * @return string
+     */
+    function date_for_human($dateTime, $precision = 2)
+    {
+        // Variáveis
+        $minute = 60;
+        $hour = 3600;
+        $day = 86400;
+        $week = 604800;
+        $month = 2629743;
+        $year = 31556926;
+        $century = $year * 10;
+        $decade = $century * 10;
+        
+        // Tempos
+        $periods = array(
+            $decade => array("decada", "decadas"),
+            $century => array("seculo", "seculos"),
+            $year => array("ano", "anos"),
+            $month => array("mês", "mêses"),
+            $week => array("semana", "semanas"),
+            $day => array("dia", "dias"),
+            $hour => array("hora", "horas"),
+            $minute => array("minuto", "minutos"),
+            1 => array("segundo", "segundos"),
+        );
+        
+        // Time atual
+        $currentTime = (new \DateTime())->getTimestamp();
+        
+        // Verifica a data passada
+        if ($dateTime instanceof \DateTimeInterface) {
+            $dateTime = $dateTime->getTimestamp();
+        } else if (is_int($dateTime)) {
+            $dateTime = DateTime::createFromFormat('U', $dateTime)->getTimestamp();
+        } else {
+            $dateTime = str_replace('/', '-', $dateTime);
+            $dateTimeCheck = explode('-', explode(' ', $dateTime)[0]);
+            
+            if (!checkdate($dateTimeCheck[1], $dateTimeCheck[2], $dateTimeCheck[0])) {
+                throw new InvalidArgumentException("Date passed not valid.", E_USER_ERROR);
+            }
+            
+            $dateTime = (new \DateTime($dateTime))->getTimestamp();
+        }
+        
+        // Quanto tempo já passou da data atual - a data passada
+        $passed = $currentTime - $dateTime;
+        
+        // Monta o resultado
+        if ($passed < 5) {
+            $output = "5 segundos";
+        } else {
+            $output = array();
+            $exit = 0;
+            
+            foreach ($periods as $period => $name) {
+                if ($exit >= $precision || $exit > 0 && $period < 1) {
+                    break;
+                }
+                
+                $result = floor($passed / $period);
+                
+                if ($result > 0) {
+                    $output[] = $result." ".($result == 1 ? $name[0] : $name[1]);
+                    $passed -= $result * $period;
+                    $exit++;
+                }
+            }
+            
+            $output = implode(" e ", $output);
+        }
+        
+        return $output;
+    }
+}
