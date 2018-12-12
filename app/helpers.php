@@ -18,9 +18,9 @@ if (!function_exists('filter_value')) {
      * Verifica e formata o valor do post
      *
      * @param string|int|bool $value
-     * @param string          $filter
-     * @param string          $message
-     * @param int             $code
+     * @param string $filter
+     * @param string $message
+     * @param int $code
      *
      * @return null
      */
@@ -94,10 +94,10 @@ if (!function_exists('json_trigger')) {
     /**
      * Gera a trigger no padrão das requisições ajax
      *
-     * @param string     $message
+     * @param string $message
      * @param string|int $type
-     * @param array      $params
-     * @param int        $status
+     * @param array $params
+     * @param int $status
      *
      * @return \Slim\Http\Response
      */
@@ -114,8 +114,8 @@ if (!function_exists('json_error')) {
      * Gera o erro no padrão das requisições ajax
      *
      * @param \Exception $exception
-     * @param array      $params
-     * @param int        $status
+     * @param array $params
+     * @param int $status
      *
      * @return \Slim\Http\Response
      */
@@ -177,12 +177,12 @@ if (!function_exists('get_image')) {
     /**
      * Recupera a imagem do asset
      *
-     * @param string     $table
+     * @param string $table
      * @param int|string $id
-     * @param string     $name
-     * @param bool       $baseUrl
-     * @param bool       $version
-     * @param string     $extension
+     * @param string $name
+     * @param bool $baseUrl
+     * @param bool $version
+     * @param string $extension
      *
      * @return bool|string
      */
@@ -205,8 +205,8 @@ if (!function_exists('get_galeria')) {
     /**
      * Recupera a imagem do asset
      *
-     * @param string       $table
-     * @param int|string   $id
+     * @param string $table
+     * @param int|string $id
      * @param string|array $name
      *
      * @return array|bool|string
@@ -306,11 +306,11 @@ if (!function_exists('upload_image')) {
     /**
      * Upload de imagem
      *
-     * @param array  $file
+     * @param array $file
      * @param string $folder
      * @param string $name
-     * @param int    $width
-     * @param int    $height
+     * @param int $width
+     * @param int $height
      *
      * @return array
      * @throws \Exception
@@ -385,7 +385,7 @@ if (!function_exists('upload_archive')) {
     /**
      * Upload de imagem
      *
-     * @param array  $file
+     * @param array $file
      * @param string $folder
      * @param string $name
      *
@@ -484,7 +484,7 @@ if (!function_exists('date_for_human')) {
      * Diferença das data em olhos humanos
      *
      * @param int|string $dateTime
-     * @param int        $precision
+     * @param int $precision
      *
      * @return string
      */
@@ -526,7 +526,7 @@ if (!function_exists('date_for_human')) {
             $dateTimeCheck = explode('-', explode(' ', $dateTime)[0]);
             
             if (!checkdate($dateTimeCheck[1], $dateTimeCheck[2], $dateTimeCheck[0])) {
-                throw new InvalidArgumentException("Date passed not valid.", E_USER_ERROR);
+                throw new \InvalidArgumentException("Date passed not valid.", E_USER_ERROR);
             }
             
             $dateTime = (new \DateTime($dateTime))->getTimestamp();
@@ -562,7 +562,6 @@ if (!function_exists('date_for_human')) {
         return $output;
     }
 }
-
 
 if (!function_exists('preg_replace_space')) {
     /**
