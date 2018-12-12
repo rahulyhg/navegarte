@@ -562,3 +562,30 @@ if (!function_exists('date_for_human')) {
         return $output;
     }
 }
+
+
+if (!function_exists('preg_replace_space')) {
+    /**
+     * Remove tags e espaços vázios
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    function preg_replace_space($string)
+    {
+        // Remove comentários
+        $string = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $string);
+        
+        // Remove espaço com mais de um espaço
+        $string = preg_replace('/^\s+|\s+$|\r\n|\r|\n|\t|\s+(?=\s)/m', '', $string);
+        
+        // Remove tag `p` vázia
+        $string = preg_replace('/<p[^>]*>[\s\s|&nbsp;]*<\/p>/m', '', $string);
+        
+        // Remove todas tags vázia
+        //$string = preg_replace('/<[\w]*[^>]*>[\s\s|&nbsp;]*<\/[\w]*>/m', '', $string);
+        
+        return $string;
+    }
+}
