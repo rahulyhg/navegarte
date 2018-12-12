@@ -3,7 +3,7 @@
 /**
  * VCWeb <https://www.vagnercardosoweb.com.br/>
  *
- * @package   VCWeb
+ * @package   VCWeb Networks
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
@@ -70,7 +70,7 @@ if (!function_exists('validate_post')) {
         // Percorre os parâmetro do post
         foreach ($params as $index => $param) {
             // Força checagem
-            if (!empty($param['force'])) {
+            if (!empty($param['force']) && $param['force'] == true) {
                 if (!array_key_exists($index, $post)) {
                     $post[$index] = '';
                 }
@@ -186,7 +186,7 @@ if (!function_exists('get_image')) {
      *
      * @return bool|string
      */
-    function get_image($table, $id, $name, $baseUrl = true, $version = false, $extension = 'jpg')
+    function get_image($table, $id, $name, $baseUrl = true, $version = true, $extension = 'jpg')
     {
         $name = mb_strtoupper($name, 'UTF-8');
         $path = "/fotos/{$table}/{$id}/{$name}";
@@ -214,7 +214,7 @@ if (!function_exists('get_galeria')) {
     function get_galeria($table, $id, $name)
     {
         $name = mb_strtoupper($name, 'UTF-8');
-        $path = ["/fotos/{$table}/{$id}/galeria_{$name}", "/fotos/fotos_album/{$id}"];
+        $path = ["fotos/{$table}/{$id}/galeria_{$name}", "fotos/fotos_album/{$id}"];
         $array = [];
         $images = [];
         
@@ -222,18 +222,18 @@ if (!function_exists('get_galeria')) {
         if (file_exists(PUBLIC_FOLDER."/{$path[1]}")) {
             $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path[1]}"), ['.', '..']));
             $path = $path[1];
-        }
-        
-        // Imagens novas
-        if (file_exists(PUBLIC_FOLDER."/{$path[0]}")) {
-            $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path[0]}/0"), ['.', '..']));
-            $path = $path[0];
+        } else {
+            // Imagens novas
+            if (file_exists(PUBLIC_FOLDER."/{$path[0]}")) {
+                $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path[0]}/0"), ['.', '..']));
+                $path = "{$path[0]}/";
+            }
         }
         
         // Percore as imagens
         foreach ($images as $key => $image) {
             if (preg_match('/(\.jpg|\.jpeg|\.png|\.gif)/i', $image)) {
-                $array[] = "/{$path}/%s/{$image}";
+                $array[] = "/{$path}%s/{$image}";
             }
         }
         
