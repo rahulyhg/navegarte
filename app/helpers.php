@@ -324,11 +324,12 @@ if (!function_exists('upload_image')) {
         foreach ($file as $key => $value) {
             $extension = substr(strrchr($value['name'], '.'), 1);
             $name = (empty($name) ? Str::slug(substr($value['name'], 0, strrpos($value['name'], '.'))) : $name);
-            $path = "{$directory}/{$name}.{$extension}";
             
             if ($extension == 'jpeg') {
                 $extension = 'jpg';
             }
+            
+            $path = "{$directory}/{$name}.{$extension}";
             
             // Checa extension
             if (!in_array($extension, $extensions)) {
