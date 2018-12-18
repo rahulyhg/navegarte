@@ -27,9 +27,9 @@ namespace App\Middlewares {
         /**
          * Registra middleware para verificar o CORS
          *
-         * @param \Slim\Http\Request  $request  PSR7 request
+         * @param \Slim\Http\Request $request PSR7 request
          * @param \Slim\Http\Response $response PSR7 response
-         * @param callable            $next     Next middleware
+         * @param callable $next Next middleware
          *
          * @return \Slim\Http\Response
          */
@@ -43,8 +43,15 @@ namespace App\Middlewares {
             header_remove("Pragma");*/
             
             $response = $response->withHeader('Access-Control-Allow-Origin', '*')
-                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+                                 ->withHeader('Access-Control-Allow-Headers', implode(', ', [
+                                     'X-Requested-With',
+                                     'X-Http-Method-Override',
+                                     'Content-Type',
+                                     'Accept',
+                                     'Origin',
+                                     'Authorization',
+                                 ]))
+                                 ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
             
             return $response;
         }
