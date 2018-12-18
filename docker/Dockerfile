@@ -1,4 +1,4 @@
-FROM php:apache
+FROM php:7.2-apache
 
 # Atualiza container e instala algumas dependencias
 RUN  apt-get update \
@@ -50,7 +50,7 @@ RUN docker-php-ext-install pdo_dblib
 RUN docker-php-ext-enable pdo_dblib
 
 # Instala xdebug
-RUN pecl install xdebug-2.7.0beta1
+RUN pecl install xdebug
 RUN docker-php-ext-enable xdebug
 RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini &&\
     echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini &&\
@@ -90,3 +90,5 @@ RUN a2ensite default-ssl
 
 # Permissão de pasta
 # RUN chown -R www-data:www-data /var/www
+
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
