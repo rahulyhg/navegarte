@@ -16,7 +16,7 @@ services:
       - "./docker/default-ssl.conf:/etc/apache2/sites-available/default-ssl.conf"
     environment:
       - COMPOSER_ALLOW_SUPERUSER=1
-      - DOCUMENT_ROOT=/var/www
+      - DOCUMENT_ROOT=/var/www/public
   db:
     image: mysql:5.7
     ports:
