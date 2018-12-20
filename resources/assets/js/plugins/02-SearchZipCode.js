@@ -22,7 +22,7 @@ $(document).ready(function () {
       if (validadeCep.test(cep)) {
         beforeSend('Aguarde....');
         
-        $.get('/api/util/zipcode', {cep: cep}, function (json) {
+        $.get('/api/zipcode', {cep: cep}, function (json) {
           if (!json.error) {
             $.each(json, function (key, value) {
               var element = $('#vc-' + key);

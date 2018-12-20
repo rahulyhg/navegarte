@@ -77,12 +77,16 @@ function vcAjax (element, url, formData, method, form, change, modal) {
   if (element.attr('vc-data') !== undefined && (element.attr('vc-data') === '' || element.attr('vc-data'))) {
     var vcData = getJSON(element.attr('vc-data'));
     
-    if (vcData) {
-      for (var key in vcData) {
-        if (vcData.hasOwnProperty(key)) {
-          if (vcData[key] !== undefined && vcData[key] !== '') {
-            formData.append(key, vcData[key]);
-          }
+    if (!vcData) {
+      alert('Atributo vc-data no elemento clicado não é um JSON válido.');
+      
+      return;
+    }
+    
+    for (var key in vcData) {
+      if (vcData.hasOwnProperty(key)) {
+        if (vcData[key] !== undefined && vcData[key] !== '') {
+          formData.append(key, vcData[key]);
         }
       }
     }
@@ -99,6 +103,24 @@ function vcAjax (element, url, formData, method, form, change, modal) {
     _METHOD = method;
   }
   
+  /* Headers */
+  var headers = {};
+  headers['X-Http-Method-Override'] = _METHOD.toUpperCase();
+  
+  if (formData.has('_HEADERS')) {
+    var jsonHeader = getJSON(formData.get('_HEADERS'));
+    
+    if (jsonHeader) {
+      for (key in jsonHeader) {
+        if (jsonHeader.hasOwnProperty(key)) {
+          headers[key] = jsonHeader[key];
+        }
+      }
+    }
+    
+    formData.delete('_HEADERS');
+  }
+  
   /* Ajax */
   var ajaxRequest = $.ajax({
     url: url,
@@ -106,11 +128,10 @@ function vcAjax (element, url, formData, method, form, change, modal) {
     dataType: 'json',
     type: method.toUpperCase(),
     enctype: 'multipart/form-data',
-    headers: {
-      'X-Http-Method-Override': _METHOD.toUpperCase(),
-    },
-    processData: false,
+    headers: headers,
+    cache: false,
     contentType: false,
+    processData: false,
     
     xhr: function () {
       var xhr = $.ajaxSettings.xhr();
@@ -302,7 +323,12 @@ function vcAjax (element, url, formData, method, form, change, modal) {
           alert(parse.error.message);
         }
       } catch (e) {
-        parse = JSON.parse(JSON.stringify(xhr.responseText));
+        try {
+          parse = JSON.parse(JSON.stringify(xhr.responseText));
+        } catch (e) {
+          parse = '[JS] Erro inesperado, favor contate o suporte.';
+          console.log(e);
+        }
         
         if (message !== undefined && message.length > 0) {
           message.html('<div class="alert alert-danger">' + parse + '</div>').fadeIn(0);

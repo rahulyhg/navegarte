@@ -19,10 +19,11 @@ use Core\App;
  */
 
 ob_start(function ($buffer) {
-    if (mb_strpos($_SERVER['HTTP_HOST'], 'localhost') === false) {
-        $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
-        $buffer = str_replace(["\r\n", "\r", "\n", "\t", '  ', '   ', '    ',], '', $buffer);
-    }
+    // Remove comentários
+    $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+    
+    // Remove espaço com mais de um espaço
+    $buffer = preg_replace('/^\s+|\s+$|\r\n|\r|\n|\t|\s+(?=\s)/m', '', $buffer);
     
     return $buffer;
 });
@@ -85,7 +86,7 @@ if (file_exists($envFile)) {
 $app = App::getInstance();
 
 /**
- * Inicia as funções customizadas
+ * Inicia as configuraçoes padrões
  */
 
 $app->registerFunctions();
@@ -109,7 +110,7 @@ $app->registerProviders();
 $app->registerMiddleware();
 
 /**
- * Inicia a aplicação
+ * Inicia
  */
 
 $app->run();

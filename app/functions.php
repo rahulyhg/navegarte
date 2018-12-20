@@ -3,7 +3,7 @@
 /**
  * VCWeb <https://www.vagnercardosoweb.com.br/>
  *
- * @package   VCWeb
+ * @package   VCWeb Networks
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
@@ -18,9 +18,9 @@ if (!function_exists('filter_value')) {
      * Verifica e formata o valor do post
      *
      * @param string|int|bool $value
-     * @param string          $filter
-     * @param string          $message
-     * @param int             $code
+     * @param string $filter
+     * @param string $message
+     * @param int $code
      *
      * @return null
      */
@@ -70,7 +70,7 @@ if (!function_exists('validate_post')) {
         // Percorre os parâmetro do post
         foreach ($params as $index => $param) {
             // Força checagem
-            if (!empty($param['force'])) {
+            if (!empty($param['force']) && $param['force'] == true) {
                 if (!array_key_exists($index, $post)) {
                     $post[$index] = '';
                 }
@@ -94,10 +94,10 @@ if (!function_exists('json_trigger')) {
     /**
      * Gera a trigger no padrão das requisições ajax
      *
-     * @param string     $message
+     * @param string $message
      * @param string|int $type
-     * @param array      $params
-     * @param int        $status
+     * @param array $params
+     * @param int $status
      *
      * @return \Slim\Http\Response
      */
@@ -114,8 +114,8 @@ if (!function_exists('json_error')) {
      * Gera o erro no padrão das requisições ajax
      *
      * @param \Exception $exception
-     * @param array      $params
-     * @param int        $status
+     * @param array $params
+     * @param int $status
      *
      * @return \Slim\Http\Response
      */
@@ -177,16 +177,16 @@ if (!function_exists('get_image')) {
     /**
      * Recupera a imagem do asset
      *
-     * @param string     $table
+     * @param string $table
      * @param int|string $id
-     * @param string     $name
-     * @param bool       $baseUrl
-     * @param bool       $version
-     * @param string     $extension
+     * @param string $name
+     * @param bool $baseUrl
+     * @param bool $version
+     * @param string $extension
      *
      * @return bool|string
      */
-    function get_image($table, $id, $name, $baseUrl = true, $version = false, $extension = 'jpg')
+    function get_image($table, $id, $name, $baseUrl = true, $version = true, $extension = 'jpg')
     {
         $name = mb_strtoupper($name, 'UTF-8');
         $path = "/fotos/{$table}/{$id}/{$name}";
@@ -205,8 +205,8 @@ if (!function_exists('get_galeria')) {
     /**
      * Recupera a imagem do asset
      *
-     * @param string       $table
-     * @param int|string   $id
+     * @param string $table
+     * @param int|string $id
      * @param string|array $name
      *
      * @return array|bool|string
@@ -214,7 +214,7 @@ if (!function_exists('get_galeria')) {
     function get_galeria($table, $id, $name)
     {
         $name = mb_strtoupper($name, 'UTF-8');
-        $path = ["/fotos/{$table}/{$id}/galeria_{$name}", "/fotos/fotos_album/{$id}"];
+        $path = ["fotos/{$table}/{$id}/galeria_{$name}", "fotos/fotos_album/{$id}"];
         $array = [];
         $images = [];
         
@@ -222,18 +222,18 @@ if (!function_exists('get_galeria')) {
         if (file_exists(PUBLIC_FOLDER."/{$path[1]}")) {
             $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path[1]}"), ['.', '..']));
             $path = $path[1];
-        }
-        
-        // Imagens novas
-        if (file_exists(PUBLIC_FOLDER."/{$path[0]}")) {
-            $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path[0]}/0"), ['.', '..']));
-            $path = $path[0];
+        } else {
+            // Imagens novas
+            if (file_exists(PUBLIC_FOLDER."/{$path[0]}")) {
+                $images = array_values(array_diff(scandir(PUBLIC_FOLDER."/{$path[0]}/0"), ['.', '..']));
+                $path = "{$path[0]}/";
+            }
         }
         
         // Percore as imagens
         foreach ($images as $key => $image) {
             if (preg_match('/(\.jpg|\.jpeg|\.png|\.gif)/i', $image)) {
-                $array[] = "/{$path}/%s/{$image}";
+                $array[] = "/{$path}%s/{$image}";
             }
         }
         
@@ -306,11 +306,11 @@ if (!function_exists('upload_image')) {
     /**
      * Upload de imagem
      *
-     * @param array  $file
+     * @param array $file
      * @param string $folder
      * @param string $name
-     * @param int    $width
-     * @param int    $height
+     * @param int $width
+     * @param int $height
      *
      * @return array
      * @throws \Exception
@@ -324,11 +324,12 @@ if (!function_exists('upload_image')) {
         foreach ($file as $key => $value) {
             $extension = substr(strrchr($value['name'], '.'), 1);
             $name = (empty($name) ? Str::slug(substr($value['name'], 0, strrpos($value['name'], '.'))) : $name);
-            $path = "{$directory}/{$name}.{$extension}";
             
             if ($extension == 'jpeg') {
                 $extension = 'jpg';
             }
+            
+            $path = "{$directory}/{$name}.{$extension}";
             
             // Checa extension
             if (!in_array($extension, $extensions)) {
@@ -385,7 +386,7 @@ if (!function_exists('upload_archive')) {
     /**
      * Upload de imagem
      *
-     * @param array  $file
+     * @param array $file
      * @param string $folder
      * @param string $name
      *
@@ -479,26 +480,112 @@ if (!file_exists('delete_recursive_directory')) {
     }
 }
 
-if (!function_exists('date_diff_carbon')) {
+if (!function_exists('date_for_human')) {
     /**
      * Diferença das data em olhos humanos
      *
-     * @param int|string $dateAndTime
+     * @param int|string $dateTime
+     * @param int $precision
      *
      * @return string
      */
-    function date_diff_carbon($dateAndTime)
+    function date_for_human($dateTime, $precision = 2)
     {
-        if (empty($dateAndTime)) {
-            return '-';
+        // Variáveis
+        $minute = 60;
+        $hour = 3600;
+        $day = 86400;
+        $week = 604800;
+        $month = 2629743;
+        $year = 31556926;
+        $century = $year * 10;
+        $decade = $century * 10;
+        
+        // Tempos
+        $periods = array(
+            $decade => array("decada", "decadas"),
+            $century => array("seculo", "seculos"),
+            $year => array("ano", "anos"),
+            $month => array("mês", "mêses"),
+            $week => array("semana", "semanas"),
+            $day => array("dia", "dias"),
+            $hour => array("hora", "horas"),
+            $minute => array("minuto", "minutos"),
+            1 => array("segundo", "segundos"),
+        );
+        
+        // Time atual
+        $currentTime = (new \DateTime())->getTimestamp();
+        
+        // Verifica a data passada
+        if ($dateTime instanceof \DateTimeInterface) {
+            $dateTime = $dateTime->getTimestamp();
+        } else if (is_int($dateTime)) {
+            $dateTime = DateTime::createFromFormat('U', $dateTime)->getTimestamp();
+        } else {
+            $dateTime = str_replace('/', '-', $dateTime);
+            $dateTimeCheck = explode('-', explode(' ', $dateTime)[0]);
+            
+            if (!checkdate($dateTimeCheck[1], $dateTimeCheck[2], $dateTimeCheck[0])) {
+                throw new \InvalidArgumentException("Date passed not valid.", E_USER_ERROR);
+            }
+            
+            $dateTime = (new \DateTime($dateTime))->getTimestamp();
         }
         
-        if (is_int($dateAndTime)) {
-            $dateAndTime = \Carbon\Carbon::createFromTimestamp($dateAndTime)
-                ->toDateTimeString();
+        // Quanto tempo já passou da data atual - a data passada
+        $passed = $currentTime - $dateTime;
+        
+        // Monta o resultado
+        if ($passed < 5) {
+            $output = "5 segundos";
+        } else {
+            $output = array();
+            $exit = 0;
+            
+            foreach ($periods as $period => $name) {
+                if ($exit >= $precision || $exit > 0 && $period < 1) {
+                    break;
+                }
+                
+                $result = floor($passed / $period);
+                
+                if ($result > 0) {
+                    $output[] = $result." ".($result == 1 ? $name[0] : $name[1]);
+                    $passed -= $result * $period;
+                    $exit++;
+                }
+            }
+            
+            $output = implode(" e ", $output);
         }
         
-        return \Carbon\Carbon::parse($dateAndTime)
-            ->diffForHumans();
+        return $output;
+    }
+}
+
+if (!function_exists('preg_replace_space')) {
+    /**
+     * Remove tags e espaços vázios
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    function preg_replace_space($string)
+    {
+        // Remove comentários
+        $string = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $string);
+        
+        // Remove espaço com mais de um espaço
+        $string = preg_replace('/^\s+|\s+$|\r\n|\r|\n|\t|\s+(?=\s)/m', '', $string);
+        
+        // Remove tag `p` vázia
+        $string = preg_replace('/<p[^>]*>[\s\s|&nbsp;]*<\/p>/m', '', $string);
+        
+        // Remove todas tags vázia
+        //$string = preg_replace('/<[\w]*[^>]*>[\s\s|&nbsp;]*<\/[\w]*>/m', '', $string);
+        
+        return $string;
     }
 }

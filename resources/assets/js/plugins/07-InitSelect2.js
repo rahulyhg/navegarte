@@ -73,7 +73,8 @@ var initSelect2 = function (selects2) {
       $(element).select2(mergeObject({
         language: 'pt-BR',
         width: 'resolve',
-        /*dropdownParent: $(element).parent()*/
+        /*dropdownParent: $(element).parent(),
+         minimumResultsForSearch: -1,*/
       }, options));
     });
   }

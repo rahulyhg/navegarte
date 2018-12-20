@@ -22,13 +22,13 @@ return [
          * Versão do framework
          */
         
-        'framework' => 'v1.2.9',
+        'framework' => 'v1.2.10',
         
         /**
          * Versão do skeleton
          */
         
-        'skeleton' => 'v1.2.4',
+        'skeleton' => 'v1.2.5',
     
     ],
     

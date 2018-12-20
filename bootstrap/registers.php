@@ -33,6 +33,7 @@ return [
             \Core\Providers\Hash\HashProvider::class,
             \Core\Providers\Jwt\JwtProvider::class,
             \Core\Providers\LoggerProvider::class,
+            \Core\Providers\Event\EventProvider::class,
         ],
         
         /**

@@ -36,6 +36,7 @@ function loadPage (content, location, pushState) {
   $.ajax({
     url: location,
     headers: {'vcAjaxPage': true},
+    cache: false,
     
     success: function (html) {
       /* Retorno HTML */
@@ -74,11 +75,23 @@ function loadPage (content, location, pushState) {
       
       $.each($(document).find('*[href="' + lhref + '"], *[data-href="' + lhref + '"]'), function (i, element) {
         $.each($(element).parent().parent().parent().find('*[href], *[data-href]'), function (i, elRemove) {
-          var elHref = $(elRemove).attr('href') || $(elRemove).data('href');
+          var vcAjax = false;
           
-          if (!elHref.match(/javascript/g)) {
-            $(elRemove).removeClass('ajax-active active');
-            $(elRemove).parent().removeClass('ajax-active active');
+          $.each(elRemove.attributes, function (i, attr) {
+            if (attr.name && attr.name.match(/vc-/g)) {
+              vcAjax = true;
+            }
+          });
+          
+          if (vcAjax === false) {
+            var elHref = $(elRemove).attr('href') || $(elRemove).data('href');
+            
+            if (!elHref.match(/#|javascript/g)) {
+              $(elRemove).removeClass('ajax-active active');
+              $(elRemove).parent().removeClass('ajax-active active');
+            }
+          } else {
+            vcAjax = false;
           }
         });
         

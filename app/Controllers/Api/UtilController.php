@@ -164,7 +164,7 @@ namespace App\Controllers\Api {
                 
                 return $this->json($result);
             } catch (\Exception $e) {
-                throw new \Exception("[ZIP CODE] :: {$e->getMessage()}", $e->getCode());
+                throw new \Exception("[ZIP CODE] {$e->getMessage()}", $e->getCode());
             }
         }
         
@@ -202,7 +202,7 @@ namespace App\Controllers\Api {
                     ],
                 ]);
             } catch (\Exception $e) {
-                throw new \Exception("[MODAL DETAIL] :: {$e->getMessage()}", $e->getCode());
+                throw new \Exception("[MODAL DETAIL] {$e->getMessage()}", $e->getCode());
             }
         }
         

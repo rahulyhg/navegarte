@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     
     {# Metas tags #}
-    {% set titleApp = (title ? title~' - '~config('client.name') : config('client.name')~(config('client.subname') ? ' - '~config('client.subname') : null)) %}
+    {% set titleApp = (title ? title~' | '~config('client.name') : config('client.name')~(config('client.subname') ? ' | '~config('client.subname') : null)) %}
     
     {# Monta image #}
     {% if image %}
@@ -17,8 +17,6 @@
     {% else %}
       {% set image = asset('/assets/web/images/1200x630.png', true) %}
     {% endif %}
-    
-    {{ imageUrl ?: asset(image ?: '/assets/web/images/1200x630.png', true) }}
     
     <title>{{ titleApp }}</title>
     

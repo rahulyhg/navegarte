@@ -1,4 +1,4 @@
-version: '3'
+version: '3.1'
 
 services:
   web:
@@ -10,7 +10,6 @@ services:
     links:
       - db:mysql
     working_dir: /var/www
-
     volumes:
       - .:/var/www
       - "./docker/000-default.conf:/etc/apache2/sites-available/000-default.conf"
@@ -26,8 +25,9 @@ services:
       - "./docker/mysql:/var/lib/mysql"
       - ".:/home/docker"
     environment:
-      - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=base
+      - MYSQL_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=root
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     links:

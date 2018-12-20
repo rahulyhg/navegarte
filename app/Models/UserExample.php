@@ -81,17 +81,9 @@ namespace App\Models {
                 $where = "AND {$this->table}.id != '{$post['id']}'";
             }
             
-            // Função para validar
-            /*$validate = function ($index, $filter = null, $message = null, $code = E_USER_WARNING) use ($post) {
-                if (!array_key_exists($index, $post)) {
-                    $post[$index] = '';
-                }
-                
-                return filter_value($post[$index], $filter, $message, $code, !empty($post['id']));
-            };
-            
-            // Validaões
-            $validate('email', '', 'O E-mail é obrigatório', E_NOTICE);*/
+            validate_post($post, [
+                'email' => 'E-mail é obrigatório.',
+            ]);
             
             // E-mail
             if (!Helper::checkMail($post['email'])) {

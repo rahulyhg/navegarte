@@ -1,18 +1,17 @@
-FROM php:apache
+FROM php:7.2-apache
 
 # Atualiza container e instala algumas dependencias
 RUN  apt-get update \
   && apt-get upgrade -y \
   && apt-get autoremove -y \
   && apt-get install -yq \
-    # Dependencia para o pdo_dblib
+    libzip-dev \
     zlib1g-dev \
     unixodbc \
     unixodbc-dev \
     freetds-dev \
     freetds-bin \
     tdsodbc \
-    # Outras dependências
     libmcrypt-dev \
     libpng-dev \
     libjpeg62-turbo-dev \
@@ -30,11 +29,23 @@ RUN  apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Instala dependencia do php
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
-RUN docker-php-ext-install gd json mbstring pdo pdo_mysql mysqli zip opcache intl xsl
+RUN docker-php-ext-configure \
+    gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+RUN docker-php-ext-install \
+    gd \
+    json \
+    mbstring \
+    pdo \
+    pdo_mysql \
+    mysqli \
+    zip \
+    opcache \
+    intl \
+    xsl
 
 # Configura pdo_dblib
 RUN docker-php-ext-configure pdo_dblib --with-libdir=/lib/x86_64-linux-gnu
+
 RUN docker-php-ext-install pdo_dblib
 RUN docker-php-ext-enable pdo_dblib
 
@@ -64,7 +75,8 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
   && php -r "unlink('composer-setup.php'); unlink('installer.sig');"
 
 # Configura timezone padrão
-RUN echo "America/Sao_Paulo" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+RUN echo "America/Sao_Paulo" > /etc/timezone && \
+    dpkg-reconfigure -f noninteractive tzdata
 
 # Habilita modulos do apache
 RUN a2enmod rewrite
@@ -78,3 +90,5 @@ RUN a2ensite default-ssl
 
 # Permissão de pasta
 # RUN chown -R www-data:www-data /var/www
+
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]

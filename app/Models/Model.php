@@ -260,7 +260,7 @@ namespace App\Models {
         /**
          * Monta os array
          *
-         * @param mixed  $conditions
+         * @param mixed $conditions
          * @param string $property
          */
         protected function montPropertyArray($conditions, $property)
