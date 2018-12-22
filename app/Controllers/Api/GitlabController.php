@@ -58,7 +58,7 @@ namespace App\Controllers\Api {
                 
                 switch ($branch) {
                     case 'master':
-                        `git fetch origin && git reset --hard origin/master`;
+                        `git fetch origin && git reset --hard origin/master 2>&1`;
                         break;
                     default:
                         throw new \Exception("Branch undefined.", E_USER_ERROR);
