@@ -10,14 +10,14 @@
  * @copyright 2017-2018 Vagner Cardoso
  */
 
-namespace App\Controllers\Api {
+namespace App\Controllers\Api\Deploy {
     
     use Core\Contracts\Controller;
     
     /**
      * Class GitlabController
      *
-     * @package App\Controllers\Api
+     * @package App\Controllers\Api\Deploy
      * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
      */
     class GitlabController extends Controller
@@ -34,7 +34,7 @@ namespace App\Controllers\Api {
                 $token = $this->request->getHeaderLine('X-Gitlab-Token');
                 $event = $this->request->getHeaderLine('X-Gitlab-Event');
                 
-                if (empty($token) || $token !== env('GITLAB_TOKEN')) {
+                if (empty($token) || $token !== env('DEPLOY_TOKEN')) {
                     throw new \Exception("Token inválid.", E_USER_ERROR);
                 }
                 
