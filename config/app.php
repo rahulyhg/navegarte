@@ -47,6 +47,12 @@ return [
         \Core\Providers\Jwt\JwtProvider::class,
         \Core\Providers\LoggerProvider::class,
         \Core\Providers\Event\EventProvider::class,
+        
+        /**
+         * Registra serviço da aplicação
+         */
+        
+        \App\Providers\ErrorSlackProvider::class,
     ],
     
     /**
