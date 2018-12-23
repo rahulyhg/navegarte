@@ -18,8 +18,11 @@
 
 $app->group('/api', function () use ($app) {
     // Deploy gitlab
-    $app->route('post', '/deploy-gitlab', 'Api/GitlabController', 'api.deploy-gitlab', 'cors');
+    $app->group('/deploy', function () use ($app) {
+        $app->route('post', '/gitlab', 'Api/Deploy/GitlabController', 'api.deploy-gitlab', 'cors');
+        $app->route('post', '/bitbucket', 'Api/Deploy/BitbucketController', 'api.deploy-bitbucket', 'cors');
+    });
     
     // Criação de métodos dinamicos
-    $app->route('get,post,put,delete', '/{method:[\w\-]+}[/{params:.*}]', 'Api/UtilController', 'api.util');
+    $app->route('get,post,put,delete,options', '/{method:[\w\-]+}[/{params:.*}]', 'Api/ApiController', 'api.method');
 });

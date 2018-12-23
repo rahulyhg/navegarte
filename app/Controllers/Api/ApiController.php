@@ -12,111 +12,77 @@
 
 namespace App\Controllers\Api {
     
+    use Core\App;
     use Core\Contracts\Controller;
     use Core\Helpers\Curl;
     use Core\Helpers\Str;
     
     /**
-     * Class UtilController
+     * Class ApiController
      *
      * @package App\Controllers\Api
-     * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
+     * @author Vagner Cardoso <vagnercardosoweb@gmail.com>
      */
-    class UtilController extends Controller
+    class ApiController extends Controller
     {
         /**
-         * @var \Core\Helpers\Curl
-         */
-        protected $curl;
-        
-        /**
-         * Inicia no __construct
-         */
-        protected function boot()
-        {
-            $this->curl = new Curl();
-        }
-        
-        /**
-         * [GET] /api/util/{method}[/{data:.*}]
+         * Emula os métodos (get, post, put, delete, options, etc...)
          *
-         * @param string $method
-         * @param string $params
+         * @param string $name
+         * @param mixed $arguments
          *
          * @return \Slim\Http\Response
          * @throws \Exception
          */
-        public function get($method, $params = null)
+        public function __call($name, $arguments)
         {
-            // Verifica METHOD
-            if (!$this->request->isGet()) {
-                throw new \Exception("Verbo HTTP aceito é apenas GET.", E_USER_ERROR);
+            if (!empty($name) && !empty($arguments)) {
+                // Se for o método options retorna
+                if ($name === 'options') {
+                    return $this->response;
+                }
+                
+                // Verifica se o méthod existe
+                if (!method_exists(App::class, $name)) {
+                    throw new \Exception("Invalid requisition method.", E_USER_ERROR);
+                }
+                
+                // Variáveis
+                $method = $arguments[0];
+                $params = (!empty($arguments[1]) ? $arguments[1] : '');
+                
+                // Realiza requisição
+                return $this->request($method, $params);
             }
-            
-            return $this->createRequest($method, $params);
         }
         
         /**
-         * [POST] /api/util/{method}[/{data:.*}]
-         *
          * @param string $method
          * @param string $params
          *
          * @return \Slim\Http\Response
-         * @throws \Exception
+         * @throws \Slim\Exception\NotFoundException
          */
-        public function post($method, $params = null)
+        protected function request($method, $params = null)
         {
-            // Verifica METHOD
-            if (!$this->request->isPost()) {
-                throw new \Exception("Verbo HTTP aceito é apenas POST.", E_USER_ERROR);
+            // Variáveis
+            $method = Str::camel(str_replace('/', '-', $method));
+            $params = array_merge(($params ? explode('/', $params) : []), $this->param());
+            
+            // Veririca se o método existe
+            if (!method_exists($this, $method)) {
+                $this->notFound();
             }
             
-            return $this->createRequest($method, $params);
+            try {
+                return $this->{$method}($params);
+            } catch (\Exception $e) {
+                return json_error($e);
+            }
         }
         
         /**
-         * [PUT] /api/util/{method}[/{data:.*}]
-         *
-         * @param string $method
-         * @param string $params
-         *
-         * @return \Slim\Http\Response
-         * @throws \Exception
-         */
-        public function put($method, $params = null)
-        {
-            // Verifica METHOD
-            if (!$this->request->isPut()) {
-                throw new \Exception("Verbo HTTP aceito é apenas PUT.", E_USER_ERROR);
-            }
-            
-            return $this->createRequest($method, $params);
-        }
-        
-        /**
-         * [DELETE] /api/util/{method}[/{data:.*}]
-         *
-         * @param string $method
-         * @param string $params
-         *
-         * @return \Slim\Http\Response
-         * @throws \Exception
-         */
-        public function delete($method, $params = null)
-        {
-            // Verifica METHOD
-            if (!$this->request->isDelete()) {
-                throw new \Exception("Verbo HTTP aceito é apenas DELETE.", E_USER_ERROR);
-            }
-            
-            return $this->createRequest($method, $params);
-        }
-        
-        /**
-         * [GET, POST] /api/util/zipcode/{zipcode}
-         *
-         * Realiza a pesquisa do CEP e pega a LONGITUDE e LATITUDE
+         * [GET, POST] /api/zipcode/{zipcode}
          *
          * @param array $params
          *
@@ -125,6 +91,14 @@ namespace App\Controllers\Api {
          */
         protected function zipcode(array $params)
         {
+            // Models
+            $curl = new Curl();
+            
+            // Verifica parametro
+            if (!empty($params[0])) {
+                $params['cep'] = $params[0];
+            }
+            
             try {
                 // Verifica se o CEP foi passado
                 if (empty($params['cep'])) {
@@ -137,7 +111,7 @@ namespace App\Controllers\Api {
                 }
                 
                 // Pega o resultado do CEP
-                $result = $this->curl->get("https://viacep.com.br/ws/{$params['cep']}/json");
+                $result = $curl->get("https://viacep.com.br/ws/{$params['cep']}/json");
                 
                 if (!empty($result['erro'])) {
                     throw new \Exception("O CEP {$params['cep']} informado não foi encontrado.", E_USER_ERROR);
@@ -153,7 +127,7 @@ namespace App\Controllers\Api {
                     'address' => urlencode($result['endereco']),
                 ];
                 
-                $maps = $this->curl->get("https://maps.google.com/maps/api/geocode/json", $mapsParams);
+                $maps = $curl->get("https://maps.google.com/maps/api/geocode/json", $mapsParams);
                 
                 if ($maps['status'] === 'OK' && !empty($maps['results'][0])) {
                     $location = $maps['results'][0]['geometry']['location'];
@@ -169,9 +143,7 @@ namespace App\Controllers\Api {
         }
         
         /**
-         * [POST] /api/util/modal-detail
-         *
-         * Realiza a pesquisa e insere o resultado na modal
+         * [POST] /api/modal-detail
          *
          * @param array $params
          *
@@ -203,39 +175,6 @@ namespace App\Controllers\Api {
                 ]);
             } catch (\Exception $e) {
                 throw new \Exception("[MODAL DETAIL] {$e->getMessage()}", $e->getCode());
-            }
-        }
-        
-        /**
-         * Cria a requisição
-         *
-         * @param string $method
-         * @param string $params
-         *
-         * @return \Slim\Http\Response
-         */
-        private function createRequest($method, $params = null)
-        {
-            $params = array_merge(($params ? explode('/', $params) : []), $this->param());
-            $method = Str::camel(str_replace('/', '-', $method));
-            
-            try {
-                if (!method_exists($this, $method)) {
-                    $method = basename(str_replace('\\', '/', get_class($this)))."::{$method}";
-                    
-                    throw new \Exception(sprintf("Método (%s) não existe.", $method), E_USER_ERROR);
-                }
-                
-                return $this->{$method}($params);
-            } catch (\Exception $e) {
-                return $this->json([
-                    'error' => [
-                        'code' => $e->getCode(),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                        'message' => $e->getMessage(),
-                    ],
-                ]);
             }
         }
     }
