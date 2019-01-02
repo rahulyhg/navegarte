@@ -84,13 +84,22 @@ gulp.task('js-web', jsWeb);
 /**
  * Sincronização do browser
  */
-/*const browser = () => {
- browserSync.init({
- proxy: 'localhost'
- });
- };
- 
- gulp.task('browser-sync', browser);*/
+const browser = () => {
+  browserSync.init({
+    proxy: 'localhost',
+    port: 3001,
+    files: [
+      '**/*.php',
+      '**/*.twig',
+      '**/*.css',
+      '**/*.js',
+      '**/*.html'
+    ],
+    injectChanges: false,
+  });
+};
+
+gulp.task('browser-sync', browser);
 
 /**
  * Inicia a observaão das tarefas
@@ -99,28 +108,28 @@ gulp.task('watch', () => {
   const onChange = (event) => {
     console.log(`File ${event.path} was ${event.type}, running tasks...`);
   };
-  
+
   /* Error */
   gulp.watch('./resources/assets/sass/error.scss', sassError);
-  
+
   /* Email */
   gulp.watch('./resources/assets/sass/mail.scss', sassMail);
-  
+
   /* Web */
   gulp.watch('./resources/assets/sass/web/**/**/**/*.{scss,css}', sassWeb);
   gulp.watch('./resources/assets/js/web/**/**/**/*.js', jsWeb);
-  
+
   /* Plugins JS */
   gulp.watch('./resources/assets/js/plugins/**/**/**/*.js', gulp.parallel(jsWeb));
-  
+
   /* BrowserSync */
-  /*gulp.watch([
-   '../!**!/!*.{php,twig,js,css}',
-   '!../!**!/docker',
-   '!../!**!/node_modules',
-   '!../!**!/bower_componets',
-   '!../!**!/vendor'
-   ]).on('change', browserSync.reload);*/
+  gulp.watch([
+    '../!**!/!*.{php,twig,js,css}',
+    '!../!**!/docker',
+    '!../!**!/node_modules',
+    '!../!**!/bower_componets',
+    '!../!**!/vendor'
+  ]).on('change', browserSync.reload);
 });
 
 /**
