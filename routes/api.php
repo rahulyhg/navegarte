@@ -1,9 +1,9 @@
 <?php
 
 /**
- * VCWeb <https://www.vagnercardosoweb.com.br/>
+ * VCWeb Networks <https://www.vagnercardosoweb.com.br/>
  *
- * @package   VCWeb
+ * @package   VCWeb Networks
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
@@ -17,12 +17,20 @@
  */
 
 $app->group('/api', function () use ($app) {
-    // Deploy gitlab
+    /**
+     * Deploy
+     *
+     * gitlab | bitbucket
+     */
+
     $app->group('/deploy', function () use ($app) {
         $app->route('post', '/gitlab', 'Api/Deploy/GitlabController', 'api.deploy-gitlab', 'cors');
         $app->route('post', '/bitbucket', 'Api/Deploy/BitbucketController', 'api.deploy-bitbucket', 'cors');
     });
-    
-    // Criação de métodos dinamicos
+
+    /**
+     * Criação de api dinâmicas
+     */
+
     $app->route('get,post,put,delete,options', '/{method:[\w\-]+}[/{params:.*}]', 'Api/ApiController', 'api.method');
 });
