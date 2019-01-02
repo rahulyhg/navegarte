@@ -13,6 +13,7 @@
 namespace App\Controllers\Api\Deploy {
     
     use Core\Contracts\Controller;
+    use Slim\Http\StatusCode;
     
     /**
      * Class GitlabController
@@ -69,7 +70,7 @@ namespace App\Controllers\Api\Deploy {
                     'message' => 'Deploy gitlab successfully.',
                 ], 200);
             } catch (\Exception $e) {
-                return json_error($e);
+                return json_error($e, [], StatusCode::HTTP_BAD_REQUEST);
             }
         }
     }

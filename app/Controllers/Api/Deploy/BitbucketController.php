@@ -13,6 +13,7 @@
 namespace App\Controllers\Api\Deploy {
     
     use Core\Contracts\Controller;
+    use Slim\Http\StatusCode;
     
     /**
      * Class BitbucketController
@@ -76,7 +77,7 @@ namespace App\Controllers\Api\Deploy {
                     'message' => 'Deploy bitbucket successfully.',
                 ], 200);
             } catch (\Exception $e) {
-                return json_error($e);
+                return json_error($e, [], StatusCode::HTTP_BAD_REQUEST);
             }
         }
     }
