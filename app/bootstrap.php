@@ -19,11 +19,13 @@ use Core\App;
  */
 
 ob_start(function ($buffer) {
-    // Remove comentários
-    $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
-    
-    // Remove espaço com mais de um espaço
-    $buffer = preg_replace('/^\s+|\s+$|\r\n|\r|\n|\t|\s+(?=\s)/m', '', $buffer);
+    if (!preg_match('/localhost|.dev|.local/', $_SERVER['HTTP_HOST'])) {
+        // Remove comentários
+        $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+        
+        // Remove espaço com mais de um espaço
+        $buffer = preg_replace('/^\s+|\s+$|\r\n|\r|\n|\t|\s+(?=\s)/m', '', $buffer);
+    }
     
     return $buffer;
 });
