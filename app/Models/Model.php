@@ -66,12 +66,12 @@ namespace App\Models {
         /**
          * @var int
          */
-        protected $limit;
+        protected $limit = null;
         
         /**
          * @var int
          */
-        protected $offset;
+        protected $offset = null;
         
         /**
          * @var array
@@ -210,6 +210,7 @@ namespace App\Models {
          */
         protected function clear()
         {
+            /*$this->table = '';*/
             $this->select = [];
             $this->join = [];
             $this->where = [];
@@ -220,6 +221,7 @@ namespace App\Models {
             $this->limit = null;
             $this->offset = null;
             $this->places = [];
+            /*$this->post = [];*/
         }
         
         /**
@@ -255,6 +257,10 @@ namespace App\Models {
          */
         public function select($select)
         {
+            if (is_string($select)) {
+                $select = explode(',', $select);
+            }
+            
             $this->montPropertyArray($select, 'select');
             
             return $this;
@@ -263,7 +269,7 @@ namespace App\Models {
         /**
          * Monta os array
          *
-         * @param mixed $conditions
+         * @param string|array|null $conditions
          * @param string $property
          */
         protected function montPropertyArray($conditions, $property)
@@ -273,14 +279,14 @@ namespace App\Models {
             }
             
             foreach ((array) $conditions as $condition) {
-                if (!empty($condition)) {
-                    $this->{$property}[] = (string) $condition;
+                if (!empty($condition) && !array_search($condition, $this->{$property})) {
+                    $this->{$property}[] = trim((string) $condition);
                 }
             }
         }
         
         /**
-         * @param mixed $join
+         * @param string|array|null $join
          *
          * @return $this
          */
@@ -292,8 +298,9 @@ namespace App\Models {
         }
         
         /**
-         * @param mixed $where
-         * @param array|string $places
+         * @param string|array|null $where
+         *
+         * @param string|array|null $places
          *
          * @return $this
          */
@@ -306,7 +313,7 @@ namespace App\Models {
         }
         
         /**
-         * @param array|string $places
+         * @param string|array $places
          *
          * @return $this
          */
@@ -334,7 +341,7 @@ namespace App\Models {
         }
         
         /**
-         * @param mixed $group
+         * @param string|array|null $group
          *
          * @return $this
          */
@@ -346,7 +353,7 @@ namespace App\Models {
         }
         
         /**
-         * @param mixed $having
+         * @param string|array|null $having
          *
          * @return $this
          */
@@ -358,7 +365,7 @@ namespace App\Models {
         }
         
         /**
-         * @param mixed $order
+         * @param string|array|null $order
          *
          * @return $this
          */
