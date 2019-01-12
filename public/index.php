@@ -40,17 +40,17 @@ define('RESOURCE_FOLDER', APP_FOLDER.'/resources');
  *  Define a URL base da aplicação
  */
 
- $schema = 'http';
- $host = $_SERVER['HTTP_HOST'];
+$schema = 'http';
+$host = $_SERVER['HTTP_HOST'];
 
- if (
-     (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ||
-     (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
- ) {
-     $schema = 'https';
- }
+if (
+    (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ||
+    (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
+) {
+    $schema = 'https';
+}
 
- define('BASE_URL', "{$schema}://{$host}");
+define('BASE_URL', "{$schema}://{$host}");
 
 /**
  * Define a URL completa da aplicação
