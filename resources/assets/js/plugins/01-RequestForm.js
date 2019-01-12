@@ -410,6 +410,7 @@ $(document).ready(function () {
     var url = '';
     var method = '';
     var formData = new FormData();
+    var errorCount = 0;
     var inputName;
     
     /* Elementos desabilitados */
@@ -438,6 +439,45 @@ $(document).ready(function () {
       /* Verifica o formulário */
       if (form.length <= 0) {
         alert('Formulário com ([name="' + element.attr('vc-form') + '"]) não foi encontrado em seu documento html.');
+        
+        return;
+      }
+      
+      // Verifica campos obrigatórios
+      form.find('input, textarea, select').each(function (key, element) {
+        var value = '';
+        var requiredMessage = '';
+        
+        if ($(element).hasClass('vc-error-field')) {
+          errorCount = 0;
+          
+          $(element)
+            .removeClass('vc-error-field')
+            .parent()
+            .removeClass('vc-error')
+            .find('.vc-error-box').remove();
+        }
+        
+        if (element.tagName.toLowerCase() === 'textarea') {
+          value = $(element).html() || '';
+        } else {
+          value = $(element).val() || '';
+        }
+        
+        if ($(element).prop('required') && (value === '' && value !== '0')) {
+          errorCount++;
+          requiredMessage = ($(element).attr('required') !== 'required' ? $(element).attr('required') : 'Campo obrigatório.');
+          
+          $(element)
+            .addClass('vc-error-field')
+            .parent()
+            .addClass('vc-error')
+            .append('<div class="vc-error-box">' + requiredMessage + '</div>');
+        }
+      });
+      
+      if (errorCount !== 0) {
+        form.find(':input.vc-error-field:first').focus();
         
         return;
       }

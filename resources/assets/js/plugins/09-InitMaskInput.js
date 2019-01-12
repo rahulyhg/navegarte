@@ -5,6 +5,7 @@
  */
 
 var initMaskInput = function () {
+  $('.maskYear').mask('0000');
   $('.maskTime').mask('00:00');
   $('.maskDate').mask('00/00/0000');
   $('.maskDateTime').mask('00/00/0000 00:00');
