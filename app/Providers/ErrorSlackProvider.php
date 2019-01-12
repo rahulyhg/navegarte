@@ -15,7 +15,6 @@ namespace App\Providers {
     use Core\Contracts\Provider;
     use Core\Helpers\Curl;
     use Core\Helpers\Helper;
-    use Core\Helpers\Str;
     
     /**
      * Class ErrorSlackProvider
@@ -34,7 +33,7 @@ namespace App\Providers {
         public function register()
         {
             // Apenas é disparado caso não seja em ambiente de desenvolvimento
-            if (!Str::contains(BASE_URL, ['localhost', '.dev', '.local'])) {
+            if (!preg_match('/localhost|.dev|.local/i', $_SERVER['HTTP_HOST'])) {
                 $this->event->on('event.error.handler', function ($errors) {
                     if (!empty($errors['error']) && !empty(env('SLACK_ERROR_URL', ''))) {
                         unset($errors['error']['trace']);
@@ -43,7 +42,7 @@ namespace App\Providers {
                         $id = hash_hmac('sha1', json_encode($errors['error']), 'SLACKNOTIFICATION');
                         
                         // Adiciona um novo evento para gerar o id.
-                        $this->event->on('app.error.id', function () use ($id) {
+                        $this->event->on('event.error.id', function () use ($id) {
                             echo $id;
                         });
                         
