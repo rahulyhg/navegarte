@@ -49,6 +49,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       : 'Aguarde...')
     : (change ? false : html));
   var message;
+  var headers = {};
   
   /* Upload file */
   var enableUpload = (element.attr('vc-upload') !== undefined);
@@ -103,8 +104,21 @@ function vcAjax (element, url, formData, method, form, change, modal) {
     _METHOD = method;
   }
   
+  /* CSRF Protect */
+  var _csrfToken = '';
+  
+  if (formData.has('_csrfToken')) {
+    _csrfToken = formData.get('_csrfToken');
+    formData.delete('_csrfToken');
+  } else {
+    _csrfToken = $('meta[name="_csrfToken"]').attr('content') || '';
+  }
+  
+  if (_csrfToken !== '') {
+    headers['X-Csrf-Token'] = _csrfToken;
+  }
+  
   /* Headers */
-  var headers = {};
   headers['X-Http-Method-Override'] = _METHOD.toUpperCase();
   
   if (formData.has('_HEADERS')) {

@@ -63,6 +63,16 @@ return [
             'has_route' => 'has_route',
             'is_route' => 'is_route',
             'dd' => 'dd',
+            'csrf_token' => function ($input = true) {
+                $token = \Core\App::getInstance()->resolve('jwt')->encode([
+                    'token' => uniqid(rand(), true),
+                    'expired' => time() + (60 * 60 * 24),
+                ]);
+                
+                return $input
+                    ? "<input type='hidden' name='_csrfToken' id='_csrfToken' value='{$token}'/>"
+                    : $token;
+            },
         ],
         
         /**
