@@ -44,11 +44,6 @@ namespace App\Models {
         protected $where = [];
         
         /**
-         * @var bool
-         */
-        protected $notWhere = false;
-        
-        /**
          * @var array
          */
         protected $group = [];
@@ -81,18 +76,31 @@ namespace App\Models {
         /**
          * @var array
          */
-        protected $post = [];
+        protected $reset = [];
+        
+        /**
+         * @var array
+         */
+        protected $data = [];
         
         /**
          * Retorna um registro
          *
+         * @param int $fetch_style
+         * @param string|object|null $fetch_argument
+         * @param array $ctor_args
+         *
          * @return array
          * @throws \Exception
          */
-        public function fetch()
+        public function fetch($fetch_style = \PDO::FETCH_ASSOC, $fetch_argument = null, array $ctor_args = [])
         {
             $fetch = current(
-                $this->limit(1)->fetchAll()
+                $this->limit(1)->fetchAll(
+                    $fetch_style,
+                    $fetch_argument,
+                    $ctor_args
+                )
             );
             
             return ($fetch ?: []);
@@ -101,12 +109,20 @@ namespace App\Models {
         /**
          * Executa e retorna o resultado padrão
          *
+         * @param int $fetch_style
+         * @param string|object|null $fetch_argument
+         * @param array $ctor_args
+         *
          * @return array
          * @throws \Exception
          */
-        public function fetchAll()
+        public function fetchAll($fetch_style = \PDO::FETCH_ASSOC, $fetch_argument = null, array $ctor_args = [])
         {
-            return $this->execute()->fetchAll();
+            return $this->execute()->fetchAll(
+                $fetch_style,
+                $fetch_argument,
+                $ctor_args
+            );
         }
         
         /**
@@ -214,14 +230,14 @@ namespace App\Models {
             $this->select = [];
             $this->join = [];
             $this->where = [];
-            $this->notWhere = false;
             $this->group = [];
             $this->having = [];
             $this->order = [];
             $this->limit = null;
             $this->offset = null;
             $this->places = [];
-            /*$this->post = [];*/
+            $this->reset = [];
+            /*$this->data = [];*/
         }
         
         /**
@@ -279,7 +295,10 @@ namespace App\Models {
             }
             
             foreach ((array) $conditions as $condition) {
-                if (!empty($condition) && !array_search($condition, $this->{$property})) {
+                if (!empty($condition) &&
+                    !array_search($condition, $this->{$property}) &&
+                    !array_search("{$this->table}.{$condition}", $this->{$property})
+                ) {
                     $this->{$property}[] = trim((string) $condition);
                 }
             }
@@ -331,11 +350,29 @@ namespace App\Models {
         }
         
         /**
+         * @param string|array|null $properties
+         *
          * @return $this
          */
-        public function notWhere()
+        public function reset($properties = [])
         {
-            $this->notWhere = true;
+            if (empty($properties)) {
+                $reflection = new \ReflectionClass(get_class($this));
+                
+                foreach ($reflection->getProperties() as $property) {
+                    if (!in_array($property->getName(), ['table', 'data'])) {
+                        $this->reset[$property->getName()] = true;
+                    }
+                }
+            } else {
+                if (is_string($properties)) {
+                    $properties = explode(',', $properties);
+                }
+                
+                foreach ($properties as $property) {
+                    $this->reset[trim($property)] = true;
+                }
+            }
             
             return $this;
         }
@@ -391,7 +428,7 @@ namespace App\Models {
         /**
          * @return string
          */
-        public function getTable()
+        public function table()
         {
             return $this->table;
         }
