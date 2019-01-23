@@ -10,6 +10,7 @@
  * @copyright 13/01/2018 Vagner Cardoso
  */
 
+use Core\App;
 use Core\Helpers\Helper;
 use Core\Helpers\Str;
 use Slim\Http\StatusCode;
@@ -34,12 +35,16 @@ if (!function_exists('validate_params')) {
             
             // Verifica caso esteja preenchido
             if (isset($params[$index]) && (empty($params[$index]) && $params[$index] != '0')) {
-                if (is_string($rule)) {
-                    throw new \InvalidArgumentException($rule, E_USER_NOTICE);
+                if (!empty($rule['id'])) {
+                    continue;
                 } else {
-                    $code = (!empty($rule['code']) ? $rule['code'] : E_USER_NOTICE);
-                    
-                    throw new \InvalidArgumentException($rule['message'], $code);
+                    if (is_string($rule)) {
+                        throw new \InvalidArgumentException($rule, E_USER_NOTICE);
+                    } else {
+                        $code = (!empty($rule['code']) ? $rule['code'] : E_USER_NOTICE);
+                        
+                        throw new \InvalidArgumentException($rule['message'], $code);
+                    }
                 }
             }
         }
@@ -107,7 +112,18 @@ if (!function_exists('json_success')) {
     function json_success($message, array $params = [], $status = StatusCode::HTTP_OK)
     {
         // Caso seja web
-        if (!empty($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_ORIGIN'])) {
+        if (in_web()) {
+            // Caso seja retorno pra API remove
+            if (!empty($params['data'])) {
+                unset($params['data']);
+            }
+            
+            // Caso a mensagem seja vázia
+            // envia apenas os parametros e status
+            if (empty($message)) {
+                return json($params, $status);
+            }
+            
             return json_trigger($message, 'success', $params, $status);
         }
         
@@ -188,12 +204,14 @@ if (!function_exists('get_image')) {
      */
     function get_image($table, $id, $name, $baseUrl = true, $version = true, $extension = 'jpg')
     {
-        $name = mb_strtoupper($name, 'UTF-8');
-        $path = "/fotos/{$table}/{$id}/{$name}";
-        
-        foreach ([$extension, strtoupper($extension)] as $ext) {
-            if ($asset = asset("{$path}.{$ext}", $baseUrl, $version)) {
-                return $asset;
+        if (!empty($id) && $id != '0') {
+            $name = mb_strtoupper($name, 'UTF-8');
+            $path = "/fotos/{$table}/{$id}/{$name}";
+            
+            foreach ([$extension, strtoupper($extension)] as $ext) {
+                if ($asset = asset("{$path}.{$ext}", $baseUrl, $version)) {
+                    return $asset;
+                }
             }
         }
         
@@ -302,6 +320,101 @@ if (!function_exists('get_day')) {
     }
 }
 
+if (!function_exists('vc_upload')) {
+    /**
+     * Upload de arquivos/images
+     *
+     * @param array $file
+     * @param string $directory
+     * @param string $name
+     * @param int $width
+     * @param int $height
+     * @param bool $forceJpg
+     * @param bool $whExact
+     *
+     * @return array
+     * @throws \Exception
+     */
+    function vc_upload(array $file, $directory, $name = null, $width = 500, $height = 500, $forceJpg = false, $whExact = false)
+    {
+        $extFiles = ['zip', 'rar', 'pdf', 'docx'];
+        $extImages = ['jpg', 'jpeg', 'png', 'gif'];
+        $extensions = array_merge($extFiles, $extImages);
+        $uploads = [];
+        
+        // Percore os arquivos
+        foreach ($file as $key => $value) {
+            $extension = substr(strrchr($value['name'], '.'), 1);
+            $name = (empty($name) ? Str::slug(substr($value['name'], 0, strrpos($value['name'], '.'))) : $name);
+            
+            // Muda extenção caso seja JPEG
+            if ($extension == 'jpeg' || $forceJpg === true) {
+                $extension = 'jpg';
+            }
+            
+            // Path do arquivo
+            $path = "{$directory}/{$name}.{$extension}";
+            
+            // Checa extension
+            if (!in_array($extension, $extensions)) {
+                throw new \Exception("Opsss, apenas as extenções <b>".strtoupper(implode(', ', $extensions))."</b> são aceito para o upload.", E_USER_ERROR);
+            }
+            
+            // Checa tamanho
+            if (($value['size'] > $max_filesize = get_upload_max_filesize()) || $value['error'] == 1) {
+                throw new \Exception("Opsss, aeu upload ultrapassou o limite de tamanho de <b>".Helper::convertBytes($max_filesize)."</b>.", E_USER_ERROR);
+            }
+            
+            // Cria pasta
+            if (!file_exists(PUBLIC_FOLDER.$directory)) {
+                mkdir(PUBLIC_FOLDER.$directory, 0755, true);
+            }
+            
+            // Verifica arquivo
+            foreach ($extensions as $ext) {
+                $deleted = str_replace(".{$extension}", ".{$ext}", $path);
+                
+                if (file_exists(PUBLIC_FOLDER."{$deleted}")) {
+                    unlink(PUBLIC_FOLDER."{$deleted}");
+                }
+            }
+            
+            // Verifica os tipo de upload
+            if (in_array($extension, $extFiles) || $extension === 'gif') {
+                if (!move_uploaded_file($value['tmp_name'], PUBLIC_FOLDER.$path)) {
+                    throw new \Exception("Opsss, não foi possível completar o seu upload! Tente novamente em alguns segundos.", E_USER_ERROR);
+                }
+            } else {
+                // Verifica se é o tamanho exato da imagem
+                if ($whExact === true) {
+                    $fnImg = 'imagemTamExato';
+                } else {
+                    $fnImg = 'imagem';
+                    
+                    // Calcula o tamanho com base no original
+                    list($widthOri, $heightOri) = getimagesize($value['tmp_name']);
+                    $width = ($width > $widthOri ? $widthOri : $width);
+                    $height = ($height > $heightOri ? $heightOri : $height);
+                }
+                
+                if (!$fnImg($value['tmp_name'], PUBLIC_FOLDER.$path, $width, $height, 90)) {
+                    throw new \Exception("Opsss, não foi possível completar o seu upload! Tente novamente em alguns segundos.", E_USER_ERROR);
+                }
+            }
+            
+            $uploads[] = [
+                'name' => $name,
+                'path' => $path,
+                'extension' => $extension,
+                'size' => $value['size'],
+                'md5' => md5_file(PUBLIC_FOLDER.$path),
+            ];
+        }
+        
+        return $uploads;
+    }
+}
+
 if (!function_exists('upload_image')) {
     /**
      * Upload de imagem
@@ -319,142 +432,24 @@ if (!function_exists('upload_image')) {
      */
     function upload_image($file, $directory, $name = null, $width = 500, $height = 500, $forceJpg = false, $whExact = false)
     {
-        $extensions = ['jpg', 'gif', 'png'];
-        $images = [];
-        
-        foreach ($file as $key => $value) {
-            $extension = substr(strrchr($value['name'], '.'), 1);
-            $name = (empty($name) ? Str::slug(substr($value['name'], 0, strrpos($value['name'], '.'))) : $name);
-            
-            if ($extension == 'jpeg' || $forceJpg === true) {
-                $extension = 'jpg';
-            }
-            
-            $path = "{$directory}/{$name}.{$extension}";
-            
-            // Checa extension
-            if (!in_array($extension, $extensions)) {
-                throw new \Exception("Apenas as extenções <b>".strtoupper(implode(', ', $extensions))."</b> são aceito para enviar sua imagem.", E_USER_ERROR);
-            }
-            
-            // Checa tamanho
-            if (($value['size'] > $max_filesize = get_upload_max_filesize()) || $value['error'] == 1) {
-                throw new \Exception("Sua imagem ultrapassou o limite de tamanho de <b>".Helper::convertBytes($max_filesize)."</b>.", E_USER_ERROR);
-            }
-            
-            // Cria pasta
-            if (!file_exists(PUBLIC_FOLDER.$directory)) {
-                mkdir(PUBLIC_FOLDER.$directory, 0755, true);
-            }
-            
-            // Verifica arquivo
-            foreach ($extensions as $ext) {
-                $deleted = str_replace(".{$extension}", ".{$ext}", $path);
-                
-                if (file_exists(PUBLIC_FOLDER."{$deleted}")) {
-                    unlink(PUBLIC_FOLDER."{$deleted}");
-                }
-            }
-            
-            // Verifica se e gif
-            if ($extension == 'gif') {
-                if (!move_uploaded_file($value['tmp_name'], PUBLIC_FOLDER.$path)) {
-                    throw new \Exception("Não foi possível enviar sua imagem, tente novamente em alguns segundos.", E_USER_ERROR);
-                }
-            } else {
-                // Tamanho original
-                list($widthOri, $heightOri) = getimagesize($value['tmp_name']);
-                
-                // Tamanhos calculados
-                $calcWidth = ($width > $widthOri ? $widthOri : $width);
-                $calcHeight = ($height > $heightOri ? $heightOri : $height);
-                
-                if ($whExact === true) {
-                    $fnImg = 'imagemTamExato';
-                } else {
-                    $fnImg = 'imagem';
-                }
-                
-                if (!$fnImg($value['tmp_name'], PUBLIC_FOLDER.$path, $calcWidth, $calcHeight, 90)) {
-                    throw new \Exception("Não foi possível enviar sua imagem, tente novamente em alguns segundos.", E_USER_ERROR);
-                }
-            }
-            
-            $images[] = [
-                'name' => $name,
-                'path' => $path,
-                'extension' => $extension,
-                'size' => $value['size'],
-                'md5' => md5_file(PUBLIC_FOLDER.$path),
-            ];
-        }
-        
-        return $images;
+        return vc_upload($file, $directory, $name, $width, $height, $forceJpg, $whExact);
     }
 }
 
 if (!function_exists('upload_archive')) {
     /**
-     * Upload de imagem
+     * Upload de arquivo
      *
      * @param array $file
-     * @param string $folder
+     * @param string $directory
      * @param string $name
      *
      * @return array
      * @throws \Exception
      */
-    function upload_archive($file, $folder, $name = null)
+    function upload_archive($file, $directory, $name = null)
     {
-        $directory = "/uploads/{$folder}";
-        $extensions = ['zip', 'rar', 'pdf', 'docx', 'jpg', 'jpeg', 'png', 'gif'];
-        $archives = [];
-        
-        // Envia os arquivos
-        foreach ($file as $key => $value) {
-            $extension = substr(strrchr($value['name'], '.'), 1);
-            $name = Str::slug((empty($name) ? substr($value['name'], 0, strrpos($value['name'], '.')) : $name));
-            $path = "{$directory}/{$name}.{$extension}";
-            
-            // Checa extension
-            if (!in_array($extension, $extensions)) {
-                throw new \Exception("Apenas as extenções <b>".strtoupper(implode(', ', $extensions))."</b> são aceito para enviar o arquivo.", E_USER_ERROR);
-            }
-            
-            // Checa tamanho
-            if (($value['size'] > $max_filesize = get_upload_max_filesize()) || $value['error'] == 1) {
-                throw new \Exception("Seu arquivo ultrapassou o limite de tamanho de <b>".Helper::convertBytes($max_filesize)."</b>.", E_USER_ERROR);
-            }
-            
-            // Cria pasta
-            if (!file_exists(PUBLIC_FOLDER.$directory)) {
-                mkdir(PUBLIC_FOLDER.$directory, 0755, true);
-            }
-            
-            // Verifica arquivo
-            foreach ($extensions as $ext) {
-                $deleted = str_replace(".{$extension}", ".{$ext}", $path);
-                
-                if (file_exists(PUBLIC_FOLDER.$deleted)) {
-                    unlink(PUBLIC_FOLDER.$deleted);
-                }
-            }
-            
-            // Envia arquivo
-            if (!move_uploaded_file($value['tmp_name'], PUBLIC_FOLDER.$path)) {
-                throw new \Exception("Não foi possível enviar o arquivo, tente novamente em alguns segundos.", E_USER_ERROR);
-            }
-            
-            $archives[] = [
-                'name' => $name,
-                'path' => $path,
-                'extension' => $extension,
-                'size' => $value['size'],
-                'md5' => md5_file(PUBLIC_FOLDER.$path),
-            ];
-        }
-        
-        return $archives;
+        return vc_upload($file, $directory, $name);
     }
 }
 
@@ -578,7 +573,8 @@ if (!function_exists('preg_replace_space')) {
         $string = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $string);
         
         // Remove espaço com mais de um espaço
-        $string = preg_replace('/^\s+|\s+$|\r\n|\r|\n|\t|\s+(?=\s)/m', '', $string);
+        $string = preg_replace('/\r\n|\r|\n|\t/m', '', $string);
+        $string = preg_replace('/^\s+|\s+$|\s+(?=\s)/m', '', $string);
         
         // Remove tag `p` vázia
         $string = preg_replace('/<p[^>]*>[\s\s|&nbsp;]*<\/p>/m', '', $string);
@@ -598,9 +594,21 @@ if (!function_exists('database_format_money')) {
      */
     function database_format_money($money)
     {
-        $money = str_replace(',', '.', str_replace('.', '', $money));
+        return database_format_float($money);
+    }
+}
+
+if (!function_exists('database_format_float')) {
+    /**
+     * @param string|int|float $value
+     *
+     * @return mixed
+     */
+    function database_format_float($value)
+    {
+        $value = str_replace(',', '.', str_replace('.', '', $value));
         
-        return (float) $money;
+        return (float) $value;
     }
 }
 
@@ -667,7 +675,7 @@ if (!function_exists('check_phone')) {
     /**
      * @param string|int $phone
      *
-     * @return bool
+     * @return bool|string
      */
     function check_phone($phone)
     {
@@ -677,6 +685,118 @@ if (!function_exists('check_phone')) {
             return false;
         }
         
+        return $phone;
+    }
+}
+
+if (!function_exists('flash')) {
+    /**
+     * Cria as flash message simplificado
+     *
+     * @param $name
+     * @param $value
+     * @param string|int|null $error
+     */
+    function flash($name, $value, $error = null)
+    {
+        if (in_web()) {
+            if (!empty($error)) {
+                $value = [$value, error_type($error)];
+            }
+            
+            App::getInstance()
+                ->resolve('flash')
+                ->add($name, $value);
+        }
+    }
+}
+
+if (!function_exists('in_web')) {
+    /**
+     * Verifica se está no site
+     *
+     * return bool
+     */
+    function in_web()
+    {
+        /** @var \Slim\Http\Request $request */
+        $request = App::getInstance()->resolve('request');
+        
+        if (!empty($request->getHeaderLine('X-Csrf-Token')) || !empty(params('_csrfToken'))) {
+            return true;
+        }
+        
+        if ((empty($_SERVER['HTTP_REFERER']) && empty($_SERVER['HTTP_ORIGIN'])) && has_route('/api/')) {
+            return false;
+        }
+        
         return true;
+    }
+}
+
+if (!function_exists('placeholder')) {
+    /**
+     * @param int $dimension
+     * @param array $params
+     *
+     * @return string
+     */
+    function placeholder($dimension = 150, $params = [])
+    {
+        $params = http_build_query($params);
+        
+        return "//via.placeholder.com/{$dimension}?{$params}";
+    }
+}
+
+if (!function_exists('cnh_validate')) {
+    /**
+     * Valida as categorias do CHN
+     *
+     * @param string $cnh (A,B)...
+     *
+     * @return string
+     */
+    function cnh_validate($cnh)
+    {
+        if (empty($cnh)) {
+            return '';
+        }
+        
+        // Variáveis
+        $max = 2;
+        $valids = ['A', 'B', 'C', 'D', 'E'];
+        $possible = ['A,B', 'A,C', 'A,D', 'A,E'];
+        $possibleReverse = array_map(function ($item) {
+            $reverse = array_reverse(explode(',', $item));
+            
+            return implode(',', $reverse);
+        }, $possible);
+        
+        if (is_string($cnh)) {
+            $cnh = explode(',', $cnh);
+        }
+        
+        if (count($cnh) > $max) {
+            throw new \InvalidArgumentException("È possível selecionar apenas 2 categorias da CNH.", E_USER_WARNING);
+        }
+        
+        foreach ($cnh as $cn) {
+            if (array_search($cn, $valids) === false) {
+                throw new \InvalidArgumentException(
+                    sprintf("Categoria <b>%s</b> da CNH não é válida.", $cn), E_USER_ERROR
+                );
+            }
+        }
+        
+        $cnh = implode(',', $cnh);
+        
+        if (strpos($cnh, ',') !== false && array_search($cnh, $merged = array_merge($possible, $possibleReverse)) === false) {
+            throw new \InvalidArgumentException(
+                sprintf("Categoria da CNH possíveis de junção é apenas <b>%s</b>.", implode(' ou ', $merged))
+            );
+        }
+        
+        return $cnh;
     }
 }
