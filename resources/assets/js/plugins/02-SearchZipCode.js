@@ -1,20 +1,20 @@
 /* Carrega o documento */
 $(document).ready(function () {
   function beforeSend (text) {
-    $('#vc-logradouro').val(text);
-    $('#vc-complemento').val(text);
-    $('#vc-bairro').val(text);
-    $('#vc-localidade').val(text);
-    $('#vc-uf').val(text);
-    $('#vc-unidade').val(text);
-    $('#vc-ibge').val(text);
-    $('#vc-gia').val(text);
-    $('#vc-latitude').val('');
-    $('#vc-longitude').val('');
+    $('#cep-logradouro').val(text);
+    $('#cep-complemento').val(text);
+    $('#cep-bairro').val(text);
+    $('#cep-localidade').val(text);
+    $('#cep-uf').val(text);
+    $('#cep-unidade').val(text);
+    $('#cep-ibge').val(text);
+    $('#cep-gia').val(text);
+    $('#cep-latitude').val('');
+    $('#cep-longitude').val('');
   }
   
   /* Realiza a pesquisa do dados */
-  $(document).on('change', '*[data-address]', function (event) {
+  $(document).on('change', '*[data-cep]', function (event) {
     var cep = $(event.currentTarget).val().replace(/\D/g, '');
     var validadeCep = /^[0-9]{8}$/;
     
@@ -22,10 +22,10 @@ $(document).ready(function () {
       if (validadeCep.test(cep)) {
         beforeSend('Aguarde....');
         
-        $.get('/api/zipcode/' + cep, function (json) {
+        $.get('/api/util/zipcode/' + cep, function (json) {
           if (!json.error) {
             $.each(json, function (key, value) {
-              var element = $('#vc-' + key);
+              var element = $('#cep-' + key);
               
               element.val(value);
               

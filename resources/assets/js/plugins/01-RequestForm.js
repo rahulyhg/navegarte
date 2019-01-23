@@ -220,6 +220,16 @@ function vcAjax (element, url, formData, method, form, change, modal) {
                   $(document).find('#' + key).html(value);
                 }
               }
+              
+              /* Masks */
+              if ($(document).find('#' + key).find('*[class*="mask"]').length) {
+                initMaskInput();
+              }
+              
+              /* Select 2 */
+              if ($(document).find('#' + key).find('*[data-toggle="select2"]').length) {
+                initSelect2($(document).find('*[data-toggle="select2"]'));
+              }
             });
           }, 500);
         }
@@ -233,6 +243,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       /* Limpa formulário */
       if (json.clear && form.length > 0) {
         form.trigger('reset');
+        form.find('*[data-toggle="select2"]').trigger('change');
       }
       
       /* Mensagem de retorno ou erro */
@@ -260,6 +271,13 @@ function vcAjax (element, url, formData, method, form, change, modal) {
         if (typeof json.switch === 'object') {
           $.each(json.switch, function (key, value) {
             switch (key) {
+              /* Hide */
+              case 'scrolltop':
+                $('html,body').animate({
+                  scrollTop: ($(value).offset().top - 20),
+                }, 500);
+                break;
+              
               /* Hide */
               case 'hide':
                 $(value).hide();
@@ -390,17 +408,25 @@ $(document).ready(function () {
     
     /* Variáveis */
     var element = $(this);
-    var method = element.attr('vc-method') ? element.attr('vc-method').toUpperCase() : 'POST';
     var formData = new FormData();
-    var param = element.attr('vc-param') ? element.attr('vc-param') : 'value';
+    var json = getJSON(element.attr('vc-change'));
+    
+    if (!json) {
+      alert('JSON Inválido.');
+      return;
+    }
+    
+    var method = (json.method || 'POST');
+    
+    if (json.data !== undefined) {
+      element.attr('vc-data', JSON.stringify(json.data));
+    }
     
     /* FormData */
-    formData.append(param, (element.val() !== undefined ? element.val() : ''));
-    
-    /* Realiza a requisição */
+    formData.append(json.name || 'value', (element.val() !== undefined ? element.val() : ''));
     formData.append('_METHOD', method);
     
-    vcAjax(element, getLocationFromElement(element, 'change'), formData, 'POST', {}, true, false);
+    vcAjax(element, json.url || '', formData, 'POST', {}, true, false);
   });
   
   /* Dispara o request ao clicar (click) */
