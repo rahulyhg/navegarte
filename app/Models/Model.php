@@ -118,11 +118,21 @@ namespace App\Models {
          */
         public function fetchAll($fetch_style = \PDO::FETCH_ASSOC, $fetch_argument = null, array $ctor_args = [])
         {
-            return $this->execute()->fetchAll(
+            $rows = $this->execute()->fetchAll(
                 $fetch_style,
                 $fetch_argument,
                 $ctor_args
             );
+            
+            foreach ($rows as $index => $row) {
+                if (method_exists($this, '_row')) {
+                    $this->{'_row'}($row);
+                }
+                
+                $rows[$index] = $row;
+            }
+            
+            return $rows;
         }
         
         /**
@@ -140,8 +150,8 @@ namespace App\Models {
             }
             
             // Verifica se o método está criado e executa
-            if (method_exists($this, 'conditions')) {
-                $this->{'conditions'}();
+            if (method_exists($this, '_conditions')) {
+                $this->{'_conditions'}();
             }
             
             // Select
@@ -263,7 +273,7 @@ namespace App\Models {
             // Executa a query
             $stmt = $this->limit(1)->execute(true)->fetch();
             
-            return $stmt['count'];
+            return (int) $stmt['count'];
         }
         
         /**
@@ -338,11 +348,17 @@ namespace App\Models {
          */
         public function places($places)
         {
-            if (!empty($places) && is_string($places)) {
-                if (function_exists('mb_parse_str')) {
-                    mb_parse_str($places, $this->places);
+            if (!empty($places)) {
+                if (is_string($places)) {
+                    $places = explode('&', $places);
+                    
+                    foreach ($places as $place) {
+                        $place = explode('=', $place);
+                        
+                        $this->places[$place[0]] = $place[1];
+                    }
                 } else {
-                    parse_str($places, $this->places);
+                    $this->places = $places;
                 }
             }
             
@@ -431,15 +447,6 @@ namespace App\Models {
         public function table()
         {
             return $this->table;
-        }
-        
-        /**
-         * Configura as condições padrões
-         *
-         * @return void
-         */
-        protected function conditions()
-        {
         }
     }
 }

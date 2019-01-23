@@ -90,15 +90,5 @@ namespace App\Models {
             
             return $this;
         }
-        
-        /**
-         * Configura as condições padrões
-         *
-         * @return void
-         */
-        protected function conditions()
-        {
-            //
-        }
     }
 }
