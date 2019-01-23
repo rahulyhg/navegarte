@@ -63,8 +63,9 @@ return [
             'has_route' => 'has_route',
             'is_route' => 'is_route',
             'dd' => 'dd',
+            'placeholder' => 'placeholder',
             'csrf_token' => function ($input = true) {
-                $token = \Core\App::getInstance()->resolve('jwt')->encode([
+                $token = \Core\App::getInstance()->resolve('encryption')->encrypt([
                     'token' => uniqid(rand(), true),
                     'expired' => time() + (60 * 60 * 24),
                 ]);
