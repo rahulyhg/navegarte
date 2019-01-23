@@ -11,73 +11,65 @@
  */
 
 return [
-
+    
     /**
      * Define a versão da aplicação
      */
-
+    
     'version' => [
-
+        
         /**
          * Versão do framework
          */
-
-        'framework' => 'v2.0.7',
-
+        
+        'framework' => 'v1.2.11',
+        
         /**
          * Versão do skeleton
          */
-
-        'skeleton' => 'v2.0.6',
-
+        
+        'skeleton' => 'v1.2.6',
+    
     ],
-
+    
     /**
-     * Registra os serviços
+     * Session
+     *
+     * Ativa / Desativa a sessão
      */
-
-    'providers' => [
-        \Core\Providers\View\ViewProvider::class,
-        \Core\Providers\ErrorProvider::class,
-        \Core\Providers\Session\SessionProvider::class,
-        \Core\Providers\Database\DatabaseProvider::class,
-        \Core\Providers\Mailer\MailerProvider::class,
-        \Core\Providers\Encryption\EncryptionProvider::class,
-        \Core\Providers\Hash\HashProvider::class,
-        \Core\Providers\Jwt\JwtProvider::class,
-        \Core\Providers\LoggerProvider::class,
-        \Core\Providers\Event\EventProvider::class,
-
-        /**
-         * Registra serviço da aplicação
-         */
-
-        \App\Providers\ErrorSlackProvider::class,
-    ],
-
+    
+    'session' => env('APP_SESSION', true),
+    
     /**
-     * Registra as middlewares
+     * Language
+     *
+     * Define a linguagem padrão
      */
-
-    'middlewares' => [
-
-        /**
-         * Middlewares iniciada automática
-         */
-
-        'automatic' => [
-            \Core\Middlewares\GenerateAppKeyMiddleware::class,
-            \Core\Middlewares\TrailingSlashMiddleware::class,
-            \Core\Middlewares\MaintenanceMiddleware::class,
-            \Core\Middlewares\OldInputMiddleware::class,
-        ],
-
-        /**
-         * Middlewares iniciada manual
-         */
-
-        'manual' => [],
-
-    ],
+    
+    'locale' => env('APP_LOCALE', 'pt_BR'),
+    
+    /**
+     * Maintenance
+     *
+     * Define se a aplicação vai estar em manutenção
+     */
+    
+    'maintenance' => env('APP_MAINTENANCE', false),
+    
+    /**
+     * Environment
+     *
+     * Define se a aplicaão está em produção ou em desenvolvimento
+     */
+    
+    'environment' => env('APP_ENV', 'production'),
+    
+    /**
+     * Timezone
+     *
+     * Define o fuso horário da aplicaão
+     */
+    
+    'timezone' => env('APP_TIMEZONE', 'America/Sao_Paulo'),
 
 ];

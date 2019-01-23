@@ -21,19 +21,6 @@ return [
     'default' => env('DB_DRIVER', 'mysql'),
     
     /**
-     * Options
-     *
-     * Configura as opções para conexão
-     */
-    
-    'options' => [
-        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-        \PDO::ATTR_CASE => \PDO::CASE_NATURAL,
-        \PDO::ATTR_PERSISTENT => true,
-    ],
-    
-    /**
      * Drivers
      *
      * Define os tipo de conexões que serão aceitos
@@ -46,7 +33,7 @@ return [
          */
         
         'mysql' => [
-            'dsn' => 'mysql:host=%s;dbname=%s',
+            'driver' => env('DB_DRIVER', 'mysql'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', 3306),
             'database' => env('DB_DATABASE', ''),
@@ -61,14 +48,14 @@ return [
          */
         
         'sqlsrv' => [
-            'dsn' => 'sqlsrv:Server=%s;Connect=%s;ConnectionPooling=0',
+            'driver' => env('DB_DRIVER', 'sqlsrv'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', 1433),
             'database' => env('DB_DATABASE', ''),
             'username' => env('DB_USER', ''),
             'password' => env('DB_PASS', ''),
-            'charset' => false,
-            'collation' => false,
+            'charset' => env('DB_CHARSET', ''),
+            'collation' => env('DB_COLLATE', ''),
         ],
         
         /**
@@ -76,7 +63,7 @@ return [
          */
         
         'dblib' => [
-            'dsn' => 'dblib:version=7.0;charset=UTF-8;host=%s;dbname=%s',
+            'driver' => env('DB_DRIVER', 'dblib'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', 1433),
             'database' => env('DB_DATABASE', ''),
