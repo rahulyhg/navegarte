@@ -7,17 +7,18 @@
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-2018 Vagner Cardoso
+ * @copyright 12/01/2018 Vagner Cardoso
  */
 
-namespace App\Controllers\Api {
+namespace App\Controllers\Api\Deploy {
     
     use Core\Contracts\Controller;
+    use Slim\Http\StatusCode;
     
     /**
      * Class GitlabController
      *
-     * @package App\Controllers\Api
+     * @package App\Controllers\Api\Deploy
      * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
      */
     class GitlabController extends Controller
@@ -34,7 +35,7 @@ namespace App\Controllers\Api {
                 $token = $this->request->getHeaderLine('X-Gitlab-Token');
                 $event = $this->request->getHeaderLine('X-Gitlab-Event');
                 
-                if (empty($token) || $token !== env('GITLAB_TOKEN')) {
+                if (empty($token) || $token !== env('DEPLOY_TOKEN')) {
                     throw new \Exception("Token inválid.", E_USER_ERROR);
                 }
                 
@@ -58,7 +59,7 @@ namespace App\Controllers\Api {
                 
                 switch ($branch) {
                     case 'master':
-                        `git fetch origin && git reset --hard origin/master`;
+                        `git fetch origin && git reset --hard origin/master 2>&1`;
                         break;
                     default:
                         throw new \Exception("Branch undefined.", E_USER_ERROR);
@@ -69,7 +70,7 @@ namespace App\Controllers\Api {
                     'message' => 'Deploy gitlab successfully.',
                 ], 200);
             } catch (\Exception $e) {
-                return json_error($e);
+                return json_error($e, [], StatusCode::HTTP_BAD_REQUEST);
             }
         }
     }

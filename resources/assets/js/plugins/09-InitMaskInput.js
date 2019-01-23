@@ -5,10 +5,14 @@
  */
 
 var initMaskInput = function () {
+  $('.maskYear').mask('0000');
   $('.maskTime').mask('00:00');
   $('.maskDate').mask('00/00/0000');
   $('.maskDateTime').mask('00/00/0000 00:00');
   $('.maskMoney').mask('#.##0,00', {reverse: true});
+  $('.maskFloat').mask('#0.00', {reverse: true});
+  $('.maskCNH').mask('#00', {reverse: true});
+  $('.maskNumber').mask('#00', {reverse: true});
   $('.maskCpf').mask('000.000.000-00', {reverse: true});
   $('.maskRg').mask('00.000.000-0', {reverse: true});
   $('.maskCnpj').mask('00.000.000/0000-00', {reverse: true});

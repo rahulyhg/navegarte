@@ -17,7 +17,7 @@ var initSelect2 = function (selects2) {
         if (option.url !== undefined || option.url !== '') {
           options = {
             placeholder: option.placeholder !== undefined ? option.placeholder : 'Pesquisar...',
-            minimumInputLength: 0,
+            minimumInputLength: option.minimumInputLength !== undefined ? option.minimumInputLength : 3,
             
             ajax: {
               url: option.url,
@@ -25,6 +25,7 @@ var initSelect2 = function (selects2) {
               dataType: option.dataType !== undefined ? option.dataType : 'json',
               delay: option.delay !== undefined ? option.delay : 250,
               cache: option.cache !== undefined ? option.cache : false,
+              headers: {'X-Csrf-Token': $('meta[name="_csrfToken"]').attr('content') || ''},
               data: function (param) {
                 var params = {
                   term: param.term || '',
@@ -73,8 +74,8 @@ var initSelect2 = function (selects2) {
       $(element).select2(mergeObject({
         language: 'pt-BR',
         width: 'resolve',
-        /*dropdownParent: $(element).parent(),
-         minimumResultsForSearch: -1,*/
+        /*dropdownParent: $(element).parent(),*/
+        /*minimumResultsForSearch: -1,*/
       }, options));
     });
   }

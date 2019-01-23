@@ -1,13 +1,13 @@
 <?php
 
 /**
- * VCWeb <https://www.vagnercardosoweb.com.br/>
+ * VCWeb Networks <https://www.vagnercardosoweb.com.br/>
  *
- * @package   VCWeb
+ * @package   VCWeb Networks
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-2018 Vagner Cardoso
+ * @copyright 12/01/2018 Vagner Cardoso
  */
 
 /**
@@ -40,7 +40,17 @@ define('RESOURCE_FOLDER', APP_FOLDER.'/resources');
  *  Define a URL base da aplicação
  */
 
-define('BASE_URL', "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}");
+$schema = 'http';
+$host = $_SERVER['HTTP_HOST'];
+
+if (
+    (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ||
+    (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
+) {
+    $schema = 'https';
+}
+
+define('BASE_URL', "{$schema}://{$host}");
 
 /**
  * Define a URL completa da aplicação

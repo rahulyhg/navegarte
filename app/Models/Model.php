@@ -1,13 +1,13 @@
 <?php
 
 /**
- * VCWeb <https://www.vagnercardosoweb.com.br/>
+ * VCWeb Networks <https://www.vagnercardosoweb.com.br/>
  *
- * @package   VCWeb
+ * @package   VCWeb Networks
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-2018 Vagner Cardoso
+ * @copyright 12/01/2018 Vagner Cardoso
  */
 
 namespace App\Models {
@@ -43,11 +43,6 @@ namespace App\Models {
         protected $where = [];
         
         /**
-         * @var bool
-         */
-        protected $notWhere = false;
-        
-        /**
          * @var array
          */
         protected $group = [];
@@ -65,12 +60,12 @@ namespace App\Models {
         /**
          * @var int
          */
-        protected $limit;
+        protected $limit = null;
         
         /**
          * @var int
          */
-        protected $offset;
+        protected $offset = null;
         
         /**
          * @var array
@@ -80,7 +75,12 @@ namespace App\Models {
         /**
          * @var array
          */
-        protected $post = [];
+        protected $reset = [];
+        
+        /**
+         * @var array
+         */
+        protected $data = [];
         
         /**
          * Retorna um registro
@@ -90,34 +90,32 @@ namespace App\Models {
          */
         public function fetch()
         {
-            $fetch = current($this->fetchAll());
+            $fetch = current(
+                $this->limit(1)->fetchAll()
+            );
             
             return ($fetch ?: []);
         }
         
         /**
-         * Retorna todos registros
+         * Executa e retorna o resultado padrão
          *
          * @return array
          * @throws \Exception
          */
         public function fetchAll()
         {
-            throw new \Exception("`-> fetchAll` method of the ".get_class($this)." model has not been implemented.", E_USER_ERROR);
-        }
-        
-        /**
-         * Recupera o total de registro
-         *
-         * @return int
-         * @throws \Exception
-         */
-        public function count()
-        {
-            // Executa a query
-            $stmt = $this->limit(1)->execute(true)->fetch();
+            $rows = $this->execute()->fetchAll();
             
-            return $stmt['count'];
+            foreach ($rows as $index => $row) {
+                if (method_exists($this, '_row')) {
+                    $this->{'_row'}($row);
+                }
+                
+                $rows[$index] = $row;
+            }
+            
+            return $rows;
         }
         
         /**
@@ -135,8 +133,8 @@ namespace App\Models {
             }
             
             // Verifica se o método está criado e executa
-            if (method_exists($this, 'conditions')) {
-                $this->{'conditions'}();
+            if (method_exists($this, '_conditions')) {
+                $this->{'_conditions'}();
             }
             
             // Select
@@ -221,16 +219,18 @@ namespace App\Models {
          */
         protected function clear()
         {
+            /*$this->table = '';*/
             $this->select = [];
             $this->join = [];
             $this->where = [];
-            $this->notWhere = false;
             $this->group = [];
             $this->having = [];
             $this->order = [];
             $this->limit = null;
             $this->offset = null;
             $this->places = [];
+            $this->reset = [];
+            /*$this->data = [];*/
         }
         
         /**
@@ -246,12 +246,30 @@ namespace App\Models {
         }
         
         /**
+         * Recupera o total de registro
+         *
+         * @return int
+         * @throws \Exception
+         */
+        public function count()
+        {
+            // Executa a query
+            $stmt = $this->limit(1)->execute(true)->fetch();
+            
+            return (int) $stmt['count'];
+        }
+        
+        /**
          * @param mixed $select
          *
          * @return $this
          */
         public function select($select)
         {
+            if (is_string($select)) {
+                $select = explode(',', $select);
+            }
+            
             $this->montPropertyArray($select, 'select');
             
             return $this;
@@ -260,7 +278,7 @@ namespace App\Models {
         /**
          * Monta os array
          *
-         * @param mixed $conditions
+         * @param string|array|null $conditions
          * @param string $property
          */
         protected function montPropertyArray($conditions, $property)
@@ -270,14 +288,17 @@ namespace App\Models {
             }
             
             foreach ((array) $conditions as $condition) {
-                if (!empty($condition)) {
-                    $this->{$property}[] = (string) $condition;
+                if (!empty($condition) &&
+                    !array_search($condition, $this->{$property}) &&
+                    !array_search("{$this->table}.{$condition}", $this->{$property})
+                ) {
+                    $this->{$property}[] = trim((string) $condition);
                 }
             }
         }
         
         /**
-         * @param mixed $join
+         * @param string|array|null $join
          *
          * @return $this
          */
@@ -289,29 +310,74 @@ namespace App\Models {
         }
         
         /**
-         * @param mixed $where
+         * @param string|array|null $where
+         *
+         * @param string|array|null $places
          *
          * @return $this
          */
-        public function where($where)
+        public function where($where, $places = [])
         {
             $this->montPropertyArray($where, 'where');
+            $this->places($places);
             
             return $this;
         }
         
         /**
+         * @param string|array $places
+         *
          * @return $this
          */
-        public function notWhere()
+        public function places($places)
         {
-            $this->notWhere = true;
+            if (!empty($places)) {
+                if (is_string($places)) {
+                    $places = explode('&', $places);
+                    
+                    foreach ($places as $place) {
+                        $place = explode('=', $place);
+                        
+                        $this->places[$place[0]] = $place[1];
+                    }
+                } else {
+                    $this->places = $places;
+                }
+            }
             
             return $this;
         }
         
         /**
-         * @param mixed $group
+         * @param string|array|null $properties
+         *
+         * @return $this
+         */
+        public function reset($properties = [])
+        {
+            if (empty($properties)) {
+                $reflection = new \ReflectionClass(get_class($this));
+                
+                foreach ($reflection->getProperties() as $property) {
+                    if (!in_array($property->getName(), ['table', 'data'])) {
+                        $this->reset[$property->getName()] = true;
+                    }
+                }
+            } else {
+                if (is_string($properties)) {
+                    $properties = explode(',', $properties);
+                }
+                
+                foreach ($properties as $property) {
+                    $this->reset[trim($property)] = true;
+                }
+            }
+            
+            return $this;
+        }
+        
+        /**
+         * @param string|array|null $group
          *
          * @return $this
          */
@@ -323,7 +389,7 @@ namespace App\Models {
         }
         
         /**
-         * @param mixed $having
+         * @param string|array|null $having
          *
          * @return $this
          */
@@ -335,7 +401,7 @@ namespace App\Models {
         }
         
         /**
-         * @param mixed $order
+         * @param string|array|null $order
          *
          * @return $this
          */
@@ -361,18 +427,9 @@ namespace App\Models {
         /**
          * @return string
          */
-        public function getTable()
+        public function table()
         {
             return $this->table;
-        }
-        
-        /**
-         * Configura as condições padrões
-         *
-         * @return void
-         */
-        protected function conditions()
-        {
         }
     }
 }

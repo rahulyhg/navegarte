@@ -49,6 +49,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       : 'Aguarde...')
     : (change ? false : html));
   var message;
+  var headers = {};
   
   /* Upload file */
   var enableUpload = (element.attr('vc-upload') !== undefined);
@@ -103,8 +104,21 @@ function vcAjax (element, url, formData, method, form, change, modal) {
     _METHOD = method;
   }
   
+  /* CSRF Protect */
+  var _csrfToken = '';
+  
+  if (formData.has('_csrfToken')) {
+    _csrfToken = formData.get('_csrfToken');
+    formData.delete('_csrfToken');
+  } else {
+    _csrfToken = $('meta[name="_csrfToken"]').attr('content') || '';
+  }
+  
+  if (_csrfToken !== '') {
+    headers['X-Csrf-Token'] = _csrfToken;
+  }
+  
   /* Headers */
-  var headers = {};
   headers['X-Http-Method-Override'] = _METHOD.toUpperCase();
   
   if (formData.has('_HEADERS')) {
@@ -206,6 +220,16 @@ function vcAjax (element, url, formData, method, form, change, modal) {
                   $(document).find('#' + key).html(value);
                 }
               }
+              
+              /* Masks */
+              if ($(document).find('#' + key).find('*[class*="mask"]').length) {
+                initMaskInput();
+              }
+              
+              /* Select 2 */
+              if ($(document).find('#' + key).find('*[data-toggle="select2"]').length) {
+                initSelect2($(document).find('*[data-toggle="select2"]'));
+              }
             });
           }, 500);
         }
@@ -219,6 +243,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       /* Limpa formulário */
       if (json.clear && form.length > 0) {
         form.trigger('reset');
+        form.find('*[data-toggle="select2"]').trigger('change');
       }
       
       /* Mensagem de retorno ou erro */
@@ -246,6 +271,13 @@ function vcAjax (element, url, formData, method, form, change, modal) {
         if (typeof json.switch === 'object') {
           $.each(json.switch, function (key, value) {
             switch (key) {
+              /* Hide */
+              case 'scrolltop':
+                $('html,body').animate({
+                  scrollTop: ($(value).offset().top - 20),
+                }, 500);
+                break;
+              
               /* Hide */
               case 'hide':
                 $(value).hide();
@@ -376,17 +408,25 @@ $(document).ready(function () {
     
     /* Variáveis */
     var element = $(this);
-    var method = element.attr('vc-method') ? element.attr('vc-method').toUpperCase() : 'POST';
     var formData = new FormData();
-    var param = element.attr('vc-param') ? element.attr('vc-param') : 'value';
+    var json = getJSON(element.attr('vc-change'));
+    
+    if (!json) {
+      alert('JSON Inválido.');
+      return;
+    }
+    
+    var method = (json.method || 'POST');
+    
+    if (json.data !== undefined) {
+      element.attr('vc-data', JSON.stringify(json.data));
+    }
     
     /* FormData */
-    formData.append(param, (element.val() !== undefined ? element.val() : ''));
-    
-    /* Realiza a requisição */
+    formData.append(json.name || 'value', (element.val() !== undefined ? element.val() : ''));
     formData.append('_METHOD', method);
     
-    vcAjax(element, getLocationFromElement(element, 'change'), formData, 'POST', {}, true, false);
+    vcAjax(element, json.url || '', formData, 'POST', {}, true, false);
   });
   
   /* Dispara o request ao clicar (click) */
@@ -396,6 +436,7 @@ $(document).ready(function () {
     var url = '';
     var method = '';
     var formData = new FormData();
+    var errorCount = 0;
     var inputName;
     
     /* Elementos desabilitados */
@@ -424,6 +465,45 @@ $(document).ready(function () {
       /* Verifica o formulário */
       if (form.length <= 0) {
         alert('Formulário com ([name="' + element.attr('vc-form') + '"]) não foi encontrado em seu documento html.');
+        
+        return;
+      }
+      
+      // Verifica campos obrigatórios
+      form.find('input, textarea, select').each(function (key, element) {
+        var value = '';
+        var requiredMessage = '';
+        
+        if ($(element).hasClass('vc-error-field')) {
+          errorCount = 0;
+          
+          $(element)
+            .removeClass('vc-error-field')
+            .parent()
+            .removeClass('vc-error')
+            .find('.vc-error-box').remove();
+        }
+        
+        if (element.tagName.toLowerCase() === 'textarea') {
+          value = $(element).html() || '';
+        } else {
+          value = $(element).val() || '';
+        }
+        
+        if ($(element).prop('required') && (value === '' && value !== '0')) {
+          errorCount++;
+          requiredMessage = ($(element).attr('required') !== 'required' ? $(element).attr('required') : 'Campo obrigatório.');
+          
+          $(element)
+            .addClass('vc-error-field')
+            .parent()
+            .addClass('vc-error')
+            .append('<div class="vc-error-box">' + requiredMessage + '</div>');
+        }
+      });
+      
+      if (errorCount !== 0) {
+        form.find(':input.vc-error-field:first').focus();
         
         return;
       }

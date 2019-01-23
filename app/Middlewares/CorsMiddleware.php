@@ -7,7 +7,7 @@
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-2018 Vagner Cardoso
+ * @copyright 12/01/2018 Vagner Cardoso
  */
 
 namespace App\Middlewares {
@@ -43,15 +43,15 @@ namespace App\Middlewares {
             header_remove("Pragma");*/
             
             $response = $response->withHeader('Access-Control-Allow-Origin', '*')
-                                 ->withHeader('Access-Control-Allow-Headers', implode(', ', [
-                                     'X-Requested-With',
-                                     'X-Http-Method-Override',
-                                     'Content-Type',
-                                     'Accept',
-                                     'Origin',
-                                     'Authorization',
-                                 ]))
-                                 ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+                ->withHeader('Access-Control-Allow-Headers', implode(', ', [
+                    'X-Requested-With',
+                    'X-Http-Method-Override',
+                    'Content-Type',
+                    'Accept',
+                    'Origin',
+                    'Authorization',
+                ]))
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
             
             return $response;
         }

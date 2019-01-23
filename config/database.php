@@ -1,13 +1,13 @@
 <?php
 
 /**
- * VCWeb <https://www.vagnercardosoweb.com.br/>
+ * VCWeb Networks <https://www.vagnercardosoweb.com.br/>
  *
- * @package   VCWeb
+ * @package   VCWeb Networks
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-2018 Vagner Cardoso
+ * @copyright 12/01/2018 Vagner Cardoso
  */
 
 return [
@@ -19,6 +19,19 @@ return [
      */
     
     'default' => env('DB_DRIVER', 'mysql'),
+    
+    /**
+     * Options
+     *
+     * Configura as opções para conexão
+     */
+    
+    'options' => [
+        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+        \PDO::ATTR_CASE => \PDO::CASE_NATURAL,
+        \PDO::ATTR_PERSISTENT => true,
+    ],
     
     /**
      * Drivers
@@ -33,7 +46,7 @@ return [
          */
         
         'mysql' => [
-            'driver' => env('DB_DRIVER', 'mysql'),
+            'dsn' => 'mysql:host=%s;dbname=%s',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', 3306),
             'database' => env('DB_DATABASE', ''),
@@ -48,14 +61,14 @@ return [
          */
         
         'sqlsrv' => [
-            'driver' => env('DB_DRIVER', 'sqlsrv'),
+            'dsn' => 'sqlsrv:Server=%s;Connect=%s;ConnectionPooling=0',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', 1433),
             'database' => env('DB_DATABASE', ''),
             'username' => env('DB_USER', ''),
             'password' => env('DB_PASS', ''),
-            'charset' => env('DB_CHARSET', ''),
-            'collation' => env('DB_COLLATE', ''),
+            'charset' => false,
+            'collation' => false,
         ],
         
         /**
@@ -63,14 +76,14 @@ return [
          */
         
         'dblib' => [
-            'driver' => env('DB_DRIVER', 'dblib'),
+            'dsn' => 'dblib:version=7.0;charset=UTF-8;host=%s;dbname=%s',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', 1433),
             'database' => env('DB_DATABASE', ''),
             'username' => env('DB_USER', ''),
             'password' => env('DB_PASS', ''),
-            'charset' => env('DB_CHARSET', ''),
-            'collation' => env('DB_COLLATE', ''),
+            'charset' => false,
+            'collation' => false,
         ],
     
     ],

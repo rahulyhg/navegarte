@@ -18,29 +18,23 @@ return [
      */
     
     'providers' => [
+        \Core\Providers\View\ViewProvider::class,
+        \Core\Providers\ErrorProvider::class,
+        \Core\Providers\Session\SessionProvider::class,
+        \Core\Providers\DatabaseProvider::class,
+        \Core\Providers\Mailer\MailerProvider::class,
+        \Core\Providers\Encryption\EncryptionProvider::class,
+        \Core\Providers\Hash\HashProvider::class,
+        \Core\Providers\Jwt\JwtProvider::class,
+        \Core\Providers\LoggerProvider::class,
+        \Core\Providers\Event\EventProvider::class,
         
         /**
-         * Providers da aplicação
+         * Registra serviço da aplicação
          */
         
-        'app' => [
-            \Core\Providers\View\ViewProvider::class,
-            \Core\Providers\ErrorProvider::class,
-            \Core\Providers\Session\SessionProvider::class,
-            \Core\Providers\DatabaseProvider::class,
-            \Core\Providers\Mailer\MailerProvider::class,
-            \Core\Providers\Encryption\EncryptionProvider::class,
-            \Core\Providers\Hash\HashProvider::class,
-            \Core\Providers\Jwt\JwtProvider::class,
-            \Core\Providers\LoggerProvider::class,
-            \Core\Providers\Event\EventProvider::class,
-        ],
-        
-        /**
-         * Providers custom
-         */
-        
-        'web' => [],
+        \App\Providers\AppProvider::class,
+        \App\Providers\ErrorSlackProvider::class,
     ],
     
     /**

@@ -1,13 +1,13 @@
 <?php
 
 /**
- * VCWeb <https://www.vagnercardosoweb.com.br/>
+ * VCWeb Networks <https://www.vagnercardosoweb.com.br/>
  *
- * @package   VCWeb
+ * @package   VCWeb Networks
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-2018 Vagner Cardoso
+ * @copyright 12/01/2018 Vagner Cardoso
  */
 
 namespace App\Controllers {
@@ -23,14 +23,6 @@ namespace App\Controllers {
     class IndexController extends Controller
     {
         /**
-         * Inicia junto com o __construct da classe pai
-         */
-        protected function boot()
-        {
-            //
-        }
-        
-        /**
          * [VIEW] /
          *
          * @return \Slim\Http\Response
@@ -40,6 +32,14 @@ namespace App\Controllers {
             $array = [];
             
             return $this->view('index', $array, 200);
+        }
+        
+        /**
+         * Inicia junto com o __construct da classe pai
+         */
+        protected function boot()
+        {
+            //
         }
     }
 }

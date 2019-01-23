@@ -1,89 +1,50 @@
 <?php
 
 /**
- * VCWeb <https://www.vagnercardosoweb.com.br/>
+ * VCWeb Networks <https://www.vagnercardosoweb.com.br/>
  *
  * @package   VCWeb Networks
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-2018 Vagner Cardoso
+ * @copyright 13/01/2018 Vagner Cardoso
  */
 
+use Core\App;
 use Core\Helpers\Helper;
 use Core\Helpers\Str;
+use Slim\Http\StatusCode;
 
-if (!function_exists('filter_value')) {
-    /**
-     * Verifica e formata o valor do post
-     *
-     * @param string|int|bool $value
-     * @param string $filter
-     * @param string $message
-     * @param int $code
-     *
-     * @return null
-     */
-    function filter_value($value, $filter = null, $message = null, $code = E_USER_WARNING)
-    {
-        if (empty($value) && $value != '0') {
-            if (!empty($message)) {
-                throw new \InvalidArgumentException($message, $code);
-            } else {
-                $value = '';
-            }
-        }
-        
-        if (!empty($value)) {
-            switch ($filter) {
-                case 'onlyNumber':
-                    $value = onlyNumber($value);
-                    break;
-                
-                case 'dateDatabase':
-                    $value = date('Y-m-d', strtotime(str_replace('/', '-', $value)));
-                    break;
-                
-                case 'dateTimeDatabase':
-                    $value = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $value)));
-                    break;
-                
-                case 'moneyDatabase':
-                    $value = str_replace(',', '.', str_replace('.', '', $value));
-                    break;
-            }
-        }
-        
-        return $value;
-    }
-}
-
-if (!function_exists('validate_post')) {
+if (!function_exists('validate_params')) {
     /**
      * Realiza a validação do post
      *
-     * @param array $post
      * @param array $params
+     * @param array $rules
      */
-    function validate_post(array $post, array $params)
+    function validate_params(array $params, array $rules)
     {
-        // Percorre os parâmetro do post
-        foreach ($params as $index => $param) {
+        // Percorre os parâmetros
+        foreach ($rules as $index => $rule) {
             // Força checagem
-            if (!empty($param['force']) && $param['force'] == true) {
-                if (!array_key_exists($index, $post)) {
-                    $post[$index] = '';
+            if (!empty($rule['force']) && $rule['force'] == true) {
+                if (!array_key_exists($index, $params)) {
+                    $params[$index] = '';
                 }
             }
             
             // Verifica caso esteja preenchido
-            if (isset($post[$index]) && (empty($post[$index]) && $post[$index] != '0')) {
-                if (is_string($param)) {
-                    throw new InvalidArgumentException($param, E_USER_WARNING);
+            if (isset($params[$index]) && (empty($params[$index]) && $params[$index] != '0')) {
+                if (!empty($rule['id'])) {
+                    continue;
                 } else {
-                    $code = (!empty($param['code']) ? $param['code'] : E_USER_WARNING);
-                    
-                    throw new InvalidArgumentException($param['message'], $code);
+                    if (is_string($rule)) {
+                        throw new \InvalidArgumentException($rule, E_USER_NOTICE);
+                    } else {
+                        $code = (!empty($rule['code']) ? $rule['code'] : E_USER_NOTICE);
+                        
+                        throw new \InvalidArgumentException($rule['message'], $code);
+                    }
                 }
             }
         }
@@ -101,7 +62,7 @@ if (!function_exists('json_trigger')) {
      *
      * @return \Slim\Http\Response
      */
-    function json_trigger($message, $type = 'success', array $params = [], $status = 200)
+    function json_trigger($message, $type = 'success', array $params = [], $status = StatusCode::HTTP_OK)
     {
         return json(array_merge([
             'trigger' => [error_type($type), $message],
@@ -111,7 +72,7 @@ if (!function_exists('json_trigger')) {
 
 if (!function_exists('json_error')) {
     /**
-     * Gera o erro no padrão das requisições ajax
+     * Gera o erro no padrão das requisições api
      *
      * @param \Exception $exception
      * @param array $params
@@ -119,16 +80,71 @@ if (!function_exists('json_error')) {
      *
      * @return \Slim\Http\Response
      */
-    function json_error($exception, array $params = [], $status = 200)
+    function json_error($exception, array $params = [], $status = StatusCode::HTTP_BAD_REQUEST)
     {
         return json(array_merge([
             'error' => [
                 'code' => $exception->getCode(),
+                'status' => $status,
                 'type' => error_type($exception->getCode()),
-                'file' => str_replace([APP_FOLDER, PUBLIC_FOLDER, RESOURCE_FOLDER], '', $exception->getFile()),
+                'file' => str_replace([
+                    APP_FOLDER,
+                    PUBLIC_FOLDER,
+                    RESOURCE_FOLDER,
+                ], '', $exception->getFile()),
                 'line' => $exception->getLine(),
                 'message' => $exception->getMessage(),
             ],
+        ], $params), $status);
+    }
+}
+
+if (!function_exists('json_success')) {
+    /**
+     * Gera o sucesso no padrão das requisições apis
+     *
+     * @param string $message
+     * @param array $params
+     * @param int $status
+     *
+     * @return \Slim\Http\Response
+     */
+    function json_success($message, array $params = [], $status = StatusCode::HTTP_OK)
+    {
+        // Caso seja web
+        if (in_web()) {
+            // Caso seja retorno pra API remove
+            if (!empty($params['data'])) {
+                unset($params['data']);
+            }
+            
+            // Caso a mensagem seja vázia
+            // envia apenas os parametros e status
+            if (empty($message)) {
+                return json($params, $status);
+            }
+            
+            return json_trigger($message, 'success', $params, $status);
+        }
+        
+        // Filtra os parametros caso seja da web
+        $params = array_filter($params, function ($param) {
+            if (!in_array($param, [
+                'storage',
+                'object',
+                'clear',
+                'trigger',
+                'switch',
+                'location',
+                'reload',
+            ])) {
+                return $param;
+            }
+        }, ARRAY_FILTER_USE_KEY);
+        
+        return json(array_merge([
+            'error' => false,
+            'message' => $message,
         ], $params), $status);
     }
 }
@@ -188,12 +204,14 @@ if (!function_exists('get_image')) {
      */
     function get_image($table, $id, $name, $baseUrl = true, $version = true, $extension = 'jpg')
     {
-        $name = mb_strtoupper($name, 'UTF-8');
-        $path = "/fotos/{$table}/{$id}/{$name}";
-        
-        foreach ([$extension, strtoupper($extension)] as $ext) {
-            if ($asset = asset("{$path}.{$ext}", $baseUrl, $version)) {
-                return $asset;
+        if (!empty($id) && $id != '0') {
+            $name = mb_strtoupper($name, 'UTF-8');
+            $path = "/fotos/{$table}/{$id}/{$name}";
+            
+            foreach ([$extension, strtoupper($extension)] as $ext) {
+                if ($asset = asset("{$path}.{$ext}", $baseUrl, $version)) {
+                    return $asset;
+                }
             }
         }
         
@@ -302,43 +320,49 @@ if (!function_exists('get_day')) {
     }
 }
 
-if (!function_exists('upload_image')) {
+if (!function_exists('vc_upload')) {
     /**
-     * Upload de imagem
+     * Upload de arquivos/images
      *
      * @param array $file
-     * @param string $folder
+     * @param string $directory
      * @param string $name
      * @param int $width
      * @param int $height
+     * @param bool $forceJpg
+     * @param bool $whExact
      *
      * @return array
      * @throws \Exception
      */
-    function upload_image($file, $folder, $name = null, $width = 500, $height = 500)
+    function vc_upload(array $file, $directory, $name = null, $width = 500, $height = 500, $forceJpg = false, $whExact = false)
     {
-        $directory = "/uploads/{$folder}";
-        $extensions = ['jpg', 'png'];
-        $images = [];
+        $extFiles = ['zip', 'rar', 'pdf', 'docx'];
+        $extImages = ['jpg', 'jpeg', 'png', 'gif'];
+        $extensions = array_merge($extFiles, $extImages);
+        $uploads = [];
         
+        // Percore os arquivos
         foreach ($file as $key => $value) {
             $extension = substr(strrchr($value['name'], '.'), 1);
             $name = (empty($name) ? Str::slug(substr($value['name'], 0, strrpos($value['name'], '.'))) : $name);
             
-            if ($extension == 'jpeg') {
+            // Muda extenção caso seja JPEG
+            if ($extension == 'jpeg' || $forceJpg === true) {
                 $extension = 'jpg';
             }
             
+            // Path do arquivo
             $path = "{$directory}/{$name}.{$extension}";
             
             // Checa extension
             if (!in_array($extension, $extensions)) {
-                throw new \Exception("Apenas as extenções <b>".strtoupper(implode(', ', $extensions))."</b> são aceito para enviar sua imagem.", E_USER_ERROR);
+                throw new \Exception("Opsss, apenas as extenções <b>".strtoupper(implode(', ', $extensions))."</b> são aceito para o upload.", E_USER_ERROR);
             }
             
             // Checa tamanho
             if (($value['size'] > $max_filesize = get_upload_max_filesize()) || $value['error'] == 1) {
-                throw new \Exception("Sua imagem ultrapassou o limite de tamanho de <b>".Helper::convertBytes($max_filesize)."</b>.", E_USER_ERROR);
+                throw new \Exception("Opsss, aeu upload ultrapassou o limite de tamanho de <b>".Helper::convertBytes($max_filesize)."</b>.", E_USER_ERROR);
             }
             
             // Cria pasta
@@ -355,21 +379,30 @@ if (!function_exists('upload_image')) {
                 }
             }
             
-            // Verifica se e gif
-            if ($extension == 'gif') {
+            // Verifica os tipo de upload
+            if (in_array($extension, $extFiles) || $extension === 'gif') {
                 if (!move_uploaded_file($value['tmp_name'], PUBLIC_FOLDER.$path)) {
-                    throw new \Exception("Não foi possível enviar sua imagem, tente novamente em alguns segundos.", E_USER_ERROR);
+                    throw new \Exception("Opsss, não foi possível completar o seu upload! Tente novamente em alguns segundos.", E_USER_ERROR);
                 }
             } else {
-                // Tamanho original
-                list($widthOri, $heightOri) = getimagesize($value['tmp_name']);
+                // Verifica se é o tamanho exato da imagem
+                if ($whExact === true) {
+                    $fnImg = 'imagemTamExato';
+                } else {
+                    $fnImg = 'imagem';
+                    
+                    // Calcula o tamanho com base no original
+                    list($widthOri, $heightOri) = getimagesize($value['tmp_name']);
+                    $width = ($width > $widthOri ? $widthOri : $width);
+                    $height = ($height > $heightOri ? $heightOri : $height);
+                }
                 
-                if (!imagem($value['tmp_name'], PUBLIC_FOLDER.$path, ($width > $widthOri ? $widthOri : $width), ($height > $heightOri ? $heightOri : $height), 90)) {
-                    throw new \Exception("Não foi possível enviar sua imagem, tente novamente em alguns segundos.", E_USER_ERROR);
+                if (!$fnImg($value['tmp_name'], PUBLIC_FOLDER.$path, $width, $height, 90)) {
+                    throw new \Exception("Opsss, não foi possível completar o seu upload! Tente novamente em alguns segundos.", E_USER_ERROR);
                 }
             }
             
-            $images[] = [
+            $uploads[] = [
                 'name' => $name,
                 'path' => $path,
                 'extension' => $extension,
@@ -378,72 +411,45 @@ if (!function_exists('upload_image')) {
             ];
         }
         
-        return $images;
+        return $uploads;
+    }
+}
+
+if (!function_exists('upload_image')) {
+    /**
+     * Upload de imagem
+     *
+     * @param array $file
+     * @param string $directory
+     * @param string $name
+     * @param int $width
+     * @param int $height
+     * @param bool $forceJpg
+     * @param bool $whExact
+     *
+     * @return array
+     * @throws \Exception
+     */
+    function upload_image($file, $directory, $name = null, $width = 500, $height = 500, $forceJpg = false, $whExact = false)
+    {
+        return vc_upload($file, $directory, $name, $width, $height, $forceJpg, $whExact);
     }
 }
 
 if (!function_exists('upload_archive')) {
     /**
-     * Upload de imagem
+     * Upload de arquivo
      *
      * @param array $file
-     * @param string $folder
+     * @param string $directory
      * @param string $name
      *
      * @return array
      * @throws \Exception
      */
-    function upload_archive($file, $folder, $name = null)
+    function upload_archive($file, $directory, $name = null)
     {
-        $directory = "/uploads/{$folder}";
-        $extensions = ['zip', 'rar', 'pdf', 'docx', 'jpg', 'png'];
-        $archives = [];
-        
-        // Envia os arquivos
-        foreach ($file as $key => $value) {
-            $extension = substr(strrchr($value['name'], '.'), 1);
-            $name = Str::slug((empty($name) ? substr($value['name'], 0, strrpos($value['name'], '.')) : $name));
-            $path = "{$directory}/{$name}.{$extension}";
-            
-            // Checa extension
-            if (!in_array($extension, $extensions)) {
-                throw new \Exception("Apenas as extenções <b>".strtoupper(implode(', ', $extensions))."</b> são aceito para enviar o arquivo.", E_USER_ERROR);
-            }
-            
-            // Checa tamanho
-            if (($value['size'] > $max_filesize = get_upload_max_filesize()) || $value['error'] == 1) {
-                throw new \Exception("Seu arquivo ultrapassou o limite de tamanho de <b>".Helper::convertBytes($max_filesize)."</b>.", E_USER_ERROR);
-            }
-            
-            // Cria pasta
-            if (!file_exists(PUBLIC_FOLDER.$directory)) {
-                mkdir(PUBLIC_FOLDER.$directory, 0755, true);
-            }
-            
-            // Verifica arquivo
-            foreach ($extensions as $ext) {
-                $deleted = str_replace(".{$extension}", ".{$ext}", $path);
-                
-                if (file_exists(PUBLIC_FOLDER.$deleted)) {
-                    unlink(PUBLIC_FOLDER.$deleted);
-                }
-            }
-            
-            // Envia arquivo
-            if (!move_uploaded_file($value['tmp_name'], PUBLIC_FOLDER.$path)) {
-                throw new \Exception("Não foi possível enviar o arquivo, tente novamente em alguns segundos.", E_USER_ERROR);
-            }
-            
-            $archives[] = [
-                'name' => $name,
-                'path' => $path,
-                'extension' => $extension,
-                'size' => $value['size'],
-                'md5' => md5_file(PUBLIC_FOLDER.$path),
-            ];
-        }
-        
-        return $archives;
+        return vc_upload($file, $directory, $name);
     }
 }
 
@@ -491,6 +497,10 @@ if (!function_exists('date_for_human')) {
      */
     function date_for_human($dateTime, $precision = 2)
     {
+        if (empty($dateTime)) {
+            return '-';
+        }
+        
         // Variáveis
         $minute = 60;
         $hour = 3600;
@@ -515,23 +525,8 @@ if (!function_exists('date_for_human')) {
         );
         
         // Time atual
-        $currentTime = (new \DateTime())->getTimestamp();
-        
-        // Verifica a data passada
-        if ($dateTime instanceof \DateTimeInterface) {
-            $dateTime = $dateTime->getTimestamp();
-        } else if (is_int($dateTime)) {
-            $dateTime = DateTime::createFromFormat('U', $dateTime)->getTimestamp();
-        } else {
-            $dateTime = str_replace('/', '-', $dateTime);
-            $dateTimeCheck = explode('-', explode(' ', $dateTime)[0]);
-            
-            if (!checkdate($dateTimeCheck[1], $dateTimeCheck[2], $dateTimeCheck[0])) {
-                throw new \InvalidArgumentException("Date passed not valid.", E_USER_ERROR);
-            }
-            
-            $dateTime = (new \DateTime($dateTime))->getTimestamp();
-        }
+        $currentTime = datetime()->getTimestamp();
+        $dateTime = datetime($dateTime)->getTimestamp();
         
         // Quanto tempo já passou da data atual - a data passada
         $passed = $currentTime - $dateTime;
@@ -578,7 +573,8 @@ if (!function_exists('preg_replace_space')) {
         $string = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $string);
         
         // Remove espaço com mais de um espaço
-        $string = preg_replace('/^\s+|\s+$|\r\n|\r|\n|\t|\s+(?=\s)/m', '', $string);
+        $string = preg_replace('/\r\n|\r|\n|\t/m', '', $string);
+        $string = preg_replace('/^\s+|\s+$|\s+(?=\s)/m', '', $string);
         
         // Remove tag `p` vázia
         $string = preg_replace('/<p[^>]*>[\s\s|&nbsp;]*<\/p>/m', '', $string);
@@ -587,5 +583,220 @@ if (!function_exists('preg_replace_space')) {
         //$string = preg_replace('/<[\w]*[^>]*>[\s\s|&nbsp;]*<\/[\w]*>/m', '', $string);
         
         return $string;
+    }
+}
+
+if (!function_exists('database_format_money')) {
+    /**
+     * @param string|int|float $money
+     *
+     * @return mixed
+     */
+    function database_format_money($money)
+    {
+        return database_format_float($money);
+    }
+}
+
+if (!function_exists('database_format_float')) {
+    /**
+     * @param string|int|float $value
+     *
+     * @return mixed
+     */
+    function database_format_float($value)
+    {
+        $value = str_replace(',', '.', str_replace('.', '', $value));
+        
+        return (float) $value;
+    }
+}
+
+if (!function_exists('database_format_datetime')) {
+    /**
+     * @param string|null $dateTime
+     * @param string $type
+     *
+     * @return string
+     */
+    function database_format_datetime($dateTime = 'now', $type = 'full')
+    {
+        $dateFormat = 'Y-m-d';
+        $timeFormat = 'H:i:s';
+        $dateTimeFormat = "{$dateFormat} {$timeFormat}";
+        
+        return datetime($dateTime)->format(
+            ($type == 'time' ? $timeFormat : ($type == 'date' ? $dateFormat : $dateTimeFormat))
+        );
+    }
+}
+
+if (!function_exists('datetime')) {
+    /**
+     * @param string|\DateTime $dateTime
+     * @param \DateTimeZone|null $timeZone
+     *
+     * @return \DateTime
+     */
+    function datetime($dateTime = 'now', \DateTimeZone $timeZone = null)
+    {
+        if (empty($dateTime)) {
+            return null;
+        }
+        
+        // Data atual
+        if ($dateTime === 'now') {
+            $dateTime = (new \DateTime($dateTime, $timeZone));
+        }
+        
+        // Verifica a data passada
+        if (!$dateTime instanceof \DateTimeInterface) {
+            if (is_int($dateTime)) {
+                $dateTime = \DateTime::createFromFormat('U', $dateTime, $timeZone);
+            } else {
+                $dateTime = str_replace('/', '-', $dateTime);
+                $dateTime = (new \DateTime($dateTime, $timeZone))->format('Y-m-d H:i:s');
+                $dateTimeSplit = explode(' ', $dateTime);
+                $dateTimeCheck = explode('-', $dateTimeSplit[0]);
+                
+                if (!checkdate($dateTimeCheck[1], $dateTimeCheck[2], $dateTimeCheck[0])) {
+                    throw new \InvalidArgumentException("datetime() check date failed.", E_USER_ERROR);
+                }
+                
+                $dateTime = (new \DateTime($dateTime, $timeZone));
+            }
+        }
+        
+        return $dateTime;
+    }
+}
+
+if (!function_exists('check_phone')) {
+    /**
+     * @param string|int $phone
+     *
+     * @return bool|string
+     */
+    function check_phone($phone)
+    {
+        $phone = onlyNumber($phone);
+        
+        if (strlen($phone) < 10 || strlen($phone) > 12) {
+            return false;
+        }
+        
+        return $phone;
+    }
+}
+
+if (!function_exists('flash')) {
+    /**
+     * Cria as flash message simplificado
+     *
+     * @param $name
+     * @param $value
+     * @param string|int|null $error
+     */
+    function flash($name, $value, $error = null)
+    {
+        if (in_web()) {
+            if (!empty($error)) {
+                $value = [$value, error_type($error)];
+            }
+            
+            App::getInstance()
+                ->resolve('flash')
+                ->add($name, $value);
+        }
+    }
+}
+
+if (!function_exists('in_web')) {
+    /**
+     * Verifica se está no site
+     *
+     * return bool
+     */
+    function in_web()
+    {
+        /** @var \Slim\Http\Request $request */
+        $request = App::getInstance()->resolve('request');
+        
+        if (!empty($request->getHeaderLine('X-Csrf-Token')) || !empty(params('_csrfToken'))) {
+            return true;
+        }
+        
+        if ((empty($_SERVER['HTTP_REFERER']) && empty($_SERVER['HTTP_ORIGIN'])) && has_route('/api/')) {
+            return false;
+        }
+        
+        return true;
+    }
+}
+
+if (!function_exists('placeholder')) {
+    /**
+     * @param int $dimension
+     * @param array $params
+     *
+     * @return string
+     */
+    function placeholder($dimension = 150, $params = [])
+    {
+        $params = http_build_query($params);
+        
+        return "//via.placeholder.com/{$dimension}?{$params}";
+    }
+}
+
+if (!function_exists('cnh_validate')) {
+    /**
+     * Valida as categorias do CHN
+     *
+     * @param string $cnh (A,B)...
+     *
+     * @return string
+     */
+    function cnh_validate($cnh)
+    {
+        if (empty($cnh)) {
+            return '';
+        }
+        
+        // Variáveis
+        $max = 2;
+        $valids = ['A', 'B', 'C', 'D', 'E'];
+        $possible = ['A,B', 'A,C', 'A,D', 'A,E'];
+        $possibleReverse = array_map(function ($item) {
+            $reverse = array_reverse(explode(',', $item));
+            
+            return implode(',', $reverse);
+        }, $possible);
+        
+        if (is_string($cnh)) {
+            $cnh = explode(',', $cnh);
+        }
+        
+        if (count($cnh) > $max) {
+            throw new \InvalidArgumentException("È possível selecionar apenas 2 categorias da CNH.", E_USER_WARNING);
+        }
+        
+        foreach ($cnh as $cn) {
+            if (array_search($cn, $valids) === false) {
+                throw new \InvalidArgumentException(
+                    sprintf("Categoria <b>%s</b> da CNH não é válida.", $cn), E_USER_ERROR
+                );
+            }
+        }
+        
+        $cnh = implode(',', $cnh);
+        
+        if (strpos($cnh, ',') !== false && array_search($cnh, $merged = array_merge($possible, $possibleReverse)) === false) {
+            throw new \InvalidArgumentException(
+                sprintf("Categoria da CNH possíveis de junção é apenas <b>%s</b>.", implode(' ou ', $merged))
+            );
+        }
+        
+        return $cnh;
     }
 }

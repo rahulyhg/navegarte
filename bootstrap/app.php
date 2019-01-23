@@ -1,13 +1,13 @@
 <?php
 
 /**
- * VCWeb <https://www.vagnercardosoweb.com.br/>
+ * VCWeb Networks <https://www.vagnercardosoweb.com.br/>
  *
- * @package   VCWeb
+ * @package   VCWeb Networks
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 2017-2018 Vagner Cardoso
+ * @copyright 13/01/2018 Vagner Cardoso
  */
 
 use Core\App;
@@ -19,11 +19,14 @@ use Core\App;
  */
 
 ob_start(function ($buffer) {
-    // Remove comentários
-    $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
-    
-    // Remove espaço com mais de um espaço
-    $buffer = preg_replace('/^\s+|\s+$|\r\n|\r|\n|\t|\s+(?=\s)/m', '', $buffer);
+    if (!preg_match('/localhost|.dev|.local/', $_SERVER['HTTP_HOST'])) {
+        // Remove comentários
+        $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
+        
+        // Remove espaço com mais de um espaço
+        $buffer = preg_replace('/\r\n|\r|\n|\t/m', '', $buffer);
+        $buffer = preg_replace('/^\s+|\s+$|\s+(?=\s)/m', '', $buffer);
+    }
     
     return $buffer;
 });
@@ -92,12 +95,6 @@ $app = App::getInstance();
 $app->registerFunctions();
 
 /**
- * Inicia as rotas
- */
-
-$app->registerRouter();
-
-/**
  * Inicia os serviços
  */
 
@@ -108,6 +105,12 @@ $app->registerProviders();
  */
 
 $app->registerMiddleware();
+
+/**
+ * Inicia as rotas
+ */
+
+$app->registerRouter();
 
 /**
  * Inicia
