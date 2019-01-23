@@ -7,7 +7,7 @@
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 12/01/2018 Vagner Cardoso
+ * @copyright 13/01/2018 Vagner Cardoso
  */
 
 use Core\App;
@@ -24,7 +24,8 @@ ob_start(function ($buffer) {
         $buffer = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $buffer);
         
         // Remove espaço com mais de um espaço
-        $buffer = preg_replace('/^\s+|\s+$|\r\n|\r|\n|\t|\s+(?=\s)/m', '', $buffer);
+        $buffer = preg_replace('/\r\n|\r|\n|\t/m', '', $buffer);
+        $buffer = preg_replace('/^\s+|\s+$|\s+(?=\s)/m', '', $buffer);
     }
     
     return $buffer;
@@ -94,12 +95,6 @@ $app = App::getInstance();
 $app->initConfigs();
 
 /**
- * Inicia as rotas
- */
-
-$app->initRoutes();
-
-/**
  * Inicia os serviços
  */
 
@@ -110,6 +105,12 @@ $app->initProviders();
  */
 
 $app->initMiddlewares();
+
+/**
+ * Inicia as rotas
+ */
+
+$app->initRoutes();
 
 /**
  * Inicia
