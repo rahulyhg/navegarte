@@ -16,8 +16,10 @@
         </p>
         
         {% if debug %}
-          {% if event_has('event.error.id') %}
-            <h1 style="text-align: center; color: red; font-weight: bold;">{{ event_emit('event.error.id') }}</h1>
+          {% if has_container('event') %}
+            {% if event_has('event.error.id') %}
+              <h1 style="text-align: center; color: red; font-weight: bold;">{{ event_emit('event.error.id') }}</h1>
+            {% endif %}
           {% endif %}
           
           <div class="debug">
