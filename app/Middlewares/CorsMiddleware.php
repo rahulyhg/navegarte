@@ -43,15 +43,16 @@ namespace App\Middlewares {
             header_remove("Pragma");*/
             
             $response = $response->withHeader('Access-Control-Allow-Origin', '*')
-                                 ->withHeader('Access-Control-Allow-Headers', implode(', ', [
-                                     'X-Requested-With',
-                                     'X-Http-Method-Override',
-                                     'Content-Type',
-                                     'Accept',
-                                     'Origin',
-                                     'Authorization',
-                                 ]))
-                                 ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+                ->withHeader('Access-Control-Allow-Headers', implode(', ', [
+                    'X-Requested-With',
+                    'X-Http-Method-Override',
+                    'Content-Type',
+                    'Accept',
+                    'Origin',
+                    'Authorization',
+                    'X-Csrf-Token',
+                ]))
+                ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
             
             return $response;
         }

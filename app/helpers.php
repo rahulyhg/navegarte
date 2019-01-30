@@ -453,7 +453,7 @@ if (!function_exists('upload_archive')) {
     }
 }
 
-if (!file_exists('delete_recursive_directory')) {
+if (!function_exists('delete_recursive_directory')) {
     /**
      * Remove os arquivos e os diretórios do path passado
      *

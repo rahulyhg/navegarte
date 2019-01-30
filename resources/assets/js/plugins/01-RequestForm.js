@@ -208,30 +208,30 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       
       /* Percore os id da div preenchendo seus dados */
       if (json.object) {
+        element.attr('disabled', false);
+        
         if (typeof json.object === 'object') {
-          window.setTimeout(function () {
-            $.each(json.object, function (key, value) {
-              if (modal) {
-                modal.find('#' + key).html(value);
+          $.each(json.object, function (key, value) {
+            if (modal) {
+              modal.find('#' + key).html(value);
+            } else {
+              if ($(document).find('input[id="' + key + '"]').length > 0) {
+                $(document).find('input[id="' + key + '"]').val(value);
               } else {
-                if ($(document).find('input[id="' + key + '"]').length > 0) {
-                  $(document).find('input[id="' + key + '"]').val(value);
-                } else {
-                  $(document).find('#' + key).html(value);
-                }
+                $(document).find('#' + key).html(value);
               }
-              
-              /* Masks */
-              if ($(document).find('#' + key).find('*[class*="mask"]').length) {
-                initMaskInput();
-              }
-              
-              /* Select 2 */
-              if ($(document).find('#' + key).find('*[data-toggle="select2"]').length) {
-                initSelect2($(document).find('*[data-toggle="select2"]'));
-              }
-            });
-          }, 500);
+            }
+          });
+          
+          /* Masks */
+          if ($(document).find('*[class*="mask"]').length) {
+            initMaskInput();
+          }
+          
+          /* Select 2 */
+          if ($(document).find('*[data-toggle="select2"]').length) {
+            initSelect2($(document).find('*[data-toggle="select2"]'));
+          }
         }
         
         /* Inicia plugins caso for a modal */
@@ -412,8 +412,14 @@ $(document).ready(function () {
     var json = getJSON(element.attr('vc-change'));
     
     if (!json) {
-      alert('JSON Inválido.');
-      return;
+      json = {};
+      
+      Object.assign(json, {
+        url: getLocationFromElement(element, 'change'),
+        method: element.attr('vc-method') ? element.attr('vc-method').toUpperCase() : 'POST',
+        data: undefined,
+        name: element.attr('vc-param') ? element.attr('vc-param') : 'value',
+      });
     }
     
     var method = (json.method || 'POST');
