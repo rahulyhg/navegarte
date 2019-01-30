@@ -69,8 +69,8 @@ return [
             'database' => env('DB_DATABASE', ''),
             'username' => env('DB_USER', ''),
             'password' => env('DB_PASS', ''),
-            'charset' => false,
-            'collation' => false,
+            'charset' => env('DB_CHARSET', ''),
+            'collation' => env('DB_COLLATE', ''),
         ],
     
     ],

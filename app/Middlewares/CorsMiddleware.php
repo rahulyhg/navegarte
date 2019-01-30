@@ -50,6 +50,7 @@ namespace App\Middlewares {
                     'Accept',
                     'Origin',
                     'Authorization',
+                    'X-Csrf-Token',
                 ]))
                 ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
             

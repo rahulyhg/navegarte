@@ -12,6 +12,7 @@
 
 namespace App\Providers {
     
+    use Core\App;
     use Core\Contracts\Provider;
     use Core\Helpers\Curl;
     use Core\Helpers\Helper;
@@ -33,7 +34,7 @@ namespace App\Providers {
         public function register()
         {
             // Apenas é disparado caso não seja em ambiente de desenvolvimento
-            if (!preg_match('/localhost|.dev|.local/i', $_SERVER['HTTP_HOST'])) {
+            if (!preg_match('/localhost|.dev|.local/i', $_SERVER['HTTP_HOST']) && !is_php_cli() && App::getInstance()->resolve('event')) {
                 $this->event->on('event.error.handler', function ($errors) {
                     if (!empty($errors['error']) && !empty(env('SLACK_ERROR_URL', ''))) {
                         unset($errors['error']['trace']);
