@@ -28,7 +28,7 @@ return [
          * Versão do skeleton
          */
         
-        'skeleton' => 'v1.2.6',
+        'skeleton' => 'v1.2.7',
     
     ],
     
