@@ -43,7 +43,6 @@ namespace App\Middlewares {
                 $payload = [];
                 $type = '';
                 $token = '';
-                $csrf = false;
                 $authorization = $request->getHeaderLine('Authorization');
                 
                 // Verifica se tem o header
@@ -54,8 +53,7 @@ namespace App\Middlewares {
                     $token = ($request->getHeaderLine('X-Csrf-Token') ?: $request->getParam('_csrfToken'));
                     
                     if (!empty($token)) {
-                        $type = 'Basic';
-                        $csrf = true;
+                        $type = 'Bearer';
                     } else {
                         // Autenticado
                         if ($this->auth) {
@@ -87,25 +85,27 @@ namespace App\Middlewares {
                 
                 // Verifica se existe o token
                 if (empty($token)) {
-                    throw new \Exception("Opsss! Não conseguimos identificar se sua requisição é válida. Atualize a página/aplicativo e tente novamente..", E_USER_ERROR);
+                    throw new \Exception("Opsss! Não conseguimos identificar se sua requisição é válida. Entre em contato conosco.", E_USER_ERROR);
                 }
                 
                 // Se a autorização for a básica dai entra nessa condição
                 // Essa condição e espeficicamente para as apis
-                if ($type === 'Basic' && ($token !== env('API_TOKEN_BASIC') && !$csrf)) {
+                if ($type === 'Basic' && $token !== env('API_TOKEN_BASIC')) {
                     throw new \Exception("Acesso negado! Esse recurso requerer autorização. Entre em contato conosco.", E_USER_ERROR);
                 }
                 
                 // Verifica se o TOKEN é válido caso seja necessário a autenticação
                 // e decripta o token
-                if (($type === 'Bearer' || $csrf) && !$payload = $this->encryption->decrypt($token)) {
-                    throw new \Exception("Não foi possível validar sua requisição! Atualize a página/aplicativo e tente novamente.", E_USER_ERROR);
+                if ($type === 'Bearer' && !$payload = $this->encryption->decrypt($token)) {
+                    if ($token !== env('API_TOKEN_BASIC')) {
+                        throw new \Exception("Opsss! Não foi possível validar sua requisição! Entre em contato conosco.", E_USER_ERROR);
+                    }
                 }
                 
                 // Verifica se o token tem data de expiração
                 // e verifica se está expirado
                 if (!empty($payload['expired']) && $payload['expired'] < time()) {
-                    throw new \Exception("Sua requisição expirou! Atualize a página/aplicativo e tente novamente.", E_USER_ERROR);
+                    throw new \Exception("Sua requisição expirou! Entre em contato conosco.", E_USER_ERROR);
                 }
                 
                 // Caso seja autenticado e tenha o id do usuário
