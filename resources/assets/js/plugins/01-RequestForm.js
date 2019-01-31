@@ -345,29 +345,42 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       }
     },
     
-    error: function (xhr) {
-      var parse;
+    error: function (xhr, exception) {
+      var json = getJSON(xhr.responseText);
       
-      try {
-        parse = JSON.parse(xhr.responseText);
+      if (json) {
+        if (message !== undefined && message.length > 0) {
+          message.html('<div class="alert alert-danger">' + json.error.message + '</div>').fadeIn(0);
+        } else {
+          alert(json.error.message);
+        }
+      } else {
+        var error;
+        
+        if (exception === 'timeout') {
+          error = "Limite de tempo esgotado para a requisição.";
+        } else if (exception === 'abort') {
+          error = "Sua requisição foi cancelada.";
+        } else if (xhr.status === 0) {
+          error = 'Sem conexão com a internet! Favor verifique sua conexão.';
+        } else if (xhr.status >= 400 && xhr.status <= 499) {
+          error = "[" + xhr.status + "] Client error! Informe o código ao suporte.";
+        } else if (xhr.status >= 500 && xhr.status <= 600) {
+          error = "[" + xhr.status + "] Server error! Informe o código ao suporte.";
+        } else {
+          if (xhr.responseText) {
+            error = xhr.responseText;
+          } else {
+            error = "Não conseguimos identificar o erro! Favor entre em contato para que possamos verificar.";
+          }
+          
+          console.log(xhr, exception);
+        }
         
         if (message !== undefined && message.length > 0) {
-          message.html('<div class="alert alert-danger">' + parse.error.message + '</div>').fadeIn(0);
+          message.html('<div class="alert alert-danger">' + error + '</div>').fadeIn(0);
         } else {
-          alert(parse.error.message);
-        }
-      } catch (e) {
-        try {
-          parse = JSON.parse(JSON.stringify(xhr.responseText));
-        } catch (e) {
-          parse = '[JS] Erro inesperado, favor contate o suporte.';
-          console.log(e);
-        }
-        
-        if (message !== undefined && message.length > 0) {
-          message.html('<div class="alert alert-danger">' + parse + '</div>').fadeIn(0);
-        } else {
-          alert('Não foi possível completar a requisição, tente novamente em alguns minutos.');
+          alert('[2] Não conseguimos identificar o erro!');
         }
       }
     },
