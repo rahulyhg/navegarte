@@ -13,12 +13,13 @@ $(window).on('load', function () {
 /**
  * Função para carregar a página
  *
- * @param {Object} content
- * @param {Boolean|String} location
+ * @param {String} content
+ * @param {String} location
  * @param {Boolean} pushState
+ * @param {Boolean} cache
  */
 
-function loadPage (content, location, pushState) {
+function loadPage (content, location, pushState, cache) {
   var contentHtml = $(content);
   var contentHtmlOffsetTop = contentHtml.offset().top;
   
@@ -31,6 +32,10 @@ function loadPage (content, location, pushState) {
   
   if (!location.match(urlRegex)) {
     location = baseUrl + location;
+  }
+  
+  if (cache === true) {
+    location = location + '?time=' + (new Date()).getTime();
   }
   
   $.ajax({
@@ -46,7 +51,7 @@ function loadPage (content, location, pushState) {
         
         /* Muda URL e Histórico de Navegação */
         if (pushState) {
-          window.history.pushState({content: content}, null, location);
+          window.history.pushState({content: content}, null, location.replace(/(\?|&)time\=(\d+)/g, ''));
         }
       }
       
@@ -60,12 +65,12 @@ function loadPage (content, location, pushState) {
       
       /* Redireciona para uma nova página */
       if (html.location) {
-        loadPage(content, html.location, true);
+        loadPage(content, html.location, true, true);
       }
       
       /* Recarrega a página atual */
       if (html.reload) {
-        window.location.reload();
+        loadPage(content, location, false, true);
       }
     },
     
@@ -118,7 +123,7 @@ function loadPage (content, location, pushState) {
       
       if (parse.location) {
         if (parse.location) {
-          loadPage(content, parse.location, true);
+          loadPage(content, parse.location, true, true);
         }
       }
     },
@@ -250,15 +255,13 @@ function onLoadHtmlSuccess (callback) {
         event.preventDefault();
         event.stopPropagation();
         
-        loadPage(content, location, true);
+        loadPage(content, location, true, false);
       }
     }
-    
-    return false;
   });
   
   /* Histórico de navegação */
   window.onpopstate = function (e) {
-    loadPage(e.state.content || '#content-ajax', window.location.href, false);
+    loadPage(e.state.content || '#content-ajax', window.location.pathname, false, false);
   };
 })(jQuery);

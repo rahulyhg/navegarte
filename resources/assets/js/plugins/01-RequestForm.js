@@ -35,7 +35,7 @@ function getLocationFromElement (element, verbo) {
 
 function vcAjax (element, url, formData, method, form, change, modal) {
   /* Verifica URL */
-  if (!url || url === null) {
+  if (!url || url === '') {
     alert('Não encontramos a URL para essa requisição.');
     
     return;
@@ -65,7 +65,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       message = form.find('#vc-message');
       
       if (message.length <= 0) {
-        message = form.parent().parent().find('#vc-message');
+        message = form.parent().parent().parent().find('#vc-message');
       }
     } else if (element.parent().parent().find('#vc-message').length > 0) {
       message = element.parent().parent().find('#vc-message');
@@ -76,18 +76,14 @@ function vcAjax (element, url, formData, method, form, change, modal) {
   
   // Verifica se tem formData no element
   if (element.attr('vc-data') !== undefined && (element.attr('vc-data') === '' || element.attr('vc-data'))) {
-    var vcData = getJSON(element.attr('vc-data'));
+    var elementData = getJSON(element.attr('vc-data'));
     
-    if (!vcData) {
-      alert('Atributo vc-data no elemento clicado não é um JSON válido.');
-      
-      return;
-    }
-    
-    for (var key in vcData) {
-      if (vcData.hasOwnProperty(key)) {
-        if (vcData[key] !== undefined && vcData[key] !== '') {
-          formData.append(key, vcData[key]);
+    if (elementData) {
+      for (var key in elementData) {
+        if (elementData.hasOwnProperty(key)) {
+          if (elementData[key] !== undefined && elementData[key] !== '') {
+            formData.append(key, elementData[key]);
+          }
         }
       }
     }
@@ -197,128 +193,136 @@ function vcAjax (element, url, formData, method, form, change, modal) {
     },
     
     success: function (json) {
-      /* Adiciona no localStorage */
-      if (json.storage) {
-        if (json.storage[0] === 'remove') {
-          window.Storage.remove(json.storage[1]);
-        } else {
-          window.Storage.set(json.storage[0], json.storage[1]);
+      window.setTimeout(function () {
+        /* Adiciona no localStorage */
+        if (json.storage) {
+          if (json.storage[0] === 'remove') {
+            window.Storage.remove(json.storage[1]);
+          } else {
+            window.Storage.set(json.storage[0], json.storage[1]);
+          }
         }
-      }
-      
-      /* Percore os id da div preenchendo seus dados */
-      if (json.object) {
-        element.attr('disabled', false);
         
-        if (typeof json.object === 'object') {
-          $.each(json.object, function (key, value) {
-            if (modal) {
-              modal.find('#' + key).html(value);
-            } else {
-              if ($(document).find('input[id="' + key + '"]').length > 0) {
-                $(document).find('input[id="' + key + '"]').val(value);
+        /* Percore os id da div preenchendo seus dados */
+        if (json.object) {
+          element.attr('disabled', false);
+          
+          if (typeof json.object === 'object') {
+            $.each(json.object, function (key, value) {
+              if (modal) {
+                modal.find('#' + key).html(value);
               } else {
-                $(document).find('#' + key).html(value);
+                if ($(document).find('input[id="' + key + '"]').length > 0) {
+                  $(document).find('input[id="' + key + '"]').val(value);
+                } else {
+                  $(document).find('#' + key).html(value);
+                }
               }
+            });
+            
+            /* Masks */
+            if ($(document).find('*[class*="mask"]').length) {
+              initMaskInput();
             }
-          });
-          
-          /* Masks */
-          if ($(document).find('*[class*="mask"]').length) {
-            initMaskInput();
+            
+            /* Select 2 */
+            if ($(document).find('*[data-toggle="select2"]').length) {
+              initSelect2($(document).find('*[data-toggle="select2"]'));
+            }
           }
           
-          /* Select 2 */
-          if ($(document).find('*[data-toggle="select2"]').length) {
-            initSelect2($(document).find('*[data-toggle="select2"]'));
+          /* Inicia plugins caso for a modal */
+          if (modal) {
+            //
           }
         }
         
-        /* Inicia plugins caso for a modal */
-        if (modal) {
-          //
-        }
-      }
-      
-      /* Limpa formulário */
-      if (json.clear && form.length > 0) {
-        form.trigger('reset');
-        form.find('*[data-toggle="select2"]').trigger('change');
-      }
-      
-      /* Mensagem de retorno ou erro */
-      if (json.trigger || json.error) {
-        var errorMessage = '';
-        var errorType = '';
-        
-        if (json.trigger) {
-          errorMessage = json.trigger[1];
-          errorType = json.trigger[0];
-        } else if (json.error) {
-          errorMessage = json.error.message;
-          errorType = json.error.type || 'danger';
+        /* Limpa formulário */
+        if (json.clear && form.length > 0) {
+          form.trigger('reset');
+          form.find('*[data-toggle="select2"]').trigger('change');
         }
         
-        if (message !== undefined && message.length > 0) {
-          message.html('<div class="alert alert-' + errorType + '">' + errorMessage + '</div>').fadeIn(0);
-        } else {
-          alert(errorMessage);
+        /* Mensagem de retorno ou erro */
+        if (json.trigger || json.error) {
+          var errorMessage = '';
+          var errorType = '';
+          
+          if (json.trigger) {
+            errorMessage = json.trigger[1];
+            errorType = json.trigger[0];
+          } else if (json.error) {
+            errorMessage = json.error.message;
+            errorType = json.error.type || 'danger';
+          }
+          
+          if (message !== undefined && message.length > 0) {
+            message.html('<div class="alert alert-' + errorType + '">' + errorMessage + '</div>').fadeIn(0);
+          } else {
+            alert(errorMessage);
+          }
         }
-      }
-      
-      /* Ações diversas */
-      if (json.switch) {
-        if (typeof json.switch === 'object') {
-          $.each(json.switch, function (key, value) {
-            switch (key) {
-              /* Hide */
-              case 'scrolltop':
-                $('html,body').animate({
-                  scrollTop: ($(value).offset().top - 20),
-                }, 500);
-                break;
-              
-              /* Hide */
-              case 'hide':
-                $(value).hide();
-                break;
-              
-              /* Show */
-              case 'show':
-                $(value).show();
-                break;
-              
-              /* Toggle */
-              case 'toggle':
-                $(value).toggle();
-                break;
-              
-              /* Eval */
-              case 'eval':
-                eval(value);
-                break;
-            }
-          });
+        
+        /* Ações diversas */
+        if (json.switch) {
+          if (typeof json.switch === 'object') {
+            $.each(json.switch, function (key, value) {
+              switch (key) {
+                /* Hide */
+                case 'scrolltop':
+                  $('html,body').animate({
+                    scrollTop: ($(value).offset().top - 20),
+                  }, 500);
+                  break;
+                
+                /* Hide */
+                case 'hide':
+                  $(value).hide();
+                  break;
+                
+                /* Show */
+                case 'show':
+                  $(value).show();
+                  break;
+                
+                /* Toggle */
+                case 'toggle':
+                  $(value).toggle();
+                  break;
+                
+                /* Eval */
+                case 'eval':
+                  if (typeof value === 'object') {
+                    $.each(value, function (k, v) {
+                      eval(v);
+                    });
+                  } else {
+                    eval(value);
+                  }
+                  break;
+              }
+            });
+          }
         }
-      }
-      
-      /* Redireciona para uma nova página */
-      if (json.location) {
-        if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
-          loadPage((window.history.state && window.history.state.content) || '#content-ajax', json.location, true);
-        } else {
-          window.location.href = json.location;
+        
+        /* Redireciona para uma nova página */
+        if (json.location) {
+          if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
+            loadPage((window.history.state && window.history.state.content) || '#content-ajax', json.location, true);
+          } else {
+            window.location.href = json.location;
+          }
         }
-      }
-      
-      /* Recarrega a página atual */
-      if (json.reload) {
-        if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
-          loadPage((window.history.state && window.history.state.content) || '#content-ajax', false, true);
-        } else {
-          window.location.reload();
+        
+        /* Recarrega a página atual */
+        if (json.reload) {
+          if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
+            loadPage((window.history.state && window.history.state.content) || '#content-ajax', false, true);
+          } else {
+            window.location.reload();
+          }
         }
-      }
+      }, 0);
     },
     
     complete: function () {
@@ -424,6 +428,7 @@ $(document).ready(function () {
     var formData = new FormData();
     var json = getJSON(element.attr('vc-change'));
     
+    /* Caso o json não seja válido, cria. */
     if (!json) {
       json = {};
       
@@ -465,9 +470,12 @@ $(document).ready(function () {
     
     /* Verifica se é para confirmar a ação */
     if (element.attr('vc-confirm') !== undefined && (element.attr('vc-confirm') === '' || element.attr('vc-confirm'))) {
-      var verify = confirm((element.attr('vc-confirm').length > 0) ? element.attr('vc-confirm') : 'Cuidado!!!\nDeseja realizar essa ação?');
+      var verify = confirm((element.attr('vc-confirm').length > 0) ? element.attr('vc-confirm') : 'Essa ação é irreversível.\nDeseja continuar?');
       
       if (verify === false) {
+        event.preventDefault(event);
+        event.stopPropagation(event);
+        
         return;
       }
     }
@@ -475,20 +483,21 @@ $(document).ready(function () {
     /* REQUEST :: FORM */
     if (element.attr('vc-form') !== undefined && (element.attr('vc-form') === '' || element.attr('vc-form'))) {
       event.preventDefault(event);
+      event.stopPropagation(event);
       
       /* Variáveis */
       form = (element.attr('vc-form') && element.attr('vc-form').length > 0) ? $('form[name="' + element.attr('vc-form') + '"]') : element.closest('form');
       method = form.attr('method') ? form.attr('method').toUpperCase() : 'POST';
-      url = form.attr('action') ? form.attr('action') : null;
+      url = form.attr('action') ? form.attr('action') : '';
       
-      /* Verifica o formulário */
+      /* Verifica se existe o formulário */
       if (form.length <= 0) {
         alert('Formulário com ([name="' + element.attr('vc-form') + '"]) não foi encontrado em seu documento html.');
         
         return;
       }
       
-      // Verifica campos obrigatórios
+      /* Verifica se existe campos obrigatório no formulário antes de enviar a requisição */
       form.find('input, textarea, select').each(function (key, element) {
         var value = '';
         var requiredMessage = '';
@@ -527,13 +536,15 @@ $(document).ready(function () {
         return;
       }
       
-      /* Cria o FormData */
+      /* Adiciona os campos do formulário no formData */
       form.find('*').each(function (key, element) {
         if ($(element).attr('name')) {
           if ($(element).prop('type') === 'checkbox') {
             if ($(element).prop('checked') !== false) {
               formData.append($(element).attr('name'), $(element).val());
             }
+            
+            /*formData.append($(element).attr('name'), ($(element).prop('checked') !== false ? $(element).val() : ''));*/
           } else if ($(element).prop('type') === 'radio') {
             if ($(element).prop('checked') !== false) {
               formData.append($(element).attr('name'), $(element).val());
@@ -566,78 +577,76 @@ $(document).ready(function () {
         }
       });
       
-      /* Envia requisição */
+      /* Adiciona o método no formData */
       formData.append('_METHOD', method);
       
+      /* Envia a requisição */
       vcAjax(element, url, formData, 'POST', form, false, false);
     }
     
-    /* REQUEST :: GET */
-    if (element.attr('vc-get') !== undefined && (element.attr('vc-get') === '' || element.attr('vc-get'))) {
-      event.preventDefault(event);
+    /* REQUEST :: Http Verbos */
+    $.each(['get', 'post', 'put', 'delete', 'options', 'ajax'], function (index, verbo) {
+      var elVerbo = element.attr('vc-' + verbo);
       
-      /* Envia requisição */
-      vcAjax(element, getLocationFromElement(element, 'get'), formData, 'GET', form, false, false);
-    }
-    
-    /* REQUEST :: POST */
-    if (element.attr('vc-post') !== undefined && (element.attr('vc-post') === '' || element.attr('vc-post'))) {
-      event.preventDefault(event);
-      
-      /* Envia requisição */
-      vcAjax(element, getLocationFromElement(element, 'post'), formData, 'POST', form, false, false);
-    }
-    
-    /* REQUEST :: DELETE */
-    if (element.attr('vc-delete') !== undefined && (element.attr('vc-delete') === '' || element.attr('vc-delete'))) {
-      event.preventDefault(event);
-      
-      verify = confirm('Essa ação é irreversível.\nDeseja continuar?');
-      if (verify === false) {
-        return;
+      /* Verifica se pode presseguir */
+      if (elVerbo !== undefined && (elVerbo === '' || elVerbo)) {
+        event.preventDefault(event);
+        event.stopPropagation(event);
+        
+        /* Variávies */
+        var elJson = getJSON(elVerbo);
+        var method = verbo;
+        
+        /* Verifica se não e um json e cria o padrão */
+        if (!elJson) {
+          elJson = {};
+          
+          /* Verifica método caso seja ajax padrão */
+          if (verbo === 'ajax') {
+            method = (element.attr('vc-method') !== undefined ? element.attr('vc-method') : 'POST');
+          }
+          
+          Object.assign(elJson, {
+            url: getLocationFromElement(element, verbo.toString()),
+            method: method.toUpperCase(),
+            data: undefined,
+          });
+        }
+        
+        /* Se for DELETE */
+        if (verbo === 'delete') {
+          verify = confirm('Essa ação é irreversível.\nDeseja continuar?');
+          if (verify === false) {
+            return;
+          }
+        }
+        
+        /* Monta o data se existir */
+        if (elJson.data !== undefined) {
+          element.attr('vc-data', JSON.stringify(elJson.data));
+        }
+        
+        /* Método */
+        formData.append('_METHOD', elJson.method);
+        
+        /* Requisição */
+        vcAjax(element, elJson.url, formData, (elJson.method !== 'GET' ? 'POST' : 'GET'), form, false, false);
       }
-      
-      /* Envia requisição */
-      if (element.attr('vc-method') !== undefined && element.attr('vc-method').length > 2) {
-        formData.append('_METHOD', element.attr('vc-method').toUpperCase());
-      } else {
-        formData.append('_METHOD', 'DELETE');
-      }
-      
-      vcAjax(element, getLocationFromElement(element, 'delete'), formData, 'POST', form, false, false);
-    }
-    
-    /* REQUEST :: GERAL */
-    if (element.attr('vc-ajax') !== undefined && (element.attr('vc-ajax') === '' || element.attr('vc-ajax'))) {
-      event.preventDefault(event);
-      
-      /* Envia requisição */
-      if (element.attr('vc-method') !== undefined && element.attr('vc-method').length > 2) {
-        formData.append('_METHOD', element.attr('vc-method').toUpperCase());
-      }
-      
-      vcAjax(element, getLocationFromElement(element, 'ajax'), formData, 'POST', form, false, false);
-    }
+    });
   });
 });
 
-/* Apos carregar */
+/* Executa apos o carregamento da página */
 $(window).on('load', function () {
-  /* REQUEST AFTER LOADING PAGE */
-  var afterLoaddings = $(document).find('*[vc-after-load]');
-  
-  if (afterLoaddings.length) {
-    $.each(afterLoaddings, function (index, element) {
-      /* Formdata */
-      var formData = new FormData();
-      
-      /* Get method */
-      if ($(element).attr('vc-method') !== undefined && $(element).attr('vc-method').length > 2) {
-        formData.append('_METHOD', element.attr('vc-method').toUpperCase());
-      }
-      
-      /* Send */
-      vcAjax($(element), getLocationFromElement($(element), 'after-load'), formData, 'POST', {}, false, false);
-    });
-  }
+  $.each($(document).find('*[vc-after-load]'), function (index, element) {
+    var formData = new FormData();
+    
+    /* Método */
+    if ($(element).attr('vc-method') !== undefined && $(element).attr('vc-method').length > 2) {
+      formData.append('_METHOD', element.attr('vc-method').toUpperCase());
+    }
+    
+    /* Envia requisição */
+    vcAjax($(element), getLocationFromElement($(element), 'after-load'), formData, 'POST', {}, false, false);
+  });
 });
