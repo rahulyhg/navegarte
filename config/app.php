@@ -49,7 +49,7 @@ return [
         \Core\Providers\Event\EventProvider::class,
 
         /**
-         * Registra serviço da aplicação
+         * Registra serviços da aplicação
          */
 
         \App\Providers\ErrorSlackProvider::class,
