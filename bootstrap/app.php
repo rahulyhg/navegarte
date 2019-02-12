@@ -55,7 +55,7 @@ if (PHP_SAPI == 'cli-server') {
 $composerAutoload = APP_FOLDER.'/vendor/autoload.php';
 
 if (!file_exists($composerAutoload)) {
-    die('run composer install');
+    die('Run command in terminal: <br><code style="background: #000; color: #fff;">composer install</code>');
 }
 
 require_once "{$composerAutoload}";
