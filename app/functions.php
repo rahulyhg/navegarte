@@ -320,7 +320,7 @@ if (!function_exists('get_day')) {
     }
 }
 
-if (!function_exists('vc_upload')) {
+if (!function_exists('upload')) {
     /**
      * Upload de arquivos/images
      *
@@ -331,11 +331,12 @@ if (!function_exists('vc_upload')) {
      * @param int $height
      * @param bool $forceJpg
      * @param bool $whExact
+     * @param bool $imagem
      *
      * @return array
      * @throws \Exception
      */
-    function vc_upload(array $file, $directory, $name = null, $width = 500, $height = 500, $forceJpg = false, $whExact = false)
+    function upload(array $file, $directory, $name = null, $width = 500, $height = 500, $forceJpg = false, $whExact = false, $imagem = false)
     {
         $extFiles = ['zip', 'rar', 'pdf', 'docx'];
         $extImages = ['jpg', 'jpeg', 'png', 'gif'];
@@ -344,11 +345,11 @@ if (!function_exists('vc_upload')) {
         
         // Percore os arquivos
         foreach ($file as $key => $value) {
-            $extension = substr(strrchr($value['name'], '.'), 1);
+            $extension = mb_strtolower(substr(strrchr($value['name'], '.'), 1), 'UTF-8');
             $name = (empty($name) ? Str::slug(substr($value['name'], 0, strrpos($value['name'], '.'))) : $name);
             
             // Muda extenção caso seja JPEG
-            if ($extension == 'jpeg' || $forceJpg === true) {
+            if ($extension == 'jpeg' || ($forceJpg === true && in_array($extension, $extImages))) {
                 $extension = 'jpg';
             }
             
@@ -356,13 +357,19 @@ if (!function_exists('vc_upload')) {
             $path = "{$directory}/{$name}.{$extension}";
             
             // Checa extension
-            if (!in_array($extension, $extensions)) {
-                throw new \Exception("Opsss, apenas as extenções <b>".strtoupper(implode(', ', $extensions))."</b> são aceito para o upload.", E_USER_ERROR);
+            if ($imagem) {
+                if (!in_array($extension, $extImages)) {
+                    throw new \Exception("Opsss, apenas as extenções <b>".strtoupper(implode(', ', $extImages))."</b> são aceita para enviar sua imagem.", E_USER_ERROR);
+                }
+            } else {
+                if (!in_array($extension, $extensions)) {
+                    throw new \Exception("Opsss, apenas as extenções <b>".strtoupper(implode(', ', $extensions))."</b> são aceita para o upload.", E_USER_ERROR);
+                }
             }
             
             // Checa tamanho
             if (($value['size'] > $max_filesize = get_upload_max_filesize()) || $value['error'] == 1) {
-                throw new \Exception("Opsss, aeu upload ultrapassou o limite de tamanho de <b>".Helper::convertBytes($max_filesize)."</b>.", E_USER_ERROR);
+                throw new \Exception("Opsss, seu upload ultrapassou o limite de tamanho de <b>".Helper::convertBytes($max_filesize)."</b>.", E_USER_ERROR);
             }
             
             // Cria pasta
@@ -379,10 +386,18 @@ if (!function_exists('vc_upload')) {
                 }
             }
             
-            // Verifica os tipo de upload
-            if (in_array($extension, $extFiles) || $extension === 'gif') {
+            // Corrige orientação da imagem
+            // Normalmente quando é enviada pelo celular
+            if ($imagem || in_array($extension, $extImages)) {
+                upload_fix_orientation($value);
+            }
+            
+            // Verifica se é arquivo ou imagem para upload
+            $uploadError = upload_error($value['error']);
+            
+            if ((in_array($extension, $extFiles) || $extension === 'gif') && !$imagem) {
                 if (!move_uploaded_file($value['tmp_name'], PUBLIC_FOLDER.$path)) {
-                    throw new \Exception("Opsss, não foi possível completar o seu upload! Tente novamente em alguns segundos.", E_USER_ERROR);
+                    throw new \Exception("<p>Não foi possível enviar seu arquivo no momento!</p><p>{$uploadError}</p>", E_USER_ERROR);
                 }
             } else {
                 // Verifica se é o tamanho exato da imagem
@@ -398,7 +413,7 @@ if (!function_exists('vc_upload')) {
                 }
                 
                 if (!$fnImg($value['tmp_name'], PUBLIC_FOLDER.$path, $width, $height, 90)) {
-                    throw new \Exception("Opsss, não foi possível completar o seu upload! Tente novamente em alguns segundos.", E_USER_ERROR);
+                    throw new \Exception("<p>Não foi possível enviar sua imagem no momento!</p><p>{$uploadError}</p>", E_USER_ERROR);
                 }
             }
             
@@ -412,6 +427,145 @@ if (!function_exists('vc_upload')) {
         }
         
         return $uploads;
+    }
+}
+
+if (!function_exists('upload_fix_orientation')) {
+    /**
+     * Corrige orientação da imagem
+     *
+     * @param $image [Caminho do arquivo ou file enviado pelo formulário]
+     */
+    function upload_fix_orientation($image)
+    {
+        // Extenção
+        $extension = null;
+        
+        // Caso seja upload feito pelo formulário
+        if (!empty($image['tmp_name'])) {
+            $extension = mb_strtolower(substr(strrchr($image['name'], '.'), 1), 'UTF-8');
+            $image = $image['tmp_name'];
+        }
+        
+        if (file_exists($image) && function_exists('exif_read_data')) {
+            // Caso seja caminho da imagem
+            if (empty($extension)) {
+                $pathinfo = pathinfo($image);
+                $extension = $pathinfo['extension'];
+            }
+            
+            // Variáveis
+            $exifData = exif_read_data($image);
+            $originalImage = null;
+            $rotateImage = null;
+            
+            // Verifica se existe a orientação na imagem
+            if (!empty($exifData['Orientation'])) {
+                // Verifica a orientação e ajusta a rotação
+                switch ($exifData['Orientation']) {
+                    case 3:
+                        $rotation = 180;
+                        break;
+                    
+                    case 6:
+                        $rotation = -90;
+                        break;
+                    
+                    case 8:
+                        $rotation = 90;
+                        break;
+                    
+                    default:
+                        $rotation = null;
+                }
+                
+                // Caso a rotação e extenção seja válida
+                if ($rotation !== null && $extension !== null) {
+                    // Cria a imagem original dependendo da extenção
+                    switch ($extension) {
+                        case 'jpg':
+                        case 'jpeg':
+                            $originalImage = imagecreatefromjpeg($image);
+                            break;
+                        
+                        case 'png':
+                            $originalImage = imagecreatefrompng($image);
+                            imagealphablending($originalImage, false);
+                            imagesavealpha($originalImage, true);
+                            break;
+                        
+                        case 'gif':
+                            $originalImage = imagecreatefromgif($image);
+                            break;
+                    }
+                    
+                    // Rotaciona a imagem corretamente
+                    $rotateImage = imagerotate($originalImage, $rotation, 0);
+                    
+                    // Cria a imagem
+                    switch ($extension) {
+                        case 'jpg':
+                        case 'jpeg':
+                            imagejpeg($rotateImage, $image, 100);
+                            break;
+                        
+                        case 'png':
+                            imagepng($rotateImage, $image, 80);
+                            break;
+                        
+                        case 'gif':
+                            imagegif($rotateImage, $image);
+                            break;
+                    }
+                    
+                    // Destroi as imagens
+                    imagedestroy($originalImage);
+                    imagedestroy($rotateImage);
+                }
+            }
+        }
+    }
+}
+
+if (!function_exists('upload_error')) {
+    /**
+     * Recupera o tipo do erro do upload
+     *
+     * @param int $code
+     *
+     * @return string
+     */
+    function upload_error($code)
+    {
+        switch ($code) {
+            case UPLOAD_ERR_INI_SIZE:
+                $message = "O arquivo enviado excede o limite definido na diretiva `upload_max_filesize` do php.ini";
+                break;
+            case UPLOAD_ERR_FORM_SIZE:
+                $message = "O arquivo excede o limite definido em `MAX_FILE_SIZE` no formulário HTML.";
+                break;
+            case UPLOAD_ERR_PARTIAL:
+                $message = "O upload do arquivo foi feito parcialmente.";
+                break;
+            case UPLOAD_ERR_NO_FILE:
+                $message = "Nenhum arquivo foi enviado.";
+                break;
+            case UPLOAD_ERR_NO_TMP_DIR:
+                $message = "Pasta temporária ausênte.";
+                break;
+            case UPLOAD_ERR_CANT_WRITE:
+                $message = "Falha em escrever o arquivo em disco.";
+                break;
+            case UPLOAD_ERR_EXTENSION:
+                $message = "Uma extensão do PHP interrompeu o upload do arquivo.";
+                break;
+            
+            default:
+                $message = "";
+                break;
+        }
+        
+        return $message;
     }
 }
 
@@ -432,7 +586,7 @@ if (!function_exists('upload_image')) {
      */
     function upload_image($file, $directory, $name = null, $width = 500, $height = 500, $forceJpg = false, $whExact = false)
     {
-        return vc_upload($file, $directory, $name, $width, $height, $forceJpg, $whExact);
+        return upload($file, $directory, $name, $width, $height, $forceJpg, $whExact, true);
     }
 }
 
@@ -449,7 +603,7 @@ if (!function_exists('upload_archive')) {
      */
     function upload_archive($file, $directory, $name = null)
     {
-        return vc_upload($file, $directory, $name);
+        return upload($file, $directory, $name);
     }
 }
 
