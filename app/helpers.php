@@ -808,16 +808,12 @@ if (!function_exists('datetime')) {
             if (is_int($dateTime)) {
                 $dateTime = \DateTime::createFromFormat('U', $dateTime, $timeZone);
             } else {
-                $dateTime = str_replace('/', '-', $dateTime);
-                $dateTime = (new \DateTime($dateTime, $timeZone))->format('Y-m-d H:i:s');
-                $dateTimeSplit = explode(' ', $dateTime);
-                $dateTimeCheck = explode('-', $dateTimeSplit[0]);
-                
-                if (!checkdate($dateTimeCheck[1], $dateTimeCheck[2], $dateTimeCheck[0])) {
-                    throw new \InvalidArgumentException("datetime() check date failed.", E_USER_ERROR);
+                try {
+                    $dateTime = str_replace('/', '-', $dateTime);
+                    $dateTime = (new \DateTime($dateTime, $timeZone));
+                } catch (Exception $e) {
+                    throw new InvalidArgumentException("Data <b>{$dateTime}</b> informada não é válida, favor corriga.");
                 }
-                
-                $dateTime = (new \DateTime($dateTime, $timeZone));
             }
         }
         
