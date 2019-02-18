@@ -15,6 +15,17 @@ use Core\Helpers\Helper;
 use Core\Helpers\Str;
 use Slim\Http\StatusCode;
 
+/**
+ * CONSTANTS
+ */
+
+define('DATE_BR', 'd/m/Y');
+define('DATE_TIME_BR', 'd/m/Y H:i:s');
+
+/**
+ * FUNCTIONS
+ */
+
 if (!function_exists('validate_params')) {
     /**
      * Realiza a validação do post
@@ -29,13 +40,13 @@ if (!function_exists('validate_params')) {
             // Força checagem
             if (!empty($rule['force']) && $rule['force'] == true) {
                 if (!array_key_exists($index, $params)) {
-                    $params[$index] = '';
+                    $params[$index] = null;
                 }
             }
             
             // Verifica caso esteja preenchido
             if (isset($params[$index]) && (empty($params[$index]) && $params[$index] != '0')) {
-                if (!empty($rule['id'])) {
+                if (!empty($rule['id']) && $rule['id'] == true) {
                     continue;
                 } else {
                     if (is_string($rule)) {
@@ -331,12 +342,11 @@ if (!function_exists('upload')) {
      * @param int $height
      * @param bool $forceJpg
      * @param bool $whExact
-     * @param bool $imagem
      *
      * @return array
      * @throws \Exception
      */
-    function upload(array $file, $directory, $name = null, $width = 500, $height = 500, $forceJpg = false, $whExact = false, $imagem = false)
+    function upload(array $file, $directory, $name = null, $width = 500, $height = 500, $forceJpg = false, $whExact = false)
     {
         $extFiles = ['zip', 'rar', 'pdf', 'docx'];
         $extImages = ['jpg', 'jpeg', 'png', 'gif'];
@@ -357,13 +367,13 @@ if (!function_exists('upload')) {
             $path = "{$directory}/{$name}.{$extension}";
             
             // Checa extension
-            if ($imagem) {
+            if (in_array($extension, $extImages)) {
                 if (!in_array($extension, $extImages)) {
                     throw new \Exception("Opsss, apenas as extenções <b>".strtoupper(implode(', ', $extImages))."</b> são aceita para enviar sua imagem.", E_USER_ERROR);
                 }
             } else {
                 if (!in_array($extension, $extensions)) {
-                    throw new \Exception("Opsss, apenas as extenções <b>".strtoupper(implode(', ', $extensions))."</b> são aceita para o upload.", E_USER_ERROR);
+                    throw new \Exception("Opsss, apenas as extenções <b>".strtoupper(implode(', ', $extensions))."</b> são aceita para enviar seu arquivo.", E_USER_ERROR);
                 }
             }
             
@@ -386,16 +396,10 @@ if (!function_exists('upload')) {
                 }
             }
             
-            // Corrige orientação da imagem
-            // Normalmente quando é enviada pelo celular
-            if ($imagem || in_array($extension, $extImages)) {
-                upload_fix_orientation($value);
-            }
-            
             // Verifica se é arquivo ou imagem para upload
             $uploadError = upload_error($value['error']);
             
-            if ((in_array($extension, $extFiles) || $extension === 'gif') && !$imagem) {
+            if (in_array($extension, $extFiles) || $extension === 'gif') {
                 if (!move_uploaded_file($value['tmp_name'], PUBLIC_FOLDER.$path)) {
                     throw new \Exception("<p>Não foi possível enviar seu arquivo no momento!</p><p>{$uploadError}</p>", E_USER_ERROR);
                 }
@@ -417,6 +421,12 @@ if (!function_exists('upload')) {
                 }
             }
             
+            // Corrige orientação da imagem
+            // Normalmente quando é enviada pelo celular
+            if ($extension == 'jpg') {
+                upload_fix_orientation(PUBLIC_FOLDER.$path);
+            }
+            
             $uploads[] = [
                 'name' => $name,
                 'path' => $path,
@@ -434,28 +444,16 @@ if (!function_exists('upload_fix_orientation')) {
     /**
      * Corrige orientação da imagem
      *
-     * @param $image [Caminho do arquivo ou file enviado pelo formulário]
+     * @param $pathImage [Caminho do arquivo ou file enviado pelo formulário]
      */
-    function upload_fix_orientation($image)
+    function upload_fix_orientation($pathImage)
     {
-        // Extenção
-        $extension = null;
-        
-        // Caso seja upload feito pelo formulário
-        if (!empty($image['tmp_name'])) {
-            $extension = mb_strtolower(substr(strrchr($image['name'], '.'), 1), 'UTF-8');
-            $image = $image['tmp_name'];
-        }
-        
-        if (file_exists($image) && function_exists('exif_read_data')) {
-            // Caso seja caminho da imagem
-            if (empty($extension)) {
-                $pathinfo = pathinfo($image);
-                $extension = $pathinfo['extension'];
-            }
+        if (file_exists($pathImage) && function_exists('exif_read_data')) {
+            $pathinfo = pathinfo($pathImage);
+            $extension = $pathinfo['extension'];
             
             // Variáveis
-            $exifData = exif_read_data($image);
+            $exifData = exif_read_data($pathImage);
             $originalImage = null;
             $rotateImage = null;
             
@@ -485,17 +483,17 @@ if (!function_exists('upload_fix_orientation')) {
                     switch ($extension) {
                         case 'jpg':
                         case 'jpeg':
-                            $originalImage = imagecreatefromjpeg($image);
+                            $originalImage = imagecreatefromjpeg($pathImage);
                             break;
                         
                         case 'png':
-                            $originalImage = imagecreatefrompng($image);
+                            $originalImage = imagecreatefrompng($pathImage);
                             imagealphablending($originalImage, false);
                             imagesavealpha($originalImage, true);
                             break;
                         
                         case 'gif':
-                            $originalImage = imagecreatefromgif($image);
+                            $originalImage = imagecreatefromgif($pathImage);
                             break;
                     }
                     
@@ -506,15 +504,15 @@ if (!function_exists('upload_fix_orientation')) {
                     switch ($extension) {
                         case 'jpg':
                         case 'jpeg':
-                            imagejpeg($rotateImage, $image, 100);
+                            imagejpeg($rotateImage, $pathImage, 100);
                             break;
                         
                         case 'png':
-                            imagepng($rotateImage, $image, 80);
+                            imagepng($rotateImage, $pathImage, 80);
                             break;
                         
                         case 'gif':
-                            imagegif($rotateImage, $image);
+                            imagegif($rotateImage, $pathImage);
                             break;
                     }
                     
@@ -586,7 +584,7 @@ if (!function_exists('upload_image')) {
      */
     function upload_image($file, $directory, $name = null, $width = 500, $height = 500, $forceJpg = false, $whExact = false)
     {
-        return upload($file, $directory, $name, $width, $height, $forceJpg, $whExact, true);
+        return upload($file, $directory, $name, $width, $height, $forceJpg, $whExact);
     }
 }
 
@@ -683,7 +681,11 @@ if (!function_exists('date_for_human')) {
         $dateTime = datetime($dateTime)->getTimestamp();
         
         // Quanto tempo já passou da data atual - a data passada
-        $passed = $currentTime - $dateTime;
+        if ($dateTime > $currentTime) {
+            $passed = $dateTime - $currentTime;
+        } else {
+            $passed = $currentTime - $dateTime;
+        }
         
         // Monta o resultado
         if ($passed < 5) {
@@ -827,7 +829,7 @@ if (!function_exists('check_phone')) {
      *
      * @return bool|string
      */
-    function check_phone($phone)
+    function check_phone(&$phone)
     {
         $phone = onlyNumber($phone);
         
