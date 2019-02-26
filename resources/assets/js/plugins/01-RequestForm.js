@@ -1,53 +1,187 @@
 /**
- * Pega href no elemento
+ * Recupera o url do elemento
  *
  * @param {Object} element
- * @param {String} verbo
+ * @param {String} http
  *
- * @returns {*|void}
+ * @returns {string}
  */
-function getLocationFromElement (element, verbo) {
-  verbo = verbo || 'get';
-  var location = element.attr('vc-' + verbo);
+function checkElementUrl (element, http) {
+  http = (http || 'get');
+  var url = element.attr('vc-' + http);
   var href = element.attr('href') || element.data('href') || '';
   var hash = href.substr(0, 1) === '#';
   
   if (!hash && href) {
-    if (!href.match(/javascript/g)) {
-      location = href;
+    if (!href.match(/^#|javascript/g)) {
+      url = href;
     }
   }
   
-  return location;
+  return url;
 }
 
 /**
  * Mostra mensagem de retorno
  *
  * @param {Object} json
- * @param {Object} message
+ * @param {Object} elementMessage
+ *
+ * @return {void}
  */
-function showReturnMessage (json, message) {
-  var errorMessage = '';
-  var errorType = '';
+function showMessage (json, elementMessage) {
+  /* Variávies */
+  var message = '';
+  var type = '';
   
+  /* Verifica o retorno do json */
   if (json.trigger) {
-    errorMessage = json.trigger[1];
-    errorType = json.trigger[0];
+    message = json.trigger[1];
+    type = json.trigger[0];
   } else if (json.error) {
-    errorMessage = json.error.message;
-    errorType = json.error.type || 'danger';
+    message = json.error.message;
+    type = json.error.type || 'danger';
   }
   
-  if (message !== undefined && message.length > 0) {
-    message.html('<div class="alert alert-' + errorType + '">' + errorMessage + '</div>').fadeIn(0);
+  /* Printa ou alerta a mensagem */
+  if (elementMessage !== undefined && elementMessage.length > 0) {
+    elementMessage.html('<div class="alert alert-' + type + '">' + message + '</div>').fadeIn(0);
   } else {
-    alert(errorMessage);
+    alert(message);
   }
 }
 
 /**
- * Cria uma requisição ajax
+ * Verifica se o elemento tem confirmação
+ *
+ * @param {Object} element
+ *
+ * @return {boolean}
+ */
+function checkElementConfirm (element) {
+  if (element.attr('vc-confirm') !== undefined && (element.attr('vc-confirm') === '' || element.attr('vc-confirm'))) {
+    var verify = confirm((element.attr('vc-confirm').length > 0) ? element.attr('vc-confirm') : 'Essa ação é irreversível.\nDeseja continuar?');
+    
+    if (verify === false) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+/**
+ * Verifica se contém :input obrigatórios
+ *
+ * @param {Object} form
+ *
+ * @return {boolean}
+ */
+function checkFormRequired (form) {
+  /* Variáveis */
+  var errors = 0;
+  
+  /* Verifica se existe campos obrigatório no formulário antes de enviar a requisição */
+  form.find(':input[required]').each(function (key, element) {
+    // Variávies
+    var value = $(element).val() || false;
+    var message = '';
+    
+    // Verifica se e textarea e caso não tenha valor
+    // pega o html
+    if ($(element).prop('tagName').toLowerCase() === 'textarena' && !value) {
+      value = $(element).html();
+    }
+    
+    // Remove as classe de erro
+    if ($(element).hasClass('vc-error-field')) {
+      $(element)
+        .removeClass('vc-error-field')
+        .parent()
+        .removeClass('vc-error')
+        .find('.vc-error-box').remove();
+    }
+    
+    // Adiciona as classe de erro
+    if (!value && value !== '0') {
+      errors++;
+      message = ($(element).attr('required') !== 'required' ? $(element).attr('required') : 'Campo obrigatório.');
+      
+      $(element)
+        .addClass('vc-error-field')
+        .parent()
+        .addClass('vc-error')
+        .append('<div class="vc-error-box">' + message + '</div>');
+    }
+  });
+  
+  /* Bloqueia o envio do ajax e foca no 1° input com erro */
+  if (errors > 0) {
+    errors = 0;
+    form.find('.vc-error-field:first').focus();
+    
+    return false;
+  }
+  
+  return true;
+}
+
+/**
+ * Monta o form data no form
+ *
+ * @param {Object} form
+ * @param {Object} formData
+ *
+ * @return {void}
+ */
+function mountFormData (form, formData) {
+  /* Caso tenha o tinymce */
+  if (typeof tinyMCE === 'object') {
+    tinyMCE.triggerSave();
+  }
+  
+  /* Percorre todos elemento */
+  form.find('*').each(function (key, element) {
+    var inputName;
+    
+    if ($(element).attr('name')) {
+      if ($(element).prop('type') === 'checkbox') {
+        //if ($(element).prop('checked') !== false) {
+        formData.append($(element).attr('name'), ($(element).prop('checked') !== false ? $(element).val() : ''));
+        //}
+      } else if ($(element).prop('type') === 'radio') {
+        if ($(element).prop('checked') !== false) {
+          formData.append($(element).attr('name'), $(element).val());
+        }
+      } else if ($(element).prop('type') === 'file') {
+        var files = $(element).prop('files');
+        
+        if (files !== undefined && files.length > 0) {
+          $.each(files, function (key, file) {
+            formData.append($(element).attr('name'), file, file.name);
+          });
+        }
+      } else {
+        var name = $(element).attr('name');
+        var value = $(element).val() || '';
+        
+        if ($(element).prop('tagName').toLowerCase() === 'textarea' && value !== '') {
+          value = $(element).html();
+        }
+        
+        /* CKEditor */
+        if (typeof CKEDITOR === "object" && typeof CKEDITOR.instances[name] === "object") {
+          value = CKEDITOR.instances[name].getData();
+        }
+        
+        formData.append(name, value);
+      }
+    }
+  });
+}
+
+/**
+ * Função responsável por realizar as requisições ajax
  *
  * @param {Object} element
  * @param {string} url
@@ -56,12 +190,13 @@ function showReturnMessage (json, message) {
  * @param {Object} form
  * @param {Boolean} change
  * @param {Object} modal
+ *
+ * @return {void}
  */
-
 function vcAjax (element, url, formData, method, form, change, modal) {
   /* Verifica URL */
   if (!url || url === '') {
-    alert('Não encontramos a URL para essa requisição.');
+    alert('URL Inválida para a requisiçao.');
     
     return;
   }
@@ -98,15 +233,13 @@ function vcAjax (element, url, formData, method, form, change, modal) {
   }
   
   // Verifica se tem formData no element
-  if (element.attr('vc-data') !== undefined && (element.attr('vc-data') === '' || element.attr('vc-data'))) {
+  if (element.attr('vc-data') !== undefined) {
     var elementData = getJSON(element.attr('vc-data'));
     
     if (elementData) {
       for (var key in elementData) {
         if (elementData.hasOwnProperty(key)) {
-          if (elementData[key] !== undefined && elementData[key] !== '') {
-            formData.append(key, elementData[key]);
-          }
+          formData.append(key, elementData[key]);
         }
       }
     }
@@ -268,7 +401,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
         
         /* Mensagem de retorno ou erro */
         if (json.trigger || json.error) {
-          showReturnMessage(json, message);
+          showMessage(json, message);
         }
         
         /* Ações diversas */
@@ -279,7 +412,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
                 /* Hide */
                 case 'scrolltop':
                   $('html,body').animate({
-                    scrollTop: ($(value).offset().top - 20),
+                    scrollTop: ($(value).offset().top - 20)
                   }, 500);
                   break;
                 
@@ -316,7 +449,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
         /* Redireciona para uma nova página */
         if (json.location) {
           if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
-            loadPage((window.history.state && window.history.state.content) || '#content-ajax', json.location, true);
+            loadPage((window.history.state && window.history.state.content) || '#content-ajax', json.location, true, true);
           } else {
             window.location.href = json.location;
           }
@@ -325,7 +458,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
         /* Recarrega a página atual */
         if (json.reload) {
           if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
-            loadPage((window.history.state && window.history.state.content) || '#content-ajax', false, true);
+            loadPage((window.history.state && window.history.state.content) || '#content-ajax', false, true, true);
           } else {
             window.location.reload();
           }
@@ -359,7 +492,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       var json = getJSON(xhr.responseText);
       
       if (json) {
-        showReturnMessage(json, message);
+        showMessage(json, message);
       } else {
         var error;
         
@@ -383,9 +516,9 @@ function vcAjax (element, url, formData, method, form, change, modal) {
           console.log(xhr, exception);
         }
         
-        showReturnMessage({'error': {'message': error}}, message);
+        showMessage({'error': {'message': error}}, message);
       }
-    },
+    }
   });
   
   /* Aborta requisição */
@@ -424,213 +557,193 @@ $(document).ready(function () {
     event.stopPropagation();
     
     /* Variáveis */
-    var element = $(this);
+    var elementChange = $(this);
     var formData = new FormData();
-    var json = getJSON(element.attr('vc-change'));
+    var json = getJSON(elementChange.attr('vc-change'));
     
     /* Caso o json não seja válido, cria. */
     if (!json) {
       json = {};
       
       Object.assign(json, {
-        url: getLocationFromElement(element, 'change'),
-        method: element.attr('vc-method') ? element.attr('vc-method').toUpperCase() : 'POST',
+        url: checkElementUrl(elementChange, 'change'),
+        method: elementChange.attr('vc-method') ? elementChange.attr('vc-method').toUpperCase() : 'POST',
         data: undefined,
-        name: element.attr('vc-param') ? element.attr('vc-param') : 'value',
+        name: elementChange.attr('vc-param') ? elementChange.attr('vc-param') : 'value'
       });
     }
     
     var method = (json.method || 'POST');
     
     if (json.data !== undefined) {
-      element.attr('vc-data', JSON.stringify(json.data));
+      elementChange.attr('vc-data', JSON.stringify(json.data));
     }
     
     /* FormData */
-    formData.append(json.name || 'value', (element.val() !== undefined ? element.val() : ''));
+    formData.append(json.name || 'value', (elementChange.val() !== undefined ? elementChange.val() : ''));
     formData.append('_METHOD', method);
     
-    vcAjax(element, json.url || '', formData, 'POST', {}, true, false);
+    vcAjax(
+      elementChange,
+      json.url || '',
+      formData,
+      'POST',
+      {},
+      true,
+      false
+    );
+  });
+  
+  /* Dispara o request ao submeter o formulário (submit) */
+  $(document).on('submit', 'form[vc-form]', function (event) {
+    /* Desabilita ações default */
+    event.preventDefault(event);
+    event.stopPropagation(event);
+    
+    /* Variávies */
+    var elementForm = $(this);
+    var formData = new FormData();
+    
+    /* Verifica se está desabilitado */
+    if (!elementForm.attr('disabled')) {
+      /* Verifica se tem mensagem de confirmação */
+      if (!checkElementConfirm(elementForm)) {
+        return false;
+      }
+      
+      /* Verifica campos obrigatórios */
+      if (!checkFormRequired(elementForm)) {
+        return false;
+      }
+      
+      /* Monta o formData */
+      mountFormData(elementForm, formData);
+      
+      /* Dispara a requisição */
+      vcAjax(
+        elementForm,
+        (elementForm.attr('action') || ''),
+        formData,
+        (elementForm.attr('method') || 'POST'),
+        elementForm,
+        false,
+        false
+      );
+    }
   });
   
   /* Dispara o request ao clicar (click) */
-  $(document).on('click', '*', function (event) {
-    var element = $(this);
-    var form = '';
-    var url = '';
-    var method = '';
+  $(document).on('click', '*:not(form[vc-form])', function (event) {
+    /* Variavéis */
+    var elementClicked = $(this);
     var formData = new FormData();
-    var errorCount = 0;
-    var inputName;
     
     /* Elementos desabilitados */
-    if (element.attr('disabled')) {
-      return;
+    if (elementClicked.attr('disabled')) {
+      return false;
     }
     
-    /* Verifica se é para confirmar a ação */
-    if (element.attr('vc-confirm') !== undefined && (element.attr('vc-confirm') === '' || element.attr('vc-confirm'))) {
-      var verify = confirm((element.attr('vc-confirm').length > 0) ? element.attr('vc-confirm') : 'Essa ação é irreversível.\nDeseja continuar?');
-      
-      if (verify === false) {
-        event.preventDefault(event);
-        event.stopPropagation(event);
-        
-        return;
-      }
+    /* Verifica se tem mensagem de confirmação */
+    if (!checkElementConfirm($(this))) {
+      return false;
     }
     
     /* REQUEST :: FORM */
-    if (element.attr('vc-form') !== undefined && (element.attr('vc-form') === '' || element.attr('vc-form'))) {
+    if (elementClicked.attr('vc-form') !== undefined && (elementClicked.attr('vc-form') === '' || elementClicked.attr('vc-form'))) {
       event.preventDefault(event);
       event.stopPropagation(event);
       
-      /* Variáveis */
-      form = (element.attr('vc-form') && element.attr('vc-form').length > 0) ? $('form[name="' + element.attr('vc-form') + '"]') : element.closest('form');
-      method = form.attr('method') ? form.attr('method').toUpperCase() : 'POST';
-      url = form.attr('action') ? form.attr('action') : '';
+      /* Form */
+      var form = (elementClicked.attr('vc-form') && elementClicked.attr('vc-form').length > 0)
+        ? $('form[name="' + elementClicked.attr('vc-form') + '"]')
+        : elementClicked.closest('form');
+      
+      /* Método */
+      formData.append('_METHOD', (form.attr('method') || 'POST'));
       
       /* Verifica se existe o formulário */
       if (form.length <= 0) {
-        alert('Formulário com ([name="' + element.attr('vc-form') + '"]) não foi encontrado em seu documento html.');
+        alert('Formulário com ([name="' + elementClicked.attr('vc-form') + '"]) não foi encontrado em seu documento html.');
         
-        return;
+        return false;
       }
       
-      /* Verifica se existe campos obrigatório no formulário antes de enviar a requisição */
-      form.find('input, textarea, select').each(function (key, element) {
-        var value = '';
-        var requiredMessage = '';
-        
-        if ($(element).hasClass('vc-error-field')) {
-          errorCount = 0;
-          
-          $(element)
-            .removeClass('vc-error-field')
-            .parent()
-            .removeClass('vc-error')
-            .find('.vc-error-box').remove();
-        }
-        
-        if (element.tagName.toLowerCase() === 'textarea') {
-          value = $(element).html() || '';
-        } else {
-          value = $(element).val() || '';
-        }
-        
-        if ($(element).prop('required') && (value === '' && value !== '0')) {
-          errorCount++;
-          requiredMessage = ($(element).attr('required') !== 'required' ? $(element).attr('required') : 'Campo obrigatório.');
-          
-          $(element)
-            .addClass('vc-error-field')
-            .parent()
-            .addClass('vc-error')
-            .append('<div class="vc-error-box">' + requiredMessage + '</div>');
-        }
-      });
-      
-      if (errorCount !== 0) {
-        form.find(':input.vc-error-field:first').focus();
-        
-        return;
+      /* Verifica campos obrigatórios */
+      if (!checkFormRequired(form)) {
+        return false;
       }
       
-      /* Adiciona os campos do formulário no formData */
-      form.find('*').each(function (key, element) {
-        if ($(element).attr('name')) {
-          if ($(element).prop('type') === 'checkbox') {
-            if ($(element).prop('checked') !== false) {
-              formData.append($(element).attr('name'), $(element).val());
-            }
-            
-            /*formData.append($(element).attr('name'), ($(element).prop('checked') !== false ? $(element).val() : ''));*/
-          } else if ($(element).prop('type') === 'radio') {
-            if ($(element).prop('checked') !== false) {
-              formData.append($(element).attr('name'), $(element).val());
-            }
-          } else if ($(element).prop('type') === 'file') {
-            var files = $(element).prop('files');
-            
-            if (files !== undefined && files.length > 0) {
-              $.each(files, function (key, file) {
-                formData.append($(element).attr('name'), file, file.name);
-              });
-            }
-          } else if ($(element).tagName && $(element).tagName.toLowerCase() === 'textarea') {
-            inputName = $(element).attr('name');
-            
-            if ((typeof CKEDITOR !== 'undefined') && CKEDITOR.instances[inputName] !== undefined) {
-              formData.append(inputName, CKEDITOR.instances[inputName].getData());
-            } else {
-              formData.append(inputName, $(element).html() === null ? '' : $(element).html());
-            }
-          } else {
-            inputName = $(element).attr('name');
-            
-            if ((typeof CKEDITOR !== 'undefined') && CKEDITOR.instances[inputName] !== undefined) {
-              formData.append(inputName, CKEDITOR.instances[inputName].getData());
-            } else {
-              formData.append(inputName, $(element).val() === null ? '' : $(element).val());
-            }
-          }
-        }
-      });
+      /* Monta o formData */
+      mountFormData(form, formData);
       
-      /* Adiciona o método no formData */
-      formData.append('_METHOD', method);
-      
-      /* Envia a requisição */
-      vcAjax(element, url, formData, 'POST', form, false, false);
+      /* Dispara a requisição */
+      vcAjax(
+        elementClicked,
+        (form.attr('action') || ''),
+        formData,
+        'POST',
+        form,
+        false,
+        false
+      );
     }
     
-    /* REQUEST :: Http Verbos */
-    $.each(['get', 'post', 'put', 'delete', 'options', 'ajax'], function (index, verbo) {
-      var elVerbo = element.attr('vc-' + verbo);
+    /* REQUEST :: Verbos HTTP */
+    $.each(['get', 'post', 'put', 'delete', 'options', 'ajax'], function (index, http) {
+      var elementHttp = elementClicked.attr('vc-' + http);
       
       /* Verifica se pode presseguir */
-      if (elVerbo !== undefined && (elVerbo === '' || elVerbo)) {
+      if (elementHttp !== undefined && (elementHttp === '' || elementHttp)) {
         event.preventDefault(event);
         event.stopPropagation(event);
         
         /* Variávies */
-        var elJson = getJSON(elVerbo);
-        var method = verbo.toUpperCase();
+        var elementHttpJson = getJSON(elementHttp);
+        var method = http.toUpperCase();
         
         /* Verifica se não e um json e cria o padrão */
-        if (!elJson) {
-          elJson = {};
+        if (!elementHttpJson) {
+          elementHttpJson = {};
           
           /* Verifica método caso seja ajax padrão */
-          if (verbo === 'ajax') {
-            method = (element.attr('vc-method') !== undefined ? element.attr('vc-method') : 'POST');
+          if (http === 'ajax') {
+            method = (elementClicked.attr('vc-method') || 'POST');
           }
           
-          Object.assign(elJson, {
-            url: getLocationFromElement(element, verbo.toString().toLowerCase()),
+          Object.assign(elementHttpJson, {
+            url: checkElementUrl(elementClicked, http.toString().toLowerCase()),
             method: method,
-            data: undefined,
+            data: undefined
           });
         }
         
         /* Se for DELETE */
-        if (verbo === 'delete') {
-          verify = confirm('Essa ação é irreversível.\nDeseja continuar?');
+        if (http === 'delete') {
+          var verify = confirm('Essa ação é irreversível.\nDeseja continuar?');
+          
           if (verify === false) {
-            return;
+            return false;
           }
         }
         
         /* Monta o data se existir */
-        if (elJson.data !== undefined) {
-          element.attr('vc-data', JSON.stringify(elJson.data));
+        if (elementHttpJson.data !== undefined) {
+          elementClicked.attr('vc-data', JSON.stringify(elementHttpJson.data));
         }
         
         /* Método */
-        formData.append('_METHOD', (elJson.method || method));
+        formData.append('_METHOD', (elementHttpJson.method || method));
         
         /* Requisição */
-        vcAjax(element, elJson.url, formData, (elJson.method !== 'GET' ? 'POST' : 'GET'), form, false, false);
+        vcAjax(
+          elementClicked,
+          elementHttpJson.url,
+          formData,
+          (elementHttpJson.method !== 'GET' ? 'POST' : 'GET'),
+          {},
+          false,
+          false
+        );
       }
     });
   });
@@ -638,7 +751,9 @@ $(document).ready(function () {
 
 /* Executa apos o carregamento da página */
 $(window).on('load', function () {
+  /* Dispara o request após carregar a página (after load) */
   $.each($(document).find('*[vc-after-load]'), function (index, element) {
+    /* FormData*/
     var formData = new FormData();
     
     /* Método */
@@ -647,6 +762,14 @@ $(window).on('load', function () {
     }
     
     /* Envia requisição */
-    vcAjax($(element), getLocationFromElement($(element), 'after-load'), formData, 'POST', {}, false, false);
+    vcAjax(
+      $(element),
+      checkElementUrl($(element), 'after-load'),
+      formData,
+      'POST',
+      {},
+      false,
+      false
+    );
   });
 });

@@ -1,51 +1,124 @@
 /* Carrega o documento */
 $(document).ready(function () {
-  function beforeSend (text) {
-    $('#cep-logradouro').val(text);
-    $('#cep-complemento').val(text);
-    $('#cep-bairro').val(text);
-    $('#cep-localidade').val(text);
-    $('#cep-uf').val(text);
-    $('#cep-unidade').val(text);
-    $('#cep-ibge').val(text);
-    $('#cep-gia').val(text);
-    $('#cep-latitude').val('');
-    $('#cep-longitude').val('');
+  function beforeSend (text, increment) {
+    $('#cep-logradouro' + increment).val(text);
+    $('#cep-complemento' + increment).val(text);
+    $('#cep-bairro' + increment).val(text);
+    $('#cep-localidade' + increment).val(text);
+    $('#cep-uf' + increment).val(text);
+    $('#cep-unidade' + increment).val(text);
+    $('#cep-ibge' + increment).val(text);
+    $('#cep-gia' + increment).val(text);
+    $('#cep-latitude' + increment).val('');
+    $('#cep-longitude' + increment).val('');
   }
   
   /* Realiza a pesquisa do dados */
   $(document).on('change', '*[data-cep]', function (event) {
-    var cep = $(event.currentTarget).val().replace(/\D/g, '');
-    var validadeCep = /^[0-9]{8}$/;
+    /* Variáveis */
+    var elementValue = $(event.currentTarget).val().replace(/\D/g, '');
+    var elementJson = getJSON($(this).data('cep')) || {};
+    elementJson.increment = (elementJson.increment !== undefined ? elementJson.increment : '');
     
-    if (cep.length === 8) {
-      if (validadeCep.test(cep)) {
-        beforeSend('Aguarde....');
-        
-        $.get('/api/util/zipcode/' + cep, function (json) {
-          if (!json.error) {
-            $.each(json, function (key, value) {
-              var element = $('#cep-' + key);
-              
-              element.val(value);
-              
-              if (value !== '' && key !== 'cep') {
-                element.attr('disabled', true);
-              } else {
-                element.attr('disabled', false);
-              }
-            });
-          } else {
-            beforeSend('');
-            
-            alert(json.error.message);
-          }
-        }, 'json');
-      }
-    } else {
-      beforeSend('');
+    if (elementValue.length === 8 && /^[0-9]{8}$/.test(elementValue)) {
+      beforeSend('Aguarde....', elementJson.increment);
       
-      alert('O CEP ' + cep + ' não é válido.');
+      $.get('/api/util/zipcode/' + elementValue, function (retornoJson) {
+        if (!retornoJson.error) {
+          $.each(retornoJson, function (index, value) {
+            /* Trata lat e long */
+            if (['latitude', 'longitude'].includes(index)) {
+              value = value.replace(",", ".");
+            }
+            
+            /* Atribue os valores para os ids */
+            $('#cep-' + index + elementJson.increment)
+              .val(value)
+              .attr('disabled', (
+                value !== '' && index !== 'cep'
+              ));
+            
+            /* Atribue os valores no json */
+            elementJson[index] = value;
+          });
+          
+          /* Autocompleta o estado e cidade */
+          if (elementJson['complete-state'] !== undefined && elementJson.uf !== undefined) {
+            elementJson.uf = elementJson.uf.toString().toLowerCase();
+            var elementState = $(document).find('#' + elementJson['complete-state'] + ' option[data-uf="' + elementJson.uf + '"]');
+            
+            if (elementState !== undefined) {
+              elementState
+                .val(elementState.val() + '::' + (elementJson.ibge || null))
+                .prop('selected', true)
+                .trigger('change');
+            }
+          }
+          
+          /* Monta o mapa */
+          if (elementJson['change-position'] !== undefined && (elementJson.latitude !== undefined && elementJson.longitude !== undefined)) {
+            initMapChangePosition(elementJson);
+          }
+        } else {
+          beforeSend('', elementJson.increment);
+          
+          alert(json.error.message);
+        }
+      }, 'json').catch(function (error) {
+        /* Trata erro */
+        beforeSend('', elementJson.increment);
+        var response = getJSON(error.responseText);
+        
+        if (response.error.message !== undefined) {
+          alert(response.error.message);
+        } else {
+          alert('Problema ao pesquisar cep.');
+        }
+      });
+    } else {
+      beforeSend('', elementJson.increment);
     }
   });
 });
+
+/**
+ * Inicia o mapa para mudar a lat/lng
+ *
+ * @param {Object} json
+ */
+
+function initMapChangePosition (json) {
+  try {
+    /* Latitude e longitude */
+    var position = new google.maps.LatLng(
+      json.latitude.replace(',', '.'),
+      json.longitude.replace(',', '.')
+    );
+    
+    /* Mapa */
+    var map = new google.maps.Map(document.getElementById(json['change-position']), {
+      center: position,
+      zoom: 18
+    });
+    
+    /* Marcador */
+    var marker = new google.maps.Marker({
+      position: position,
+      map: map,
+      /*icon: '',*/
+      title: '',
+      draggable: true
+    });
+    
+    /* Evento ao mover o marcador */
+    marker.addListener('dragend', function (event) {
+      $('#cep-latitude' + json.increment).val(event.latLng.lat());
+      $('#cep-longitude' + json.increment).val(event.latLng.lng());
+    });
+    
+    /* Tamanho do mapa */
+    $(document).find('#' + json['change-position']).css('height', (json['change-position-height'] || 350) + 'px');
+  } catch (e) {
+    $(document).find('#' + json['change-position']).html('<div class="alert alert-danger mb-0"><p>Google Maps not installed in application.</p>');
+  }
+}

@@ -9,74 +9,71 @@
 var initSelect2 = function (selects2) {
   if (selects2.length) {
     $.each(selects2, function (key, element) {
-      var option = $(element).data('option');
-      var options = {};
+      var json = getJSON($(element).data('json')) || {};
+      
+      var options = new Object({
+        width: 'resolve',
+        language: 'pt-BR',
+        placeholder: json.placeholder !== undefined ? json.placeholder : '.:: Selecione ::.',
+        /*dropdownParent: $(element).parent(),*/
+        /*minimumResultsForSearch: -1,*/
+      });
       
       /* Configurações do AJAX */
-      if (option !== undefined) {
-        if (option.url !== undefined || option.url !== '') {
-          options = {
-            placeholder: option.placeholder !== undefined ? option.placeholder : 'Pesquisar...',
-            minimumInputLength: option.minimumInputLength !== undefined ? option.minimumInputLength : 3,
+      if (json && json.url !== undefined) {
+        Object.assign(options, {
+          placeholder: json.placeholder !== undefined ? json.placeholder : '.:: Pesquise ::.',
+          minimumInputLength: json.minimumInputLength !== undefined ? json.minimumInputLength : 0,
+          
+          ajax: {
+            url: json.url,
+            type: json.type !== undefined ? json.type : 'POST',
+            dataType: json.dataType !== undefined ? json.dataType : 'json',
+            delay: json.delay !== undefined ? json.delay : 250,
+            cache: json.cache !== undefined ? json.cache : false,
+            headers: {'X-Csrf-Token': $('meta[name="_csrfToken"]').attr('content') || ''},
             
-            ajax: {
-              url: option.url,
-              type: option.type !== undefined ? option.type : 'POST',
-              dataType: option.dataType !== undefined ? option.dataType : 'json',
-              delay: option.delay !== undefined ? option.delay : 250,
-              cache: option.cache !== undefined ? option.cache : false,
-              headers: {'X-Csrf-Token': $('meta[name="_csrfToken"]').attr('content') || ''},
-              data: function (param) {
-                var params = {
-                  term: param.term || '',
-                  page: param.page || 1,
-                };
+            data: function (param) {
+              var params = {
+                term: param.term || '',
+                page: param.page || 1,
+              };
+              
+              /* Monta data vindo das opções */
+              if (json.data !== undefined && (json.data === '' || json.data)) {
+                var jsonData = json.data;
                 
-                /* Monta data vindo das opções */
-                if (option.data !== undefined && (option.data === '' || option.data)) {
-                  var optionData = getJSON(option.data);
-                  
-                  if (optionData) {
-                    for (var key in optionData) {
-                      if (optionData.hasOwnProperty(key)) {
-                        if (optionData[key] !== undefined && optionData[key] !== '') {
-                          params[key] = optionData[key];
-                        }
-                      }
-                    }
+                for (var key in jsonData) {
+                  if (jsonData.hasOwnProperty(key)) {
+                    params[key] = jsonData[key];
                   }
                 }
-                
-                return params;
-              },
-            },
-            
-            escapeMarkup: function (markup) {
-              return markup;
-            },
-            
-            templateResult: function (state) {
-              if (state.loading) {
-                return state.text;
               }
               
-              return state.name || state.text;
+              return params;
             },
+          },
+          
+          escapeMarkup: function (markup) {
+            return markup;
+          },
+          
+          templateResult: function (state) {
+            if (state.loading) {
+              return state.text;
+            }
             
-            templateSelection: function (state) {
-              return state.name || state.text;
-            },
-          };
-        }
+            return state.name || state.text;
+          },
+          
+          templateSelection: function (state) {
+            return state.name || state.text;
+          },
+        });
       }
       
       /* Inicia o select2 */
-      $(element).select2(mergeObject({
-        language: 'pt-BR',
-        width: 'resolve',
-        /*dropdownParent: $(element).parent(),*/
-        /*minimumResultsForSearch: -1,*/
-      }, options));
+      $(element).select2(options);
     });
   }
 };
