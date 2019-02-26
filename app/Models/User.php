@@ -15,17 +15,32 @@ namespace App\Models {
     use Core\Helpers\Helper;
     
     /**
-     * Class UserExample
+     * Class User
      *
      * @package App\Models
      * @author  Vagner Cardoso <vagnercardosoweb@gmail.com>
      */
-    class UserExample extends Model
+    class User extends Model
     {
         /**
          * @var string
          */
         protected $table = 'users';
+        
+        /**
+         * @param int $id
+         *
+         * @return array
+         * @throws \Exception
+         */
+        public function fetchById($id)
+        {
+            $id = filter_params($id)[0];
+            
+            return $this->where([
+                "AND {$this->table}.id = :uid",
+            ], "uid={$id}")->limit(1)->fetch();
+        }
         
         /**
          * Adiciona registro
@@ -36,18 +51,23 @@ namespace App\Models {
         public function save()
         {
             if (!empty($this->data['id'])) {
-                // Atualiza
-                if (!$row = $this->reset()->where("AND {$this->table}.id = :id", "id={$this->data['id']}")->fetch()) {
+                // Verifica
+                if (!$row = $this->reset()->fetchById($this->data['id'])) {
                     throw new \Exception("Registro não encontrado.", E_USER_ERROR);
                 }
                 
-                $this->db->update($this->table, $this->data, 'WHERE id = :id', "id={$this->data['id']}");
+                // Atualiza
+                $this->db->update($this->table, array_merge($this->data, [
+                    'updated_at' => database_format_datetime(),
+                ]), 'WHERE id = :id', "id={$this->data['id']}");
+                
+                // Mescla os dados
                 $this->data = array_merge($row, $this->data);
             } else {
                 // Adiciona
-                $this->data['id'] = $this->db->create(
-                    $this->table, $this->data
-                )->lastInsertId();
+                $this->data['id'] = $this->db->create($this->table, array_merge($this->data, [
+                    'created_at' => database_format_datetime(),
+                ]))->lastInsertId();
             }
             
             return $this->data;
@@ -70,18 +90,25 @@ namespace App\Models {
                 $where = "AND {$this->table}.id != '{$data['id']}'";
             }
             
+            // Validações
             validate_params($data, [
-                'email' => 'E-mail é obrigatório.',
+                'name' => 'Nome não pode ser vázio.',
+                'email' => 'E-mail não pode ser vázio.',
+                'password' => ['message' => 'Senha não pode ser vázio.', 'id' => !empty($data['id'])],
             ]);
             
             // E-mail
             if (!empty($data['email'])) {
                 if (!Helper::checkMail($data['email'])) {
-                    throw new \InvalidArgumentException("O E-mail informado não é válido.", E_USER_WARNING);
+                    throw new \InvalidArgumentException(
+                        "O E-mail informado não é válido.", E_USER_WARNING
+                    );
                 }
                 
                 if ($this->reset()->where([$where, "AND {$this->table}.email = '{$data['email']}'"])->count() > 0) {
-                    throw new \InvalidArgumentException("O e-mail digitado já foi registrado.", E_USER_WARNING);
+                    throw new \InvalidArgumentException(
+                        "O e-mail digitado já foi registrado.", E_USER_WARNING
+                    );
                 }
             }
             
