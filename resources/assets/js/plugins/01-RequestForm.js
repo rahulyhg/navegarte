@@ -22,6 +22,31 @@ function getLocationFromElement (element, verbo) {
 }
 
 /**
+ * Mostra mensagem de retorno
+ *
+ * @param {Object} json
+ * @param {Object} message
+ */
+function showReturnMessage (json, message) {
+  var errorMessage = '';
+  var errorType = '';
+  
+  if (json.trigger) {
+    errorMessage = json.trigger[1];
+    errorType = json.trigger[0];
+  } else if (json.error) {
+    errorMessage = json.error.message;
+    errorType = json.error.type || 'danger';
+  }
+  
+  if (message !== undefined && message.length > 0) {
+    message.html('<div class="alert alert-' + errorType + '">' + errorMessage + '</div>').fadeIn(0);
+  } else {
+    alert(errorMessage);
+  }
+}
+
+/**
  * Cria uma requisição ajax
  *
  * @param {Object} element
@@ -67,10 +92,8 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       if (message.length <= 0) {
         message = form.parent().parent().parent().find('#vc-message');
       }
-    } else if (element.parent().parent().find('#vc-message').length > 0) {
-      message = element.parent().parent().find('#vc-message');
     } else if (element.attr('vc-message')) {
-      message = $(element.attr('vc-message'));
+      message = $(document).find(element.attr('vc-message'));
     }
   }
   
@@ -245,22 +268,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
         
         /* Mensagem de retorno ou erro */
         if (json.trigger || json.error) {
-          var errorMessage = '';
-          var errorType = '';
-          
-          if (json.trigger) {
-            errorMessage = json.trigger[1];
-            errorType = json.trigger[0];
-          } else if (json.error) {
-            errorMessage = json.error.message;
-            errorType = json.error.type || 'danger';
-          }
-          
-          if (message !== undefined && message.length > 0) {
-            message.html('<div class="alert alert-' + errorType + '">' + errorMessage + '</div>').fadeIn(0);
-          } else {
-            alert(errorMessage);
-          }
+          showReturnMessage(json, message);
         }
         
         /* Ações diversas */
@@ -271,7 +279,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
                 /* Hide */
                 case 'scrolltop':
                   $('html,body').animate({
-                    scrollTop: ($(value).offset().top - 20),
+                    scrollTop: ($(value).offset().top - 20)
                   }, 500);
                   break;
                 
@@ -308,7 +316,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
         /* Redireciona para uma nova página */
         if (json.location) {
           if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
-            loadPage((window.history.state && window.history.state.content) || '#content-ajax', json.location, true, true);
+            loadPage((window.history.state && window.history.state.content) || '#content-ajax', json.location, true);
           } else {
             window.location.href = json.location;
           }
@@ -317,7 +325,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
         /* Recarrega a página atual */
         if (json.reload) {
           if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
-            loadPage((window.history.state && window.history.state.content) || '#content-ajax', '', true, true);
+            loadPage((window.history.state && window.history.state.content) || '#content-ajax', false, true);
           } else {
             window.location.reload();
           }
@@ -351,11 +359,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       var json = getJSON(xhr.responseText);
       
       if (json) {
-        if (message !== undefined && message.length > 0) {
-          message.html('<div class="alert alert-danger">' + json.error.message + '</div>').fadeIn(0);
-        } else {
-          alert(json.error.message);
-        }
+        showReturnMessage(json, message);
       } else {
         var error;
         
@@ -379,13 +383,9 @@ function vcAjax (element, url, formData, method, form, change, modal) {
           console.log(xhr, exception);
         }
         
-        if (message !== undefined && message.length > 0) {
-          message.html('<div class="alert alert-danger">' + error + '</div>').fadeIn(0);
-        } else {
-          alert('[2] Não conseguimos identificar o erro!');
-        }
+        showReturnMessage({'error': {'message': error}}, message);
       }
-    },
+    }
   });
   
   /* Aborta requisição */
@@ -436,7 +436,7 @@ $(document).ready(function () {
         url: getLocationFromElement(element, 'change'),
         method: element.attr('vc-method') ? element.attr('vc-method').toUpperCase() : 'POST',
         data: undefined,
-        name: element.attr('vc-param') ? element.attr('vc-param') : 'value',
+        name: element.attr('vc-param') ? element.attr('vc-param') : 'value'
       });
     }
     
@@ -595,7 +595,7 @@ $(document).ready(function () {
         
         /* Variávies */
         var elJson = getJSON(elVerbo);
-        var method = verbo;
+        var method = verbo.toUpperCase();
         
         /* Verifica se não e um json e cria o padrão */
         if (!elJson) {
@@ -607,9 +607,9 @@ $(document).ready(function () {
           }
           
           Object.assign(elJson, {
-            url: getLocationFromElement(element, verbo.toString()),
-            method: method.toUpperCase(),
-            data: undefined,
+            url: getLocationFromElement(element, verbo.toString().toLowerCase()),
+            method: method,
+            data: undefined
           });
         }
         
@@ -627,7 +627,7 @@ $(document).ready(function () {
         }
         
         /* Método */
-        formData.append('_METHOD', elJson.method);
+        formData.append('_METHOD', (elJson.method || method));
         
         /* Requisição */
         vcAjax(element, elJson.url, formData, (elJson.method !== 'GET' ? 'POST' : 'GET'), form, false, false);
