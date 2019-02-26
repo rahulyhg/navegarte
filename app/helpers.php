@@ -45,7 +45,11 @@ if (!function_exists('validate_params')) {
             }
             
             // Verifica caso esteja preenchido
-            if (isset($params[$index]) && (empty($params[$index]) && $params[$index] != '0')) {
+            if (!empty($params[$index]) && is_array($params[$index])) {
+                $params[$index] = array_filter($params[$index]);
+            }
+            
+            if (array_key_exists($index, $params) && (empty($params[$index]) && $params[$index] != '0')) {
                 if (!empty($rule['id']) && $rule['id'] == true) {
                     continue;
                 } else {
@@ -396,6 +400,12 @@ if (!function_exists('upload')) {
                 }
             }
             
+            // Corrige orientação da imagem
+            // Normalmente quando é enviada pelo celular
+            if ($extension == 'jpg') {
+                upload_fix_orientation($value['tmp_name'], $extension);
+            }
+            
             // Verifica se é arquivo ou imagem para upload
             $uploadError = upload_error($value['error']);
             
@@ -421,12 +431,6 @@ if (!function_exists('upload')) {
                 }
             }
             
-            // Corrige orientação da imagem
-            // Normalmente quando é enviada pelo celular
-            if ($extension == 'jpg') {
-                upload_fix_orientation(PUBLIC_FOLDER.$path);
-            }
-            
             $uploads[] = [
                 'name' => $name,
                 'path' => $path,
@@ -444,14 +448,12 @@ if (!function_exists('upload_fix_orientation')) {
     /**
      * Corrige orientação da imagem
      *
-     * @param $pathImage [Caminho do arquivo ou file enviado pelo formulário]
+     * @param string $pathImage [Caminho do arquivo ou file enviado pelo formulário]
+     * @param string $extension
      */
-    function upload_fix_orientation($pathImage)
+    function upload_fix_orientation($pathImage, $extension)
     {
         if (file_exists($pathImage) && function_exists('exif_read_data')) {
-            $pathinfo = pathinfo($pathImage);
-            $extension = $pathinfo['extension'];
-            
             // Variáveis
             $exifData = exif_read_data($pathImage);
             $originalImage = null;
