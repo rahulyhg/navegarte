@@ -19,6 +19,7 @@ services:
       - DOCUMENT_ROOT=/var/www/public
   db:
     image: mysql:5.7
+    command: --sql-mode=""
     ports:
       - "3306:3306"
     volumes:
