@@ -138,7 +138,7 @@ namespace App\Models {
             }
             
             // Select
-            $this->select = ($count ? 'COUNT(1) AS count' : implode(', ', ($this->select ?: ['*'])));
+            $this->select = ($count ? 'COUNT(1) AS count' : implode(', ', ($this->select ?: ["{$this->table}.*"])));
             $sql = "SELECT {$this->select} FROM {$this->table} ";
             
             // Join
