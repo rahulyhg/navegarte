@@ -112,6 +112,7 @@ namespace App\Middlewares {
                 // dai e criado o serviço de autorização para usar nos controllers, models...
                 // E se não existir já o serviço
                 if ($type === 'Bearer' && !empty($payload['id']) && !$this->auth) {
+                    unset($this->container['auth']);
                     $this->container['auth'] = function () use ($payload) {
                         //
                     };
