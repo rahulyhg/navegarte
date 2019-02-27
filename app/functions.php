@@ -19,8 +19,13 @@ use Slim\Http\StatusCode;
  * CONSTANTS
  */
 
-define('DATE_BR', 'd/m/Y');
-define('DATE_TIME_BR', 'd/m/Y H:i:s');
+if (!defined('DATE_BR')) {
+    define('DATE_BR', 'd/m/Y');
+}
+
+if (!defined('DATE_TIME_BR')) {
+    define('DATE_TIME_BR', 'd/m/Y H:i:s');
+}
 
 /**
  * FUNCTIONS
