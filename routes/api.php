@@ -27,10 +27,10 @@ $app->group('/api', function () use ($app) {
         $app->route('post', '/gitlab', 'Api/Deploy/GitlabController', 'api.deploy-gitlab', 'cors');
         $app->route('post', '/bitbucket', 'Api/Deploy/BitbucketController', 'api.deploy-bitbucket', 'cors');
     });
-
+    
     /**
      * Criação de api dinâmicas
      */
-
-    $app->route('get,post,put,delete,options', '/{method:[\w\-]+}[/{params:.*}]', 'Api/ApiController', 'api.method');
+    
+    $app->route('get,post,put,delete,options', '/util/{method:[\w\-]+}[/{params:.*}]', 'Api/UtilController', 'api.util');
 });

@@ -18,12 +18,12 @@ namespace App\Controllers\Api {
     use Core\Helpers\Str;
     
     /**
-     * Class ApiController
+     * Class UtilController
      *
      * @package App\Controllers\Api
      * @author Vagner Cardoso <vagnercardosoweb@gmail.com>
      */
-    class ApiController extends Controller
+    class UtilController extends Controller
     {
         /**
          * Emula os métodos (get, post, put, delete, options, etc...)
