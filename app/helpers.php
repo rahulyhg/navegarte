@@ -407,7 +407,7 @@ if (!function_exists('upload')) {
             
             // Corrige orientação da imagem
             // Normalmente quando é enviada pelo celular
-            if ($extension == 'jpg') {
+            if ($extension == 'jpg' && in_array($value['type'], ['image/jpeg', 'image/jpg'])) {
                 upload_fix_orientation($value['tmp_name'], $extension);
             }
             
