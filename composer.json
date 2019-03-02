@@ -17,7 +17,8 @@
   ],
   "require": {
     "php": ">=5.6",
-    "navegarte/core": "2.*"
+    "navegarte/core": "2.*",
+    "robmorgan/phinx": "^0.10.6"
   },
   "autoload": {
     "psr-4": {
