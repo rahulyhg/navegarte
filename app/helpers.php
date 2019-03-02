@@ -739,6 +739,9 @@ if (!function_exists('preg_replace_space')) {
         $string = preg_replace('/\r\n|\r|\n|\t/m', '', $string);
         $string = preg_replace('/^\s+|\s+$|\s+(?=\s)/m', '', $string);
         
+        // Adiciona espaço apos o . (dot)
+        $string = preg_replace('/(?<=\.)(?=[a-zA-Z])/m', ' ', $string);
+        
         // Remove tag `p` vázia
         $string = preg_replace('/<p[^>]*>[\s\s|&nbsp;]*<\/p>/m', '', $string);
         
@@ -904,7 +907,7 @@ if (!function_exists('placeholder')) {
     {
         $params = http_build_query($params);
         
-        return "//via.placeholder.com/{$dimension}?{$params}";
+        return "https://via.placeholder.com/{$dimension}?{$params}";
     }
 }
 
