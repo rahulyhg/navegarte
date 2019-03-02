@@ -165,7 +165,7 @@ function mountFormData (form, formData) {
         var name = $(element).attr('name');
         var value = $(element).val() || '';
         
-        if ($(element).prop('tagName').toLowerCase() === 'textarea' && value !== '') {
+        if ($(element).prop('tagName').toLowerCase() === 'textarea' && value === '') {
           value = $(element).html();
         }
         
