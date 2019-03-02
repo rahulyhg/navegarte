@@ -38,7 +38,7 @@ namespace App\Controllers\Api {
         {
             if (!empty($name) && !empty($arguments)) {
                 // Se for o método options retorna
-                if ($name === 'options') {
+                if (in_array($name, ['options', 'patch'])) {
                     return $this->response;
                 }
                 
@@ -48,73 +48,59 @@ namespace App\Controllers\Api {
                 }
                 
                 // Variáveis
-                $method = $arguments[0];
-                $params = (!empty($arguments[1]) ? $arguments[1] : '');
+                $method = Str::camel(str_replace('/', '-', $arguments[0]));
+                $path = (!empty($arguments[1]) ? $arguments[1] : '');
+                $data = array_merge(($path ? explode('/', $path) : []), $this->param());
                 
-                // Realiza requisição
-                return $this->request($method, $params);
-            }
-        }
-        
-        /**
-         * @param string $method
-         * @param string $params
-         *
-         * @return \Slim\Http\Response
-         * @throws \Slim\Exception\NotFoundException
-         */
-        protected function request($method, $params = null)
-        {
-            // Variáveis
-            $method = Str::camel(str_replace('/', '-', $method));
-            $params = array_merge(($params ? explode('/', $params) : []), $this->param());
-            
-            // Veririca se o método existe
-            if (!method_exists($this, $method)) {
-                $this->notFound();
-            }
-            
-            try {
-                return $this->{$method}($params);
-            } catch (\Exception $e) {
-                return json_error($e);
+                // Veririca se o método existe
+                if (!method_exists($this, $method)) {
+                    throw new \BadMethodCallException(
+                        sprintf("Call to undefined method %s::%s()", get_class($this), $method), E_ERROR
+                    );
+                }
+                
+                try {
+                    return $this->{$method}($data);
+                } catch (\Exception $e) {
+                    throw new $e;
+                }
             }
         }
         
         /**
          * [GET, POST] /api/zipcode/{zipcode}
          *
-         * @param array $params
+         * @param array $data
          *
          * @return \Slim\Http\Response
          * @throws \Exception
          */
-        protected function zipcode(array $params)
+        protected function zipcode(array $data)
         {
             // Models
             $curl = new Curl();
             
             // Verifica parametro
-            if (!empty($params[0])) {
-                $params['cep'] = $params[0];
+            if (!empty($data[0])) {
+                $data['cep'] = $data[0];
             }
             
             try {
                 // Verifica se o CEP foi passado
-                if (empty($params['cep'])) {
+                if (empty($data['cep'])) {
                     throw new \InvalidArgumentException("Você deve passar o CEP para buscar.", E_USER_ERROR);
                 }
                 
                 // Verifica se é válido
-                if (strlen(onlyNumber($params['cep'])) < 8) {
-                    throw new \InvalidArgumentException("O CEP {$params['cep']} informado deve conter, no mínimo 8 números.", E_USER_ERROR);
+                if (strlen(onlyNumber($data['cep'])) < 8) {
+                    throw new \InvalidArgumentException("O CEP {$data['cep']} informado deve conter, no mínimo 8 números.", E_USER_ERROR);
                 }
                 
                 // Pega o resultado do CEP
-                $result = $curl->get("https://viacep.com.br/ws/{$params['cep']}/json");
+                $result = $curl->get("https://viacep.com.br/ws/{$data['cep']}/json");
                 
                 if (!empty($result['erro'])) {
-                    throw new \Exception("O CEP {$params['cep']} informado não foi encontrado.", E_USER_ERROR);
+                    throw new \Exception("O CEP {$data['cep']} informado não foi encontrado.", E_USER_ERROR);
                 }
                 
                 // Formata endereço
@@ -138,31 +124,33 @@ namespace App\Controllers\Api {
                 
                 return $this->json($result);
             } catch (\Exception $e) {
-                throw new \Exception("[ZIP CODE] {$e->getMessage()}", $e->getCode());
+                throw new $e;
             }
         }
         
         /**
          * [POST] /api/modal-detail
          *
-         * @param array $params
+         * @param array $data
          *
          * @return \Slim\Http\Response
          * @throws \Exception
          */
-        protected function modelDetail(array $params)
+        protected function modalDetail(array $data)
         {
             try {
                 // Verifica a view
-                if (empty($params['view'])) {
-                    throw new \Exception("Você deve passar a view para inserir na modal.", E_USER_ERROR);
+                if (empty($data['view'])) {
+                    throw new \Exception(
+                        "Você deve passar a view para inserir na modal.", E_USER_ERROR
+                    );
                 }
                 
                 // Verifica se foi passado o model
-                if (!empty($params['model']) && (!empty($params['id']) && $params['id'] > 0)) {
-                    $namespace = "\\App\\Models\\".Str::studly($params['model']);
+                if (!empty($data['model']) && (!empty($data['id']) && $data['id'] > 0)) {
+                    $model = "\\App\\Models\\".Str::studly($data['model']);
                     
-                    if (!$params['row'] = (new $namespace())->id($params['id'])->limit(1)->get()) {
+                    if (!$data['row'] = (new $model())->reset()->fetchById($data['id'])) {
                         throw new \Exception("Registro não encontrado.", E_USER_ERROR);
                     }
                 }
@@ -170,11 +158,11 @@ namespace App\Controllers\Api {
                 // Retorna resultado
                 return $this->json([
                     'object' => [
-                        'modalContent' => $this->view->fetch($params['view'], $params),
+                        'modalContent' => $this->view->fetch($data['view'], $data),
                     ],
                 ]);
             } catch (\Exception $e) {
-                throw new \Exception("[MODAL DETAIL] {$e->getMessage()}", $e->getCode());
+                throw new $e;
             }
         }
     }
