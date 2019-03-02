@@ -442,6 +442,26 @@ namespace App\Models {
         }
         
         /**
+         * @param array $data
+         * @param bool $validate
+         *
+         * @return $this
+         */
+        public function data(array $data, $validate = true)
+        {
+            // Validações e tratamento dos dados
+            if (method_exists($this, '_data')) {
+                $this->_data($data, $validate);
+            }
+            
+            // Monta a propriedade data com
+            // os dados já tratados
+            $this->data = $data;
+            
+            return $this;
+        }
+        
+        /**
          * @return string
          */
         public function table()

@@ -77,17 +77,16 @@ namespace App\Models {
          * Monta e verifica as colunas
          *
          * @param array $data
+         * @param bool $validate
          *
-         * @return $this
+         * @return void
          * @throws \Exception
          */
-        public function data(array $data)
+        public function _data(array &$data, $validate = true)
         {
-            // Where
-            $where = '';
-            
+            // Caso passe o id
             if (!empty($data['id'])) {
-                $where = "AND {$this->table}.id != '{$data['id']}'";
+                $this->where("AND {$this->table}.id != '{$data['id']}'");
             }
             
             // Validações
@@ -105,17 +104,12 @@ namespace App\Models {
                     );
                 }
                 
-                if ($this->reset()->where([$where, "AND {$this->table}.email = '{$data['email']}'"])->count() > 0) {
+                if ($this->reset()->where("AND {$this->table}.email = '{$data['email']}'")->count() > 0) {
                     throw new \InvalidArgumentException(
                         "O e-mail digitado já foi registrado.", E_USER_WARNING
                     );
                 }
             }
-            
-            // Monta a propriedade
-            $this->data = $data;
-            
-            return $this;
         }
     }
 }
