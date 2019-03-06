@@ -34,6 +34,18 @@ return [
     ],
     
     /**
+     * Events
+     *
+     * Habilita ou desabilita os eventos das ações
+     *
+     * tbName:creating | tbName:created
+     * tbName:updating | tbName:updated
+     * tbName:deleting | tbName:deleted
+     */
+    
+    'events' => true,
+    
+    /**
      * Drivers
      *
      * Define os tipo de conexões que serão aceitos

@@ -46,7 +46,7 @@ namespace App\Models {
         {
             // Caso passe o id
             if (!empty($data['id'])) {
-                $this->where("AND {$this->table}.{$this->primaryKey} != '{$data['id']}'");
+                //$this->where("AND {$this->table}.{$this->primaryKey} != '{$data['id']}'");
             }
             
             // Validações
