@@ -11,31 +11,31 @@
  */
 
 return [
-
+    
     /**
      * Define a versão da aplicação
      */
-
+    
     'version' => [
-
+        
         /**
          * Versão do framework
          */
-
-        'framework' => 'v2.0.12',
-
+        
+        'framework' => 'v2.0.13',
+        
         /**
          * Versão do skeleton
          */
-
-        'skeleton' => 'v2.0.9',
-
+        
+        'skeleton' => 'v2.0.10',
+    
     ],
-
+    
     /**
      * Registra os serviços
      */
-
+    
     'providers' => [
         \Core\Providers\View\ViewProvider::class,
         \Core\Providers\ErrorProvider::class,
@@ -47,37 +47,37 @@ return [
         \Core\Providers\Jwt\JwtProvider::class,
         \Core\Providers\LoggerProvider::class,
         \Core\Providers\Event\EventProvider::class,
-
+        
         /**
          * Registra serviços da aplicação
          */
-
+        
         \App\Providers\ErrorSlackProvider::class,
     ],
-
+    
     /**
      * Registra as middlewares
      */
-
+    
     'middlewares' => [
-
+        
         /**
          * Middlewares iniciada automática
          */
-
+        
         'automatic' => [
             \Core\Middlewares\GenerateAppKeyMiddleware::class,
             \Core\Middlewares\TrailingSlashMiddleware::class,
             \Core\Middlewares\MaintenanceMiddleware::class,
             \Core\Middlewares\OldInputMiddleware::class,
         ],
-
+        
         /**
          * Middlewares iniciada manual
          */
-
+        
         'manual' => [],
-
+    
     ],
 
 ];

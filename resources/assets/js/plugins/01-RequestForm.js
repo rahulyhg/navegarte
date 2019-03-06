@@ -109,9 +109,9 @@ function checkFormRequired (form) {
       
       $(element)
         .addClass('vc-error-field')
+        .after('<div class="vc-error-box">' + message + '</div>')
         .parent()
-        .addClass('vc-error')
-        .append('<div class="vc-error-box">' + message + '</div>');
+        .addClass('vc-error');
     }
   });
   
@@ -142,8 +142,6 @@ function mountFormData (form, formData) {
   
   /* Percorre todos elemento */
   form.find('*').each(function (key, element) {
-    var inputName;
-    
     if ($(element).attr('name')) {
       if ($(element).prop('type') === 'checkbox') {
         //if ($(element).prop('checked') !== false) {

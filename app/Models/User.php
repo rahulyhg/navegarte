@@ -12,6 +12,7 @@
 
 namespace App\Models {
     
+    use Core\Contracts\Model;
     use Core\Helpers\Helper;
     
     /**
@@ -28,50 +29,9 @@ namespace App\Models {
         protected $table = 'users';
         
         /**
-         * @param int $id
-         *
-         * @return array
-         * @throws \Exception
+         * @var string
          */
-        public function fetchById($id)
-        {
-            $id = filter_params($id)[0];
-            
-            return $this->where([
-                "AND {$this->table}.id = :uid",
-            ], "uid={$id}")->limit(1)->fetch();
-        }
-        
-        /**
-         * Adiciona registro
-         *
-         * @return array
-         * @throws \Exception
-         */
-        public function save()
-        {
-            if (!empty($this->data['id'])) {
-                // Verifica
-                if (!$row = $this->reset()->fetchById($this->data['id'])) {
-                    throw new \Exception("Registro não encontrado.", E_USER_ERROR);
-                }
-                
-                // Atualiza
-                $this->db->update($this->table, array_merge($this->data, [
-                    'updated_at' => database_format_datetime(),
-                ]), 'WHERE id = :id', "id={$this->data['id']}");
-                
-                // Mescla os dados
-                $this->data = array_merge($row, $this->data);
-            } else {
-                // Adiciona
-                $this->data['id'] = $this->db->create($this->table, array_merge($this->data, [
-                    'created_at' => database_format_datetime(),
-                ]))->lastInsertId();
-            }
-            
-            return $this->data;
-        }
+        protected $primaryKey = "id";
         
         /**
          * Monta e verifica as colunas
@@ -86,14 +46,14 @@ namespace App\Models {
         {
             // Caso passe o id
             if (!empty($data['id'])) {
-                $this->where("AND {$this->table}.id != '{$data['id']}'");
+                $this->where("AND {$this->table}.{$this->primaryKey} != '{$data['id']}'");
             }
             
             // Validações
             validate_params($data, [
                 'name' => 'Nome não pode ser vázio.',
                 'email' => 'E-mail não pode ser vázio.',
-                'password' => ['message' => 'Senha não pode ser vázio.', 'id' => !empty($data['id'])],
+                'password' => ['message' => 'Senha não pode ser vázio.', 'force' => empty($data['id'])],
             ]);
             
             // E-mail
@@ -104,7 +64,7 @@ namespace App\Models {
                     );
                 }
                 
-                if ($this->reset()->where("AND {$this->table}.email = '{$data['email']}'")->count() > 0) {
+                if ($this->where("AND {$this->table}.email = '{$data['email']}'")->count() > 0) {
                     throw new \InvalidArgumentException(
                         "O e-mail digitado já foi registrado.", E_USER_WARNING
                     );
