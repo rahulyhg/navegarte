@@ -10,6 +10,8 @@
  * @copyright 12/01/2018 Vagner Cardoso
  */
 
+use Core\App;
+
 return [
     
     /**
@@ -64,8 +66,9 @@ return [
             'is_route' => 'is_route',
             'dd' => 'dd',
             'placeholder' => 'placeholder',
+            'has_container' => [App::getInstance(), 'resolve'],
             'csrf_token' => function ($input = true) {
-                $token = \Core\App::getInstance()->resolve('encryption')->encrypt([
+                $token = App::getInstance()->resolve('encryption')->encrypt([
                     'token' => uniqid(rand(), true),
                     'expired' => time() + (60 * 60 * 24),
                 ]);
