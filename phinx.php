@@ -28,65 +28,40 @@ define('BASE_URL', "");
  * Carrega o autoload
  */
 
-$autoload = __DIR__.'/vendor/autoload.php';
+$pathAutoload = APP_FOLDER.'/vendor/autoload.php';
 
-if (!file_exists($autoload)) {
-    die("Composer autoload not found.\n");
+if (!file_exists($pathAutoload)) {
+    die(
+        'Run command in terminal: <br>'.
+        '<code style="background: #000; color: #fff;">composer install</code>'
+    );
 }
 
-require_once "{$autoload}";
+require_once "{$pathAutoload}";
 
 /**
- * Environment
+ * App
  *
- * Carrega as configurações sensíveis
+ * Inicia as configurações da aplicação
  */
-
-$envFile = __DIR__.'/.env';
-
-if (file_exists($envFile)) {
-    (new \Dotenv\Dotenv(__DIR__, '.env'))->overload();
-} else {
-    die('.env not found.');
-}
 
 try {
     /**
-     * Applicação
+     * Instancia da classe
      */
     
     $app = App::getInstance();
     
     /**
-     * Configurações padrão
+     * Inicia os serviços
      */
     
-    $app->initConfigs();
-    
-    /**
-     * Serviços
-     */
-    
-    $providers = [
+    $app->initProviders([
         \Core\Providers\Database\DatabaseProvider::class,
         \Core\Providers\Encryption\EncryptionProvider::class,
         \Core\Providers\Hash\HashProvider::class,
         \Core\Providers\Jwt\JwtProvider::class,
-    ];
-    
-    /**
-     * Registra os serviços
-     */
-    
-    foreach ($providers as $provider) {
-        if (class_exists($provider)) {
-            $provider = new $provider($app->getContainer());
-            
-            if (method_exists($provider, 'register')) {
-                $provider->register();
-            }
-        }
-    }
+    ]);
     
     /**
      * Configurações do phinx
@@ -143,7 +118,7 @@ try {
             ],
             
             /**
-             * DBLib
+             * MSSQL
              */
             
             'dblib' => [
