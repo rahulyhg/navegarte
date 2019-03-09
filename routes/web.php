@@ -7,13 +7,13 @@
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 12/01/2018 Vagner Cardoso
+ * @copyright 08/03/2018 Vagner Cardoso
  */
 
 /**
  * Web
  *
- * Grupo de rotas pra criação do sistema
+ * Grupo de rotas pra criação da aplicação
  */
 
 $app->route('get', '/', 'IndexController', 'web.index');
