@@ -13,6 +13,14 @@
 return [
     
     /**
+     * Eventos
+     *
+     * tbName:creating | tbName:created
+     * tbName:updating | tbName:updated
+     * tbName:deleting | tbName:deleted
+     */
+    
+    /**
      * Default
      *
      * Driver de conexão padrão
@@ -32,18 +40,6 @@ return [
         \PDO::ATTR_CASE => \PDO::CASE_NATURAL,
         \PDO::ATTR_PERSISTENT => false,
     ],
-    
-    /**
-     * Events
-     *
-     * Habilita ou desabilita os eventos das ações
-     *
-     * tbName:creating | tbName:created
-     * tbName:updating | tbName:updated
-     * tbName:deleting | tbName:deleted
-     */
-    
-    'events' => true,
     
     /**
      * Drivers
@@ -69,25 +65,11 @@ return [
         ],
         
         /**
-         * MSSQL Windows
-         */
-        
-        'sqlsrv' => [
-            'dsn' => 'sqlsrv:Server=%s;Connect=%s;ConnectionPooling=0',
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', 1433),
-            'database' => env('DB_DATABASE', ''),
-            'username' => env('DB_USER', ''),
-            'password' => env('DB_PASS', ''),
-            'charset' => false,
-            'collation' => false,
-        ],
-        
-        /**
-         * MSSQL Linux
+         * MSSQL
          */
         
         'dblib' => [
+            //'dsn' => 'sqlsrv:Server=%s;Connect=%s;ConnectionPooling=0',
             'dsn' => 'dblib:version=7.0;charset=UTF-8;host=%s;dbname=%s',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', 1433),
