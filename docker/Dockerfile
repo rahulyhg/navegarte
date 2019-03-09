@@ -19,6 +19,8 @@ RUN  apt-get update \
     libicu-dev \
     libxml2-dev \
     libxslt-dev \
+    #gulp-notify
+    libnotify-bin \
     mysql-client \
     curl \
     git \
@@ -41,7 +43,8 @@ RUN docker-php-ext-install \
     zip \
     opcache \
     intl \
-    xsl
+    xsl \
+    exif
 
 # Configura pdo_dblib
 RUN docker-php-ext-configure pdo_dblib --with-libdir=/lib/x86_64-linux-gnu
@@ -61,9 +64,13 @@ RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xd
 # RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 # RUN apt-get install -y nodejs
 # RUN npm update -g npm
+# RUN npm cache verify
+# RUN npm cache clean --force
 # RUN npm install -g sass
 # RUN npm install -g bower
 # RUN npm install -g gulp
+# RUN npm install -g gulp-notify
+# RUN npm install -g notify-send
 # RUN npm install -g coffeescript
 # RUN npm install -g browser-sync
 

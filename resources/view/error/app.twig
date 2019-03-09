@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>{{ error_title ?: 'Whoops!' }}</title>
-    
+
+    {# Styles #}
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
     <style>{{ asset_source('/assets/error.css') }}</style>
     {% block style %}{% endblock %}

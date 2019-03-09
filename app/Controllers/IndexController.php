@@ -7,7 +7,7 @@
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 12/01/2018 Vagner Cardoso
+ * @copyright 08/03/2018 Vagner Cardoso
  */
 
 namespace App\Controllers {
@@ -27,19 +27,11 @@ namespace App\Controllers {
          *
          * @return \Slim\Http\Response
          */
-        public function get()
+        public function index()
         {
             $array = [];
             
             return $this->view('index', $array, 200);
-        }
-        
-        /**
-         * Inicia junto com o __construct da classe pai
-         */
-        protected function boot()
-        {
-            //
         }
     }
 }

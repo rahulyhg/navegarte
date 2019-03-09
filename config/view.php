@@ -7,46 +7,85 @@
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 12/01/2018 Vagner Cardoso
+ * @copyright 09/03/2019 Vagner Cardoso
  */
+
+use Core\App;
 
 return [
     
     /**
-     * Template engine
+     * Options
      *
-     * Defines which template engine will be used.
-     *
-     * php | twig
+     * Configura as opções padões do twig
      */
     
-    'engine' => 'twig',
+    'options' => [
+        'debug' => true,
+        'charset' => 'UTF-8',
+        'strict_variables' => false,
+        'autoescape' => 'html',
+        'cache' => (env('APP_ENV') === 'production' ? APP_FOLDER.'/storage/cache' : false),
+        'auto_reload' => true,
+        'optimizations' => -1,
+    ],
     
     /**
-     * View debug
+     * Templates
      *
-     * When enabled, any type of error will be
+     * Define os templates no carregamento das views
      */
     
-    'debug' => true,
+    'template' => [
+        'view' => RESOURCE_FOLDER.'/view',
+        'mail' => RESOURCE_FOLDER.'/mail',
+    ],
     
     /**
-     * View cache
+     * Helpers & Functions
      *
-     * When enabled, it will be saved as configured by configuring [path.compiled]
+     * Registra funções e filtros para usar na view
      */
     
-    'cache' => true,
+    'registers' => [
+        
+        /**
+         * Funções
+         */
+        
+        'functions' => [
+            'path_for' => 'path_for',
+            'config' => 'config',
+            'asset' => 'asset',
+            'asset_source' => 'asset_source',
+            'has_route' => 'has_route',
+            'is_route' => 'is_route',
+            'dd' => 'dd',
+            'placeholder' => 'placeholder',
+            'has_container' => [App::getInstance(), 'resolve'],
+            'csrf_token' => function ($input = true) {
+                $token = App::getInstance()->resolve('encryption')->encrypt([
+                    'token' => uniqid(rand(), true),
+                    'expired' => time() + (60 * 60 * 24),
+                ]);
+                
+                return $input
+                    ? "<input type='hidden' name='_csrfToken' id='_csrfToken' value='{$token}'/>"
+                    : $token;
+            },
+        ],
+        
+        /**
+         * Filtros
+         */
+        
+        'filters' => [
+            'is_string' => 'is_string',
+            'is_array' => 'is_array',
+            'get_day' => 'get_day',
+            'get_month' => 'get_month',
+        ],
     
-    /**
-     * View paths
-     *
-     * Directories that will pull the views and save the cache
-     */
-    
-    'path' => [
-        'folder' => RESOURCE_FOLDER.'/view',
-        'compiled' => APP_FOLDER.'/storage/cache',
     ],
 
 ];

@@ -95,7 +95,9 @@ namespace App\Providers {
                     "mrkdwn" => true,
                 ]));
             } catch (\Exception $e) {
-                logger('Slack notification', $error, 'error', 'slack');
+                $this->logger->filename('slack')->error(
+                    $e->getMessage(), $error
+                );
             }
         }
         

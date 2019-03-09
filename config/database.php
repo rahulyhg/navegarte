@@ -21,6 +21,31 @@ return [
     'default' => env('DB_DRIVER', 'mysql'),
     
     /**
+     * Options
+     *
+     * Configura as opções para conexão
+     */
+    
+    'options' => [
+        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
+        \PDO::ATTR_CASE => \PDO::CASE_NATURAL,
+        \PDO::ATTR_PERSISTENT => false,
+    ],
+    
+    /**
+     * Events
+     *
+     * Habilita ou desabilita os eventos das ações
+     *
+     * tbName:creating | tbName:created
+     * tbName:updating | tbName:updated
+     * tbName:deleting | tbName:deleted
+     */
+    
+    'events' => true,
+    
+    /**
      * Drivers
      *
      * Define os tipo de conexões que serão aceitos
@@ -33,7 +58,7 @@ return [
          */
         
         'mysql' => [
-            'driver' => env('DB_DRIVER', 'mysql'),
+            'dsn' => 'mysql:host=%s;dbname=%s',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', 3306),
             'database' => env('DB_DATABASE', ''),
@@ -44,33 +69,19 @@ return [
         ],
         
         /**
-         * MSSQL Windows
-         */
-        
-        'sqlsrv' => [
-            'driver' => env('DB_DRIVER', 'sqlsrv'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', 1433),
-            'database' => env('DB_DATABASE', ''),
-            'username' => env('DB_USER', ''),
-            'password' => env('DB_PASS', ''),
-            'charset' => env('DB_CHARSET', ''),
-            'collation' => env('DB_COLLATE', ''),
-        ],
-        
-        /**
-         * MSSQL Linux
+         * MSSQL
          */
         
         'dblib' => [
-            'driver' => env('DB_DRIVER', 'dblib'),
+            //'dsn' => 'sqlsrv:Server=%s;Connect=%s;ConnectionPooling=0',
+            'dsn' => 'dblib:version=7.0;charset=UTF-8;host=%s;dbname=%s',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', 1433),
             'database' => env('DB_DATABASE', ''),
             'username' => env('DB_USER', ''),
             'password' => env('DB_PASS', ''),
-            'charset' => env('DB_CHARSET', ''),
-            'collation' => env('DB_COLLATE', ''),
+            'charset' => false,
+            'collation' => false,
         ],
     
     ],

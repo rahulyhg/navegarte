@@ -61,26 +61,12 @@ try {
      * Serviços
      */
     
-    $providers = [
-        \Core\Providers\DatabaseProvider::class,
+    $app->registerProviders([
+        \Core\Providers\Database\DatabaseProvider::class,
         \Core\Providers\Encryption\EncryptionProvider::class,
         \Core\Providers\Hash\HashProvider::class,
         \Core\Providers\Jwt\JwtProvider::class,
-    ];
-    
-    /**
-     * Registra os serviços
-     */
-    
-    foreach ($providers as $provider) {
-        if (class_exists($provider)) {
-            $provider = new $provider($app->getContainer());
-            
-            if (method_exists($provider, 'register')) {
-                $provider->register();
-            }
-        }
-    }
+    ]);
     
     /**
      * Configurações do phinx

@@ -9,7 +9,7 @@
 var initSelect2 = function (selects2) {
   if (selects2.length) {
     $.each(selects2, function (key, element) {
-      var json = getJSON(($(element).data('json') || $(element).data('option'))) || {};
+      var json = getJSON($(element).data('json')) || {};
       
       var options = new Object({
         width: 'resolve',

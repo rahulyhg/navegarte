@@ -90,14 +90,14 @@ namespace App\Middlewares {
                 
                 // Se a autorização for a básica dai entra nessa condição
                 // Essa condição e espeficicamente para as apis
-                if ($type === 'Basic' && $token !== env('API_TOKEN_BASIC')) {
+                if ($type === 'Basic' && $token !== env('API_TOKEN')) {
                     throw new \Exception("Acesso negado! Esse recurso requerer autorização. Entre em contato conosco.", E_USER_ERROR);
                 }
                 
                 // Verifica se o TOKEN é válido caso seja necessário a autenticação
                 // e decripta o token
                 if ($type === 'Bearer' && !$payload = $this->encryption->decrypt($token)) {
-                    if ($token !== env('API_TOKEN_BASIC')) {
+                    if ($token !== env('API_TOKEN')) {
                         throw new \Exception("Opsss! Não foi possível validar sua requisição! Entre em contato conosco.", E_USER_ERROR);
                     }
                 }
@@ -112,6 +112,7 @@ namespace App\Middlewares {
                 // dai e criado o serviço de autorização para usar nos controllers, models...
                 // E se não existir já o serviço
                 if ($type === 'Bearer' && !empty($payload['id']) && !$this->auth) {
+                    unset($this->container['auth']);
                     $this->container['auth'] = function () use ($payload) {
                         //
                     };
