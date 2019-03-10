@@ -13,6 +13,14 @@
 return [
     
     /**
+     * Eventos
+     *
+     * tbName:creating | tbName:created
+     * tbName:updating | tbName:updated
+     * tbName:deleting | tbName:deleted
+     */
+    
+    /**
      * Default
      *
      * Driver de conexão padrão
@@ -32,18 +40,6 @@ return [
         \PDO::ATTR_CASE => \PDO::CASE_NATURAL,
         \PDO::ATTR_PERSISTENT => false,
     ],
-    
-    /**
-     * Events
-     *
-     * Habilita ou desabilita os eventos das ações
-     *
-     * tbName:creating | tbName:created
-     * tbName:updating | tbName:updated
-     * tbName:deleting | tbName:deleted
-     */
-    
-    'events' => true,
     
     /**
      * Drivers

@@ -37,11 +37,12 @@ namespace App\Models {
          * Monta e verifica as colunas
          *
          * @param array $data
+         * @param bool $validate
          *
          * @return void
          * @throws \Exception
          */
-        public function _data(array &$data)
+        public function _data(array &$data, $validate = true)
         {
             // Caso passe o id
             if (!empty($data['id'])) {

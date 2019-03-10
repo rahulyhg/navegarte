@@ -39,7 +39,7 @@ ob_start(function ($buffer) {
 
 if (PHP_SAPI == 'cli-server') {
     $url = parse_url($_SERVER['REQUEST_URI']);
-    $file = APP_FOLDER.$url['path'];
+    $file = __DIR__.$url['path'];
     
     if (is_file($file)) {
         return false;
@@ -52,33 +52,16 @@ if (PHP_SAPI == 'cli-server') {
  * Carrega o autoload
  */
 
-$composerAutoload = APP_FOLDER.'/vendor/autoload.php';
+$pathAutoload = APP_FOLDER.'/vendor/autoload.php';
 
-if (!file_exists($composerAutoload)) {
-    die('Run command in terminal: <br><code style="background: #000; color: #fff;">composer install</code>');
+if (!file_exists($pathAutoload)) {
+    die(
+        'Run command in terminal: <br>'.
+        '<code style="background: #000; color: #fff;">composer install</code>'
+    );
 }
 
-require_once "{$composerAutoload}";
-
-/**
- * ENV
- *
- * Carrega as configurações do .env
- */
-
-$envFile = APP_FOLDER.'/.env';
-
-if (file_exists($envFile)) {
-    (new \Dotenv\Dotenv(APP_FOLDER, '.env'))->load();
-} else {
-    $envExample = APP_FOLDER.'/.env-example';
-    
-    if ((file_exists($envExample) && !is_dir($envExample)) && !file_exists($envFile)) {
-        $envContent = file_get_contents($envExample);
-        
-        file_put_contents($envFile, $envContent, FILE_APPEND);
-    }
-}
+$autoload = require_once "{$pathAutoload}";
 
 /**
  * App
