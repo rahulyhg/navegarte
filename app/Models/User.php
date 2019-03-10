@@ -12,8 +12,8 @@
 
 namespace App\Models {
     
-    use Core\Contracts\Model;
     use Core\Helpers\Helper;
+    use Core\Providers\Database\Model;
     
     /**
      * Class User
