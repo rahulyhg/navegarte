@@ -133,11 +133,6 @@ if (!function_exists('json_success')) {
     {
         // Caso seja web
         if (in_web()) {
-            // Caso seja retorno pra API remove
-            if (!empty($params['data'])) {
-                unset($params['data']);
-            }
-            
             // Caso a mensagem seja vázia
             // envia apenas os parametros e status
             if (empty($message)) {

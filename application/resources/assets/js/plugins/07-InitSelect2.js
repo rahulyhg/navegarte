@@ -9,12 +9,12 @@
 var initSelect2 = function (selects2) {
   if (selects2.length) {
     $.each(selects2, function (key, element) {
-      var json = getJSON($(element).data('json')) || {};
+      var json = getJSON(($(element).data('json') || $(element).data('option'))) || {};
       
       var options = new Object({
         width: 'resolve',
         language: 'pt-BR',
-        placeholder: json.placeholder !== undefined ? json.placeholder : '.:: Selecione ::.',
+        placeholder: json.placeholder !== undefined ? json.placeholder : '.:: Selecione ::.'
         /*dropdownParent: $(element).parent(),*/
         /*minimumResultsForSearch: -1,*/
       });
@@ -36,7 +36,7 @@ var initSelect2 = function (selects2) {
             data: function (param) {
               var params = {
                 term: param.term || '',
-                page: param.page || 1,
+                page: param.page || 1
               };
               
               /* Monta data vindo das opções */
@@ -51,7 +51,7 @@ var initSelect2 = function (selects2) {
               }
               
               return params;
-            },
+            }
           },
           
           escapeMarkup: function (markup) {
@@ -68,7 +68,7 @@ var initSelect2 = function (selects2) {
           
           templateSelection: function (state) {
             return state.name || state.text;
-          },
+          }
         });
       }
       

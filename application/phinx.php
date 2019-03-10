@@ -17,10 +17,10 @@ use Core\App;
  */
 
 define('ROOT', __DIR__);
-define('PUBLIC_FOLDER', __DIR__.'/public');
-define('APP_FOLDER', __DIR__.'');
+define('PUBLIC_FOLDER', __DIR__.'/../public_html');
+define('APP_FOLDER', __DIR__);
 define('RESOURCE_FOLDER', __DIR__.'/resources');
-define('BASE_URL', "");
+define('BASE_URL', "http://localhost");
 
 /**
  * Composer

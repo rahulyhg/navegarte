@@ -34,14 +34,14 @@ const compileSass = (src, fileName, dest) => {
     .pipe(concat(`${fileName}.css`))
     .pipe(postcss([
       require('autoprefixer')({browsers: ['last 2 versions'], cascade: false}),
-      require('css-mqpacker')(),
+      require('css-mqpacker')()
     ]))
     .pipe(minifycss({
       keepBreaks: false,
       target: config.path.public,
       root: config.path.public,
       processImport: true,
-      keepSpecialComments: 0,
+      keepSpecialComments: 0
     }))
     .pipe(concat(`${fileName}.css`))
     .pipe(gulp.dest(dest))
@@ -95,7 +95,7 @@ const browser = () => {
       '**/*.js',
       '**/*.html'
     ],
-    injectChanges: false,
+    injectChanges: false
   });
 };
 
@@ -108,20 +108,20 @@ gulp.task('watch', () => {
   const onChange = (event) => {
     console.log(`File ${event.path} was ${event.type}, running tasks...`);
   };
-
+  
   /* Error */
   gulp.watch('./resources/assets/sass/error.scss', sassError);
-
+  
   /* Email */
   gulp.watch('./resources/assets/sass/mail.scss', sassMail);
-
+  
   /* Web */
   gulp.watch('./resources/assets/sass/web/**/**/**/*.{scss,css}', sassWeb);
   gulp.watch('./resources/assets/js/web/**/**/**/*.js', jsWeb);
-
+  
   /* Plugins JS */
   gulp.watch('./resources/assets/js/plugins/**/**/**/*.js', gulp.parallel(jsWeb));
-
+  
   /* BrowserSync */
   gulp.watch([
     '../!**!/!*.{php,twig,js,css}',

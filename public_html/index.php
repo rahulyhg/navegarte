@@ -7,7 +7,7 @@
  * @author    Vagner Cardoso <vagnercardosoweb@gmail.com>
  * @license   MIT
  *
- * @copyright 12/01/2018 Vagner Cardoso
+ * @copyright 10/03/2019 Vagner Cardoso
  */
 
 /**
@@ -20,7 +20,7 @@ define('ROOT', str_ireplace('\\', '/', realpath(dirname(__DIR__))));
  * Diretório raiz da pasta publica
  */
 
-define('PUBLIC_FOLDER', ROOT.'/public');
+define('PUBLIC_FOLDER', ROOT.'/public_html');
 
 /**
  * Diretório raiz da aplicação
@@ -28,7 +28,7 @@ define('PUBLIC_FOLDER', ROOT.'/public');
  * OBS: Esse diretório não pode ser acesso pela URL
  */
 
-define('APP_FOLDER', ROOT.'');
+define('APP_FOLDER', ROOT.'/application');
 
 /**
  * Diretório que armazena os recursos dos assets e views

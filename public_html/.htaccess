@@ -9,7 +9,12 @@
   # RewriteCond %{HTTP_HOST} !^www\. [NC]
   # RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+  # Remove WWW
+  # RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+  # RewriteRule ^(.*)$ http://%1%{REQUEST_URI} [R=301,QSA,NC,L]
+
   # HTTPS Redirect
+  # RewriteCond %{HTTP_HOST} !^localhost$ [NC]
   # RewriteCond %{HTTP:X-Forwarded-Proto} !https
   # RewriteCond %{HTTPS} off
   # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
