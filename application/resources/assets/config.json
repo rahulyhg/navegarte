@@ -1,0 +1,18 @@
+{
+  "path": {
+    "public": "../public_html",
+    "css": "../public_html/assets",
+    "js": "../public_html/assets"
+  },
+  "web": {
+    "css": [
+      "./resources/assets/sass/web/*.scss"
+    ],
+    "js": [
+      "../public_html/assets/web/bower_components/jquery/dist/jquery.min.js",
+      "../public_html/assets/web/bower_components/popper.js/dist/umd/popper.min.js",
+      "../public_html/assets/web/bower_components/bootstrap/dist/js/bootstrap.min.js",
+      "./resources/assets/js/web/*.js"
+    ]
+  }
+}

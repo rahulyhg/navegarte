@@ -1,0 +1,26 @@
+{
+  "short_name": "VCWeb",
+  "name": "VCWeb Networks",
+  "theme_color": "#6272a4",
+  "background_color": "#282a36",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/assets/web/images/64x64.png",
+      "type": "image/png",
+      "sizes": "64x64"
+    },
+    {
+      "src": "/assets/web/images/192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/assets/web/images/512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/?utm_source=pwa",
+  "orientation": "portrait"
+}
