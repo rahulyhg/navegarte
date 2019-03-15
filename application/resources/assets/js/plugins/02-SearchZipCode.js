@@ -48,8 +48,10 @@ $(document).ready(function () {
             var elementState = $(document).find('#' + elementJson['complete-state'] + ' option[data-uf="' + elementJson.uf + '"]');
             
             if (elementState !== undefined) {
+              var elementStateValue = elementState.val().split('::', 2);
+              
               elementState
-                .val(elementState.val() + '::' + (elementJson.ibge || null))
+                .val(elementStateValue[0] + '::' + (elementJson.ibge || null))
                 .prop('selected', true)
                 .trigger('change');
             }

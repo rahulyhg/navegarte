@@ -44,10 +44,12 @@ function showMessage (json, elementMessage) {
   }
   
   /* Printa ou alerta a mensagem */
-  if (elementMessage !== undefined && elementMessage.length > 0) {
-    elementMessage.html('<div class="alert alert-' + type + '">' + message + '</div>').fadeIn(0);
-  } else {
-    alert(message);
+  if (message) {
+    if (elementMessage !== undefined && elementMessage.length > 0) {
+      elementMessage.html('<div class="alert alert-' + type + '">' + message + '</div>').fadeIn(0);
+    } else {
+      alert(message);
+    }
   }
 }
 
@@ -176,6 +178,32 @@ function mountFormData (form, formData) {
       }
     }
   });
+}
+
+/**
+ * Verifica se existe redirecionamento
+ * ou atualizar a página
+ *
+ * @param {Object} json
+ */
+function redirectAndReload (json) {
+  /* Redireciona para uma nova página */
+  if (json.location) {
+    if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
+      loadPage((window.history.state && window.history.state.content) || '#content-ajax', json.location, true, true);
+    } else {
+      window.location.href = json.location;
+    }
+  }
+  
+  /* Recarrega a página atual */
+  if (json.reload) {
+    if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
+      loadPage((window.history.state && window.history.state.content) || '#content-ajax', '', true, true);
+    } else {
+      window.location.reload();
+    }
+  }
 }
 
 /**
@@ -444,23 +472,8 @@ function vcAjax (element, url, formData, method, form, change, modal) {
           }
         }
         
-        /* Redireciona para uma nova página */
-        if (json.location) {
-          if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
-            loadPage((window.history.state && window.history.state.content) || '#content-ajax', json.location, true, true);
-          } else {
-            window.location.href = json.location;
-          }
-        }
-        
-        /* Recarrega a página atual */
-        if (json.reload) {
-          if (typeof loadPage !== 'undefined' && typeof loadPage === 'function' && !json.noajaxpage) {
-            loadPage((window.history.state && window.history.state.content) || '#content-ajax', false, true, true);
-          } else {
-            window.location.reload();
-          }
-        }
+        /* Redirect & Reload */
+        redirectAndReload(json);
       }, 0);
     },
     
@@ -491,6 +504,7 @@ function vcAjax (element, url, formData, method, form, change, modal) {
       
       if (json) {
         showMessage(json, message);
+        redirectAndReload(json);
       } else {
         var error;
         
