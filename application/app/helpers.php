@@ -43,7 +43,7 @@ if (!function_exists('validate_params')) {
         // Percorre os parâmetros
         foreach ($rules as $index => $rule) {
             // Força checagem
-            if (!empty($rule['force']) && $rule['force'] == true) {
+            if (!empty($rule['force'])) {
                 if (!array_key_exists($index, $params)) {
                     $params[$index] = null;
                 }
@@ -55,16 +55,13 @@ if (!function_exists('validate_params')) {
             }
             
             if (array_key_exists($index, $params) && (empty($params[$index]) && $params[$index] != '0')) {
-                if (!empty($rule['id']) && $rule['id'] == true) {
+                if (array_key_exists('force', (array) $rule) && $rule['force'] == false) {
                     continue;
                 } else {
-                    if (is_string($rule)) {
-                        throw new \InvalidArgumentException($rule, E_USER_NOTICE);
-                    } else {
-                        $code = (!empty($rule['code']) ? $rule['code'] : E_USER_NOTICE);
-                        
-                        throw new \InvalidArgumentException($rule['message'], $code);
-                    }
+                    throw new \InvalidArgumentException(
+                        (!empty($rule['message']) ? $rule['message'] : (is_string($rule) ? $rule : 'undefined')),
+                        (!empty($rule['code']) ? $rule['code'] : E_USER_NOTICE)
+                    );
                 }
             }
         }
