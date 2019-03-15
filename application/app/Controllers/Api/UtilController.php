@@ -62,7 +62,7 @@ namespace App\Controllers\Api {
                 try {
                     return $this->{$method}($data);
                 } catch (\Exception $e) {
-                    throw new $e;
+                    throw $e;
                 }
             }
         }
