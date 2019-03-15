@@ -5,6 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="theme-color" content="#6272a4">
     <meta name="_csrfToken" content="{{ csrf_token(false)|raw }}">
     
     {# Metas tags #}
@@ -40,8 +41,8 @@
     <link rel="base" href="{{ constant('BASE_URL') }}"/>
     <link rel="canonical" href="{{ constant('FULL_URL') }}"/>
     
-    {# Manifest #}
-    {#<link rel="manifest" href="{{ asset('/manifest.json') }}"/>#}
+    {# Manifest + Theme color #}
+    <link rel="manifest" href="{{ asset('/manifest.json', true) }}"/>
     
     {# RSS e SiteMAP #}
     {#<link rel="alternate" type="application/rss+xml" href="{{ constant('BASE_URL') }}/rss"/>
