@@ -61,6 +61,7 @@
 </IfModule>
 
 <IfModule mod_mime.c>
+  AddType application/x-mpegURL                       m3u8
   AddType audio/mp4                                   m4a f4a f4b
   AddType audio/ogg                                   oga ogg
   AddType application/javascript                      js jsonp
