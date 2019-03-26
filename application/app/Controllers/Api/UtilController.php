@@ -124,7 +124,7 @@ namespace App\Controllers\Api {
                 
                 return $this->json($result);
             } catch (\Exception $e) {
-                throw new $e;
+                throw $e;
             }
         }
         
@@ -162,7 +162,7 @@ namespace App\Controllers\Api {
                     ],
                 ]);
             } catch (\Exception $e) {
-                throw new $e;
+                throw $e;
             }
         }
     }
