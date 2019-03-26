@@ -46,6 +46,10 @@ RUN docker-php-ext-install \
     xsl \
     exif
 
+# Configura rar
+RUN pecl -v install rar
+RUN docker-php-ext-enable rar
+
 # Configura pdo_dblib
 RUN docker-php-ext-configure pdo_dblib --with-libdir=/lib/x86_64-linux-gnu
 
